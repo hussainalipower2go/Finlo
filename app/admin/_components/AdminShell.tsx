@@ -165,21 +165,17 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   )
 
   const MobileBottomNav = (
-    <nav className="admin-bottom-nav" aria-label="Admin sections" style={{ position: 'fixed', left: 12, right: 12, bottom: 'calc(12px + env(safe-area-inset-bottom, 0px))', height: 60, borderRadius: 24, background: colors.sidebar, border: `1px solid ${colors.border}`, boxShadow: '0 14px 44px rgba(31,45,90,0.18), inset 0 1px 0 rgba(255,255,255,0.9)', backdropFilter: 'blur(22px) saturate(180%)', WebkitBackdropFilter: 'blur(22px) saturate(180%)', display: 'none', zIndex: 30, overflow: 'hidden' }}>
+    <nav className="admin-bottom-nav" aria-label="Admin sections">
       {NAV.map((n) => {
         const active = activeId === n.id
         return (
           <Link
             key={n.id}
             href={n.href}
-            style={{
-              flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 3,
-              color: active ? colors.accent : colors.sub, fontSize: 9.5, fontWeight: active ? 700 : 500,
-              background: active ? colors.hover : 'transparent', textDecoration: 'none',
-            }}
+            className={active ? 'admin-bnav-item active' : 'admin-bnav-item'}
           >
-            {n.icon}
-            <span>{n.label.split(' ')[0]}</span>
+            <span className="admin-bnav-icon">{n.icon}</span>
+            <span className="admin-bnav-label">{n.label.split(' ')[0]}</span>
           </Link>
         )
       })}
