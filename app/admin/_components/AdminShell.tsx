@@ -146,6 +146,14 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
         <div style={{ fontSize: 13, fontWeight: 600, color: colors.text, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{currentLabel}</div>
       </div>
       <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
+        <Link
+          href="/admin/settings"
+          aria-label="Settings"
+          title="Settings"
+          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 8, borderRadius: 8, border: `1px solid ${colors.border}`, background: 'transparent', color: activeId === 'settings' ? colors.accent : colors.sub, cursor: 'pointer', textDecoration: 'none' }}
+        >
+          <Settings size={15} />
+        </Link>
         <button
           onClick={toggleTheme}
           aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
@@ -166,7 +174,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
 
   const MobileBottomNav = (
     <nav className="admin-bottom-nav" aria-label="Admin sections">
-      {NAV.map((n) => {
+      {NAV.filter((n) => n.id !== 'settings').map((n) => {
         const active = activeId === n.id
         return (
           <Link
