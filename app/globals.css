@@ -1,26 +1,307 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&display=swap');
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #080b1a;
+  --panel: #0e0a26;
+  --panel-deep: #0a081e;
+  --primary: #7c3aed;
+  --primary-strong: #8b5cf6;
+  --secondary: #4f46e5;
+  --accent: #a78bfa;
+  --accent-soft: #c4b5fd;
+  --text: #ffffff;
+  --text-soft: #e9e4ff;
+  --text-muted: #b4a5e6;
+  --text-faint: #9482c8;
+  --teal: #34d399;
+  --blue: #60a5fa;
+  --divider: rgba(109, 40, 217, 0.15);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* Admin dashboard palette — light (default for /admin) */
+:root,
+.light {
+  --ace-card: #ffffff;
+  --ace-card-border: rgba(15, 23, 42, 0.1);
+  --ace-text: #1e293b;
+  --ace-sub: #64748b;
+  --ace-input-bg: #ffffff;
+  --ace-soft-bg: rgba(99, 102, 241, 0.07);
+  --ace-accent-text: #5b5bd6;
+  --ace-sidebar: #0f1730;
+  --ace-sidebar-text: #e2e8f0;
+  --ace-sidebar-sub: #94a3b8;
+  --ace-sidebar-border: rgba(255, 255, 255, 0.08);
+  --ace-shell-bg: linear-gradient(160deg, #f4f7fb 0%, #eef2f8 55%, #f8fafc 100%);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+.dark {
+  --bg: #020417;
+  --panel: #050511;
+  --panel-deep: #03030a;
+  --primary: #8b5cf6;
+  --primary-strong: #a5b4fc;
+  --secondary: #6d28d9;
+  --accent: #c4b5fd;
+  --accent-soft: #e7d8fd;
+  --text: #f8fafc;
+  --text-soft: #e2e8f0;
+  --text-muted: #cbd5e1;
+  --text-faint: #a78bfa;
+  --teal: #38bdf8;
+  --blue: #93c5fd;
+  --divider: rgba(139, 92, 246, 0.15);
+
+  /* Admin dashboard palette (dark) */
+  --ace-card: linear-gradient(145deg, rgba(43, 55, 84, 0.7), rgba(26, 34, 60, 0.42));
+  --ace-card-border: rgba(255, 255, 255, 0.08);
+  --ace-text: #f1f5f9;
+  --ace-sub: #94a3b8;
+  --ace-input-bg: rgba(15, 23, 42, 0.5);
+  --ace-soft-bg: rgba(15, 23, 42, 0.3);
+  --ace-accent-text: #a5b4fc;
+  --ace-sidebar: #151d33;
+  --ace-sidebar-text: #f1f5f9;
+  --ace-sidebar-sub: #94a3b8;
+  --ace-sidebar-border: rgba(255, 255, 255, 0.07);
+  --ace-shell-bg: linear-gradient(160deg, #0b1220 0%, #111a35 55%, #0b1024 100%);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100dvh;
+}
+
+*:focus-visible {
+  outline: 2px solid var(--primary-strong);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* Dashboard responsiveness (FinloApp - app/dashboard/page.tsx) */
+.finlo-dash-burger,
+.finlo-dash-backdrop,
+.finlo-dash-date,
+.finlo-dash-bottomnav {
+  display: none;
+}
+
+@media (max-width: 1023px) {
+  .finlo-dash-maincol {
+    padding-left: 0 !important;
+  }
+  .finlo-dash-burger {
+    display: flex !important;
+  }
+  .finlo-dash-backdrop {
+    display: block;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    z-index: 35;
+  }
+  .finlo-dash-aside {
+    position: fixed !important;
+    left: 0 !important;
+    top: 0 !important;
+    height: 100vh !important;
+    width: 248px !important;
+    z-index: 40 !important;
+    transform: translateX(-110%);
+    transition: transform 0.25s ease !important;
+    box-shadow: 0 0 40px rgba(0, 0, 0, 0.35) !important;
+  }
+  .finlo-dash-aside.open {
+    transform: translateX(0) !important;
+  }
+  .finlo-dash-main {
+    padding: 16px !important;
+  }
+  .finlo-grid-70,
+  .finlo-grid-30 {
+    flex: none !important;
+    width: 100% !important;
+    grid-template-columns: 1fr !important;
+  }
+  .finlo-grid-split,
+  .finlo-grid-2,
+  .finlo-grid-3,
+  .finlo-grid-4 {
+    grid-template-columns: 1fr !important;
+  }
+  .finlo-table-wrap {
+    overflow-x: auto !important;
+  }
+  .finlo-table-wrap > div:not(.finlo-table-empty) {
+    min-width: 620px;
+  }
+}
+
+@media (max-width: 767px) {
+  .finlo-dash-bottomnav {
+    display: flex !important;
+  }
+  .finlo-dash-main {
+    padding-bottom: 96px !important;
+  }
+  .finlo-dash-fab {
+    bottom: 82px !important;
+    right: 18px !important;
+  }
+  .finlo-dash-topbar {
+    padding: 0 14px !important;
+  }
+}
+
+/* AI Assistant inline page (AIPage - app/dashboard/page.tsx) — stacks on mobile */
+.finlo-ai-chat,
+.finlo-ai-side {
+  min-width: 0;
+}
+@media (max-width: 767px) {
+  .finlo-ai-page {
+    flex-direction: column !important;
+    height: auto !important;
+    gap: 16px !important;
+  }
+  .finlo-ai-chat {
+    width: 100% !important;
+    flex: none !important;
+    height: calc(100vh - 200px);
+    height: calc(100dvh - 200px);
+    min-height: 400px;
+  }
+  .finlo-ai-side {
+    width: 100% !important;
+  }
+}
+
+@media (max-width: 560px) {
+  .finlo-dash-date {
+    display: none !important;
+  }
+}
+
+/* Liquid-glass finish for dashboard cards (matched via shared gradient inline style) */
+div[style*="linear-gradient(145deg"]:not([style*="position: fixed"]):not([style*="position:fixed"]) {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), 0 10px 28px rgba(31, 45, 90, 0.07) !important;
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+
+.spin {
+  animation: finlo-spin 1s linear infinite;
+}
+
+@keyframes finlo-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Profile & Settings pages (standalone app-shell pages) */
+.finlo-ps-back {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .finlo-ps-aside {
+    display: none !important;
+  }
+  .finlo-ps-topbar {
+    padding: 0 14px !important;
+  }
+  .finlo-ps-main {
+    padding: 16px !important;
+  }
+  .finlo-ps-back {
+    display: flex !important;
+  }
+}
+
+@media (max-width: 1023px) {
+  .finlo-left {
+    display: none !important;
+  }
+  .finlo-right {
+    width: 100% !important;
+    padding: 56px 24px 32px !important;
+    overflow-y: auto;
+    min-height: 100vh;
+  }
+  .finlo-outer {
+    border: none !important;
+    border-radius: 0 !important;
+    max-width: none !important;
+  }
+  .finlo-card {
+    max-width: 460px !important;
+  }
+}
+
+@media (max-width: 560px) {
+  .finlo-right {
+    padding: 64px 16px 28px !important;
+  }
+  .finlo-card {
+    padding: 32px 18px !important;
+  }
+  .finlo-card h2 {
+    font-size: 23px !important;
+  }
+  .finlo-toggle {
+    top: 18px !important;
+    right: 16px !important;
+    padding: 7px 13px !important;
+    font-size: 12px !important;
+  }
+  .finlo-social {
+    flex-direction: column !important;
+  }
+  .finlo-social button {
+    width: 100% !important;
+  }
+}
+
+/* Admin dashboard shell responsiveness (app/admin) */
+@media (max-width: 860px) {
+  .admin-sidebar {
+    display: none !important;
+  }
+  .admin-mobile-header {
+    display: flex !important;
+  }
+  .admin-main-pad {
+    padding: 16px !important;
+  }
+}
+
+@keyframes admin-pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
 }

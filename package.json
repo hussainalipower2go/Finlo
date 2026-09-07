@@ -6,12 +6,35 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "vitest run",
+    "mobile:sync": "cap sync android",
+    "mobile:copy": "cap copy android",
+    "mobile:add": "cap add android",
+    "mobile:open": "cap open android",
+    "mobile:run": "cap run android",
+    "apk:debug": "cd android && gradlew.bat assembleDebug",
+    "apk:release": "cd android && gradlew.bat bundleRelease"
   },
   "dependencies": {
+    "@capacitor/android": "^8.5.1",
+    "@capacitor/cli": "^8.5.1",
+    "@capacitor/core": "^8.5.1",
+    "@shadcn/ui": "^0.0.4",
+    "@supabase/auth-ui-react": "^0.4.7",
+    "@supabase/auth-ui-shared": "^0.1.8",
+    "@supabase/ssr": "^0.12.5",
+    "@supabase/supabase-js": "^2.113.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "jspdf": "^4.2.1",
+    "lucide-react": "^1.39.0",
     "next": "16.3.4",
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "recharts": "^3.10.1",
+    "tailwind-merge": "^3.6.0",
+    "zod": "^4.5.4"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
@@ -20,7 +43,9 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.3.4",
+    "supabase": "^2.116.0",
     "tailwindcss": "^4",
-    "typescript": "^5"
+    "typescript": "^5",
+    "vitest": "^3.2.4"
   }
 }
