@@ -35,6 +35,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   const supabase = createClient()
 
   const activeId = NAV.find((n) => pathname === n.href || pathname.startsWith(`${n.href}/`))?.id ?? 'overview'
+  const currentLabel = NAV.find((n) => n.id === activeId)?.label ?? 'Finlo Admin'
 
   const [viewerEmail, setViewerEmail] = useState('')
   const [isDark, setIsDark] = useState(() => {
@@ -141,39 +142,48 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
         </div>
         <span style={{ fontSize: 13.5, fontWeight: 700, color: colors.text, whiteSpace: 'nowrap' }}>Finlo Admin</span>
       </div>
-      <nav className="admin-nav-scroll" style={{ display: 'flex', gap: 4, overflowX: 'auto', flex: 1, scrollbarWidth: 'none' }}>
-        {NAV.map((n) => {
-          const active = activeId === n.id
-          return (
-            <Link
-              key={n.id}
-              href={n.href}
-              style={{
-                display: 'inline-flex', alignItems: 'center', gap: 6, padding: '7px 11px', borderRadius: 8,
-                color: active ? colors.text : colors.sub, fontSize: 12.5, fontWeight: active ? 700 : 500,
-                background: active ? colors.hover : 'transparent', textDecoration: 'none', whiteSpace: 'nowrap',
-              }}
-            >
-              {n.label}
-            </Link>
-          )
-        })}
-      </nav>
-      <button
-        onClick={toggleTheme}
-        aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
-        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 8, borderRadius: 8, border: `1px solid ${colors.border}`, background: 'transparent', color: colors.sub, cursor: 'pointer', flexShrink: 0 }}
-      >
-        {isDark ? <Sun size={15} /> : <Moon size={15} />}
-      </button>
-      <button
-        onClick={handleSignOut}
-        aria-label="Sign out"
-        style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 8, borderRadius: 8, border: `1px solid ${colors.border}`, background: 'transparent', color: colors.sub, cursor: 'pointer', flexShrink: 0 }}
-      >
-        <LogOut size={15} />
-      </button>
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <div style={{ fontSize: 13, fontWeight: 600, color: colors.text, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{currentLabel}</div>
+      </div>
+      <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
+        <button
+          onClick={toggleTheme}
+          aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 8, borderRadius: 8, border: `1px solid ${colors.border}`, background: 'transparent', color: colors.sub, cursor: 'pointer' }}
+        >
+          {isDark ? <Sun size={15} /> : <Moon size={15} />}
+        </button>
+        <button
+          onClick={handleSignOut}
+          aria-label="Sign out"
+          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 8, borderRadius: 8, border: `1px solid ${colors.border}`, background: 'transparent', color: colors.sub, cursor: 'pointer' }}
+        >
+          <LogOut size={15} />
+        </button>
+      </div>
     </div>
+  )
+
+  const MobileBottomNav = (
+    <nav className="admin-bottom-nav" aria-label="Admin sections" style={{ position: 'fixed', left: 12, right: 12, bottom: 'calc(12px + env(safe-area-inset-bottom, 0px))', height: 60, borderRadius: 24, background: colors.sidebar, border: `1px solid ${colors.border}`, boxShadow: '0 14px 44px rgba(31,45,90,0.18), inset 0 1px 0 rgba(255,255,255,0.9)', backdropFilter: 'blur(22px) saturate(180%)', WebkitBackdropFilter: 'blur(22px) saturate(180%)', display: 'none', zIndex: 30, overflow: 'hidden' }}>
+      {NAV.map((n) => {
+        const active = activeId === n.id
+        return (
+          <Link
+            key={n.id}
+            href={n.href}
+            style={{
+              flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 3,
+              color: active ? colors.accent : colors.sub, fontSize: 9.5, fontWeight: active ? 700 : 500,
+              background: active ? colors.hover : 'transparent', textDecoration: 'none',
+            }}
+          >
+            {n.icon}
+            <span>{n.label.split(' ')[0]}</span>
+          </Link>
+        )
+      })}
+    </nav>
   )
 
   return (
@@ -193,6 +203,8 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
           {children}
         </main>
       </div>
+
+      {MobileBottomNav}
     </div>
   )
 }
