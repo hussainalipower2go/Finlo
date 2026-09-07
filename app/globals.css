@@ -17,6 +17,17 @@
   --teal: #34d399;
   --blue: #60a5fa;
   --divider: rgba(109, 40, 217, 0.15);
+
+  /* Fluid spacing */
+  --f-pad: clamp(12px, 2.5vw + 4px, 28px);
+  --f-pad-sm: clamp(8px, 1.8vw + 2px, 16px);
+  --f-pad-xs: clamp(4px, 1vw + 1px, 8px);
+  --f-gap: clamp(8px, 1.8vw + 2px, 20px);
+  --f-gap-sm: clamp(6px, 1.2vw + 1px, 12px);
+  --f-radius: clamp(12px, 2.5vw + 4px, 24px);
+  --f-radius-sm: clamp(8px, 1.5vw + 2px, 14px);
+  --f-bottom-offset: clamp(76px, 12vw + 8px, 120px);
+  --f-bottom-nav-h: clamp(52px, 8vw + 10px, 66px);
 }
 
 /* Admin dashboard palette — light (default for /admin) */
@@ -107,6 +118,33 @@ body {
   display: none;
 }
 
+/* Fluid base overrides for dashboard inline styles */
+.finlo-dash-topbar {
+  margin: var(--f-pad-sm) var(--f-pad) !important;
+  padding: 0 var(--f-pad) !important;
+  border-radius: var(--f-radius-sm) !important;
+}
+.finlo-dash-main {
+  padding: var(--f-pad) !important;
+}
+.finlo-dash-fab {
+  width: clamp(44px, 10vw, 54px) !important;
+  height: clamp(44px, 10vw, 54px) !important;
+  right: var(--f-pad-sm) !important;
+}
+.finlo-dash-bottomnav {
+  left: var(--f-pad-sm) !important;
+  right: var(--f-pad-sm) !important;
+  bottom: calc(var(--f-pad-xs) + env(safe-area-inset-bottom, 0px)) !important;
+  height: auto !important;
+  min-height: var(--f-bottom-nav-h);
+  border-radius: calc(var(--f-pad-sm) + 10px) !important;
+  padding: clamp(5px, 1vw + 2px, 8px) !important;
+}
+.finlo-dash-aside {
+  width: clamp(200px, 22vw + 48px, 248px) !important;
+}
+
 @media (max-width: 1023px) {
   .finlo-dash-maincol {
     padding-left: 0 !important;
@@ -125,14 +163,14 @@ body {
     display: flex !important;
   }
   .finlo-dash-main {
-    padding-bottom: 90px !important;
+    padding-bottom: var(--f-bottom-offset) !important;
   }
   .finlo-dash-aside {
     position: fixed !important;
     left: 0 !important;
     top: 0 !important;
     height: 100vh !important;
-    width: 248px !important;
+    width: clamp(200px, 22vw + 48px, 248px) !important;
     z-index: 40 !important;
     transform: translateX(-110%);
     transition: transform 0.25s ease !important;
@@ -140,9 +178,6 @@ body {
   }
   .finlo-dash-aside.open {
     transform: translateX(0) !important;
-  }
-  .finlo-dash-main {
-    padding: 16px !important;
   }
   .finlo-grid-70,
   .finlo-grid-30 {
@@ -163,7 +198,7 @@ body {
     overflow-x: auto !important;
   }
   .finlo-table-wrap > div:not(.finlo-table-empty) {
-    min-width: 620px;
+    min-width: 520px;
   }
 }
 
@@ -172,21 +207,21 @@ body {
     display: flex !important;
   }
   .finlo-dash-main {
-    padding-bottom: 96px !important;
+    padding-bottom: calc(var(--f-bottom-offset) + 6px) !important;
   }
   .finlo-dash-fab {
-    bottom: 82px !important;
-    right: 18px !important;
+    bottom: calc(var(--f-bottom-offset) - var(--f-pad-sm) + 2px) !important;
   }
   .finlo-dash-topbar {
-    padding: 0 14px !important;
+    padding: 0 var(--f-pad-sm) !important;
+    margin: var(--f-pad-xs) var(--f-pad-sm) !important;
   }
 }
 
 /* Onboarding — compact card + stacked currency options on mobile */
 @media (max-width: 767px) {
   .finlo-onboard-card {
-    padding: 28px 20px !important;
+    padding: clamp(20px, 5vw + 4px, 28px) clamp(16px, 4vw + 4px, 20px) !important;
   }
   .finlo-onboard-ccy {
     grid-template-columns: 1fr !important;
@@ -202,12 +237,11 @@ body {
   .finlo-ai-page {
     flex-direction: column !important;
     height: auto !important;
-    gap: 16px !important;
+    gap: var(--f-gap) !important;
   }
   .finlo-ai-chat {
     width: 100% !important;
     flex: none !important;
-    height: calc(100vh - 200px);
     height: calc(100dvh - 200px);
     min-height: 400px;
   }
@@ -219,6 +253,12 @@ body {
 @media (max-width: 560px) {
   .finlo-dash-date {
     display: none !important;
+  }
+}
+
+@media (max-width: 420px) {
+  .finlo-dash-topbar {
+    margin: var(--f-pad-xs) var(--f-pad-xs) !important;
   }
 }
 
@@ -244,15 +284,22 @@ div[style*="linear-gradient(145deg"]:not([style*="position: fixed"]):not([style*
   display: none;
 }
 
+.finlo-ps-topbar {
+  padding: 0 var(--f-pad) !important;
+}
+.finlo-ps-main {
+  padding: var(--f-pad) !important;
+}
+
 @media (max-width: 767px) {
   .finlo-ps-aside {
     display: none !important;
   }
   .finlo-ps-topbar {
-    padding: 0 14px !important;
+    padding: 0 var(--f-pad-sm) !important;
   }
   .finlo-ps-main {
-    padding: 16px !important;
+    padding: var(--f-pad-sm) !important;
   }
   .finlo-ps-back {
     display: flex !important;
@@ -265,7 +312,7 @@ div[style*="linear-gradient(145deg"]:not([style*="position: fixed"]):not([style*
   }
   .finlo-right {
     width: 100% !important;
-    padding: 56px 24px 32px !important;
+    padding: 56px var(--f-pad) 32px !important;
     overflow-y: auto;
     min-height: 100vh;
   }
@@ -281,17 +328,17 @@ div[style*="linear-gradient(145deg"]:not([style*="position: fixed"]):not([style*
 
 @media (max-width: 560px) {
   .finlo-right {
-    padding: 64px 16px 28px !important;
+    padding: clamp(52px, 8vw, 64px) var(--f-pad-sm) clamp(20px, 4vw, 28px) !important;
   }
   .finlo-card {
-    padding: 32px 18px !important;
+    padding: clamp(24px, 5vw, 32px) clamp(14px, 3vw, 18px) !important;
   }
   .finlo-card h2 {
-    font-size: 23px !important;
+    font-size: clamp(20px, 5vw, 23px) !important;
   }
   .finlo-toggle {
     top: 18px !important;
-    right: 16px !important;
+    right: var(--f-pad-sm) !important;
     padding: 7px 13px !important;
     font-size: 12px !important;
   }
@@ -310,6 +357,7 @@ div[style*="linear-gradient(145deg"]:not([style*="position: fixed"]):not([style*
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.78), rgba(248, 250, 255, 0.55));
   border-bottom: 1px solid rgba(255, 255, 255, 0.55);
   box-shadow: 0 8px 24px rgba(31, 45, 90, 0.08);
+  padding: var(--f-pad-sm) var(--f-pad) !important;
 }
 
 html.dark .admin-mobile-header,
@@ -319,16 +367,20 @@ html.dark .admin-mobile-header,
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
 }
 
+.admin-main-pad {
+  padding: var(--f-pad) !important;
+}
+
 .admin-bottom-nav {
   display: none;
   position: fixed;
   left: 50%;
-  bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  bottom: calc(var(--f-pad-sm) + env(safe-area-inset-bottom, 0px));
   transform: translateX(-50%);
-  width: min(calc(100% - 24px), 560px);
+  width: min(calc(100% - var(--f-pad) * 2), 560px);
   z-index: 30;
-  border-radius: 26px;
-  padding: 8px;
+  border-radius: var(--f-radius);
+  padding: clamp(6px, 1.2vw + 1px, 10px);
   align-items: center;
   justify-content: space-around;
   background: linear-gradient(135deg, rgba(255, 255, 255, 0.74), rgba(248, 250, 255, 0.5));
@@ -351,13 +403,13 @@ html.dark .admin-bottom-nav,
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 3px;
-  min-height: 46px;
-  padding: 6px 2px;
-  border-radius: 18px;
+  gap: clamp(2px, 0.5vw, 3px);
+  min-height: clamp(38px, 7vw + 6px, 50px);
+  padding: clamp(4px, 0.8vw + 1px, 7px) clamp(1px, 0.3vw, 3px);
+  border-radius: clamp(14px, 3vw, 20px);
   color: var(--ace-sub);
   text-decoration: none;
-  font-size: clamp(8px, 2.6vw, 9.5px);
+  font-size: clamp(7.5px, 2.4vw, 10px);
   font-weight: 500;
   letter-spacing: 0.2px;
   transition: all 0.25s ease;
@@ -386,24 +438,9 @@ html.dark .admin-bottom-nav .admin-bnav-item.active,
   transform: scale(1.14);
 }
 
-@media (max-width: 400px) {
-  .admin-bottom-nav {
-    width: calc(100% - 16px);
-    border-radius: 22px;
-    padding: 7px 5px;
-  }
-  .admin-bottom-nav .admin-bnav-item {
-    min-height: 44px;
-    font-size: 8.5px;
-  }
-}
-
 @media (max-width: 360px) {
   .admin-bottom-nav .admin-bnav-label {
     display: none;
-  }
-  .admin-bottom-nav .admin-bnav-item {
-    min-height: 40px;
   }
 }
 
@@ -433,23 +470,34 @@ html.dark .admin-bottom-nav .admin-bnav-item.active,
   .admin-users-cards {
     display: flex !important;
     flex-direction: column;
-    gap: 12px;
+    gap: var(--f-gap-sm);
   }
   .admin-audit-cards {
     display: flex !important;
     flex-direction: column;
-    gap: 12px;
+    gap: var(--f-gap-sm);
   }
   .admin-table-wrap {
     display: none !important;
   }
   .admin-main-pad {
-    padding: 16px !important;
-    padding-bottom: 120px !important;
+    padding: var(--f-pad-sm) !important;
+    padding-bottom: var(--f-bottom-offset) !important;
   }
   .ace-grid-split,
   .ace-grid-2 {
     grid-template-columns: 1fr !important;
+  }
+  .ace-card {
+    padding: clamp(14px, 3vw + 2px, 20px) !important;
+    border-radius: clamp(12px, 2.5vw, 16px) !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .ace-card {
+    padding: clamp(12px, 2.5vw + 2px, 16px) !important;
+    border-radius: clamp(10px, 2vw, 14px) !important;
   }
 }
 

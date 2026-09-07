@@ -19,7 +19,7 @@ export const ace = {
 
 export function Card({ title, icon, children, style, right }: { title?: React.ReactNode; icon?: React.ReactNode; children: React.ReactNode; style?: React.CSSProperties; right?: React.ReactNode }) {
   return (
-    <div style={{ background: ace.card, border: `1px solid ${ace.cardBorder}`, borderRadius: 16, padding: 20, ...style }}>
+    <div className="ace-card" style={{ background: ace.card, border: `1px solid ${ace.cardBorder}`, borderRadius: 16, padding: 20, ...style }}>
       {title && (
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight: 700, fontSize: 14.5, color: ace.text, marginBottom: 16 }}>
           {icon && <span style={{ color: ace.accent, display: 'flex' }}>{icon}</span>}
