@@ -342,7 +342,7 @@ html.dark .admin-bottom-nav,
   border-radius: 18px;
   color: var(--ace-sub);
   text-decoration: none;
-  font-size: 9.5px;
+  font-size: clamp(8px, 2.6vw, 9.5px);
   font-weight: 500;
   letter-spacing: 0.2px;
   transition: all 0.25s ease;
@@ -380,6 +380,15 @@ html.dark .admin-bottom-nav .admin-bnav-item.active,
   .admin-bottom-nav .admin-bnav-item {
     min-height: 44px;
     font-size: 8.5px;
+  }
+}
+
+@media (max-width: 360px) {
+  .admin-bottom-nav .admin-bnav-label {
+    display: none;
+  }
+  .admin-bottom-nav .admin-bnav-item {
+    min-height: 40px;
   }
 }
 
