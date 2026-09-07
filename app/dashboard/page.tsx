@@ -442,6 +442,7 @@ export default function FinloApp() {
   const mobileTabs = [
     { id: "dashboard" as Page, label: "Home", icon: <LayoutDashboard size={18} /> },
     { id: "transactions" as Page, label: "Money", icon: <ArrowLeftRight size={18} /> },
+    { id: "upcoming" as Page, label: "Upcoming", icon: <Calendar size={18} /> },
     { id: "budgets" as Page, label: "Budgets", icon: <PieChart size={18} /> },
     { id: "analytics" as Page, label: "Analytics", icon: <BarChart2 size={18} /> },
     { id: "ai" as Page, label: "AI", icon: <Bot size={18} /> },
@@ -643,7 +644,7 @@ export default function FinloApp() {
         boxShadow: isDark ? "0 14px 44px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.06)" : "0 14px 44px rgba(31,45,90,0.18), inset 0 1px 0 rgba(255,255,255,0.9)",
         backdropFilter: "blur(22px) saturate(180%)",
         WebkitBackdropFilter: "blur(22px) saturate(180%)",
-        display: "none", alignItems: "center", justifyContent: "space-around",
+        alignItems: "center", justifyContent: "space-around",
         zIndex: 30,
       }}>
         {mobileTabs.map(tab => {

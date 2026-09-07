@@ -121,6 +121,12 @@ body {
     background: rgba(0, 0, 0, 0.45);
     z-index: 35;
   }
+  .finlo-dash-bottomnav {
+    display: flex !important;
+  }
+  .finlo-dash-main {
+    padding-bottom: 90px !important;
+  }
   .finlo-dash-aside {
     position: fixed !important;
     left: 0 !important;
