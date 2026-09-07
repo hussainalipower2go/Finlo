@@ -201,7 +201,7 @@ export function ImportCenter({ colors, supabase }: {
       <div style={{ fontSize: 12.5, color: colors.textSub, lineHeight: 1.6, marginBottom: 16 }}>
         Automatically turns your bank SMS alerts into Finlo transactions. A small companion Android app reads money-related
         SMS on your phone (after your explicit permission) and sends only transaction details — never OTPs, passwords, or
-        your full inbox. On iOS smoke this feature is unavailable.
+        your full inbox. SMS transaction import is available on supported Android devices.
       </div>
 
       {!settingsLoaded && <div style={{ fontSize: 12, color: colors.textSub }}>Loading…</div>}
