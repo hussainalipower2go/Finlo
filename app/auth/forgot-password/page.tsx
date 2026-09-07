@@ -10,7 +10,6 @@ export default function ForgotPassword() {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [success, setSuccess] = useState(false)
-  const supabase = createClient()
 
   async function handleResetPassword(e: React.FormEvent) {
     e.preventDefault()
@@ -18,6 +17,7 @@ export default function ForgotPassword() {
     setLoading(true)
 
     try {
+      const supabase = createClient()
       const baseUrl =
         process.env.NEXT_PUBLIC_APP_URL && !process.env.NEXT_PUBLIC_APP_URL.includes('localhost')
           ? process.env.NEXT_PUBLIC_APP_URL
