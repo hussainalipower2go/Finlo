@@ -154,6 +154,7 @@ export default function AdminUsersPage() {
         ) : !users || (users.length === 0) ? (
           <EmptyState icon={<UserX size={22} />} title="No users found" desc="Try clearing the search or filters." />
         ) : (
+          <>
           <div className="admin-table-wrap" style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 760 }}>
               <thead>
@@ -187,50 +188,36 @@ export default function AdminUsersPage() {
                       <td style={{ padding: '9px 10px', fontSize: 12, color: ace.sub, whiteSpace: 'nowrap' }}>{u.last_sign_in_at ? new Date(u.last_sign_in_at).toLocaleDateString() : '—'}</td>
                       <td style={{ padding: '9px 10px', fontSize: 12, color: ace.sub, whiteSpace: 'nowrap' }}>{u.has_data ? `${u.transaction_count} entries` : 'empty'}</td>
                       <td style={{ padding: '9px 10px', textAlign: 'right', whiteSpace: 'nowrap' }} onClick={(e) => e.stopPropagation()}>
-                        {u.account_status === 'ACTIVE' ? (
-                          <button disabled={actingId === u.id} onClick={() => runAction(u.id, 'suspend')} title="Suspend" style={iconBtn('#f59e0b')}>
-                            <ShieldX size={15} />
-                          </button>
-                        ) : (
-                          <button disabled={actingId === u.id} onClick={() => runAction(u.id, 'reactivate')} title="Reactivate" style={iconBtn('#10b981')}>
-                            <UserCheck size={15} />
-                          </button>
-                        )}
-                        {u.role === 'ADMIN' ? (
-                          <button disabled={actingId === u.id} onClick={() => runAction(u.id, 'demote')} title="Demote to user" style={iconBtn('#f87171')}>
-                            <ShieldCheck size={15} />
-                          </button>
-                        ) : (
-                          <button disabled={actingId === u.id} onClick={() => runAction(u.id, 'promote')} title="Make admin" style={iconBtn('#818cf8')}>
-                            <ShieldCheck size={15} />
-                          </button>
-                        )}
-                        <button disabled={actingId === u.id} onClick={() => runAction(u.id, 'deactivate')} title="Deactivate" style={iconBtn('#64748b')}>
-                          <UserX size={15} />
-                        </button>
+                        <UserActions u={u} actingId={actingId} onAction={runAction} />
                         <span style={{ display: 'inline-flex', color: ace.sub, marginLeft: 2 }}><ChevronDown size={14} /></span>
                       </td>
-                    </tr>
-                    {expanded === u.id && (
-                      <tr>
-                        <td colSpan={7} style={{ padding: '4px 12px 14px 12px', background: 'var(--ace-soft-bg)' }}>
-                          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(150px,1fr))', gap: 10, fontSize: 12.5 }}>
-                            <Stat label="Currency" value={u.currency || 'PKR'} />
-                            <Stat label="Monthly income" value={u.monthly_income != null ? Number(u.monthly_income).toLocaleString() : '—'} />
-                            <Stat label="Accounts with data" value={u.has_data ? `Yes (${u.transaction_count})` : 'No'} />
-                            <Stat label="User ID" value={u.id.slice(0, 8) + '…'} />
-                          </div>
-                          <p style={{ marginTop: 10, fontSize: 11.5, color: ace.sub, lineHeight: 1.5 }}>
-                            <ShieldCheck size={11} style={{ verticalAlign: '-1px' }} /> Role changes and status actions are recorded in the audit log.
-                          </p>
-                        </td>
                       </tr>
-                    )}
+                      {expanded === u.id && (
+                        <tr>
+                          <td colSpan={7} style={{ padding: '4px 12px 14px 12px', background: 'var(--ace-soft-bg)' }}>
+                            <UserDetail u={u} />
+                          </td>
+                        </tr>
+                      )}
                   </Fragment>
                 ))}
               </tbody>
             </table>
           </div>
+
+          <div className="admin-users-cards">
+            {users.map((u) => (
+              <UserCard
+                key={u.id}
+                u={u}
+                actingId={actingId}
+                expanded={expanded === u.id}
+                onToggle={() => setExpanded(expanded === u.id ? null : u.id)}
+                onAction={runAction}
+              />
+            ))}
+          </div>
+          </>
         )}
 
         {users && users.length > 0 && (
@@ -256,3 +243,91 @@ function iconBtn(color: string) {
     color, cursor: 'pointer' as const, opacity: 0.85,
   }
 }
+
+function UserActions({ u, actingId, onAction }: { u: AdminUser; actingId: string | null; onAction: AdminAction }) {
+  return (
+    <>
+      {u.account_status === 'ACTIVE' ? (
+        <button disabled={actingId === u.id} onClick={() => onAction(u.id, 'suspend')} title="Suspend" style={iconBtn('#f59e0b')}>
+          <ShieldX size={15} />
+        </button>
+      ) : (
+        <button disabled={actingId === u.id} onClick={() => onAction(u.id, 'reactivate')} title="Reactivate" style={iconBtn('#10b981')}>
+          <UserCheck size={15} />
+        </button>
+      )}
+      {u.role === 'ADMIN' ? (
+        <button disabled={actingId === u.id} onClick={() => onAction(u.id, 'demote')} title="Demote to user" style={iconBtn('#f87171')}>
+          <ShieldCheck size={15} />
+        </button>
+      ) : (
+        <button disabled={actingId === u.id} onClick={() => onAction(u.id, 'promote')} title="Make admin" style={iconBtn('#818cf8')}>
+          <ShieldCheck size={15} />
+        </button>
+      )}
+      <button disabled={actingId === u.id} onClick={() => onAction(u.id, 'deactivate')} title="Deactivate" style={iconBtn('#64748b')}>
+        <UserX size={15} />
+      </button>
+    </>
+  )
+}
+
+function UserDetail({ u }: { u: AdminUser }) {
+  return (
+    <div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(150px,1fr))', gap: 10, fontSize: 12.5 }}>
+        <Stat label="Currency" value={u.currency || 'PKR'} />
+        <Stat label="Monthly income" value={u.monthly_income != null ? Number(u.monthly_income).toLocaleString() : '—'} />
+        <Stat label="Accounts with data" value={u.has_data ? `Yes (${u.transaction_count})` : 'No'} />
+        <Stat label="User ID" value={u.id.slice(0, 8) + '…'} />
+      </div>
+      <p style={{ marginTop: 10, fontSize: 11.5, color: ace.sub, lineHeight: 1.5 }}>
+        <ShieldCheck size={11} style={{ verticalAlign: '-1px' }} /> Role changes and status actions are recorded in the audit log.
+      </p>
+    </div>
+  )
+}
+
+function UserCard({ u, actingId, expanded, onToggle, onAction }: { u: AdminUser; actingId: string | null; expanded: boolean; onToggle: () => void; onAction: AdminAction }) {
+  return (
+    <div style={{ background: 'var(--ace-soft-bg)', border: `1px solid ${ace.cardBorder}`, borderRadius: 14, padding: 14 }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 10 }}>
+        <Avatar name={u.full_name} email={u.email} />
+        <div style={{ flex: 1, minWidth: 0 }}>
+          <div style={{ fontSize: 14, fontWeight: 700, color: ace.text, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{u.full_name || '—'}</div>
+          <div style={{ fontSize: 12, color: ace.sub, marginTop: 1 }}>{u.email}</div>
+        </div>
+        <button aria-label="Toggle details" onClick={onToggle} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 6, borderRadius: 8, border: `1px solid ${ace.cardBorder}`, background: 'transparent', color: ace.sub, cursor: 'pointer' }}>
+          <ChevronDown size={15} style={{ transform: expanded ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
+        </button>
+      </div>
+
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 10 }}>
+        <Badge tone={u.role === 'ADMIN' ? 'violet' : 'default'}>{u.role}</Badge>
+        <Badge tone={statusTone(u.account_status)}>{u.account_status}</Badge>
+        <span style={{ fontSize: 11.5, color: ace.sub, alignSelf: 'center' }}>Joined {new Date(u.created_at).toLocaleDateString()}</span>
+      </div>
+
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 10, fontSize: 12, color: ace.sub }}>
+        <span style={{ background: 'var(--ace-input-bg)', border: `1px solid ${ace.cardBorder}`, borderRadius: 999, padding: '4px 10px', fontSize: 11.5 }}>
+          <b style={{ color: ace.text, fontWeight: 700 }}>Last active:</b> {u.last_sign_in_at ? new Date(u.last_sign_in_at).toLocaleDateString() : '—'}
+        </span>
+        <span style={{ background: 'var(--ace-input-bg)', border: `1px solid ${ace.cardBorder}`, borderRadius: 999, padding: '4px 10px', fontSize: 11.5 }}>
+          <b style={{ color: ace.text, fontWeight: 700 }}>Data:</b> {u.has_data ? `${u.transaction_count} entries` : 'empty'}
+        </span>
+      </div>
+
+      {expanded && (
+        <div style={{ marginTop: 12 }}>
+          <UserDetail u={u} />
+        </div>
+      )}
+
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 12, alignItems: 'center' }}>
+        <UserActions u={u} actingId={actingId} onAction={onAction} />
+      </div>
+    </div>
+  )
+}
+
+type AdminAction = (id: string, action: 'suspend' | 'reactivate' | 'promote' | 'demote' | 'deactivate') => void

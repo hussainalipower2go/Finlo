@@ -295,6 +295,10 @@ div[style*="linear-gradient(145deg"]:not([style*="position: fixed"]):not([style*
   display: none;
 }
 
+.admin-users-cards {
+  display: none;
+}
+
 @media (max-width: 860px) {
   .admin-sidebar {
     display: none !important;
@@ -304,6 +308,14 @@ div[style*="linear-gradient(145deg"]:not([style*="position: fixed"]):not([style*
   }
   .admin-bottom-nav {
     display: flex !important;
+  }
+  .admin-users-cards {
+    display: flex !important;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .admin-table-wrap {
+    display: none !important;
   }
   .admin-main-pad {
     padding: 16px !important;
