@@ -14,7 +14,7 @@ import {
   TrendingUp, TrendingDown, AlertCircle, ChevronRight,
   Wallet, ShieldCheck, Timer, Home, Zap, Wifi, Dumbbell,
   ShoppingCart, Car, UtensilsCrossed, Heart,
-  MoreHorizontal, Search, Trash2, Menu,
+  MoreHorizontal, Search, Trash2,
   Info, Send, ChevronDown, LogOut,
   Download, User, ArrowUp, ArrowDown,
   Target, DollarSign, Sparkles, FileText, Pencil, Check,
@@ -559,18 +559,6 @@ export default function FinloApp() {
           boxShadow: isDark ? "0 18px 54px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.14)" : "0 18px 54px rgba(31,45,90,0.18), inset 0 1px 0 rgba(255,255,255,0.95)",
           position: "sticky", top: 14, zIndex: 9
         }}>
-          <button
-            className="finlo-dash-burger"
-            aria-label="Open menu"
-            onClick={() => setSidebarOpen(true)}
-            style={{
-              width: 36, height: 36, borderRadius: 8, flexShrink: 0, marginRight: 10,
-              border: `1px solid ${colors.cardBorder}`, background: colors.card,
-              color: colors.textSub, alignItems: "center", justifyContent: "center", cursor: "pointer"
-            }}
-          >
-            <Menu size={18} />
-          </button>
           <div style={{ minWidth: 0, flex: 1, marginRight: 8, overflow: "hidden" }}>
             <div style={{ fontWeight: 700, fontSize: 18, letterSpacing: "-0.3px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
               {page === "dashboard" && `${timeGreeting()}, ${userFirstName} ${timeEmoji()}`}
