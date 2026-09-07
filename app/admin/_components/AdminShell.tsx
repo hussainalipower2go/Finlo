@@ -188,7 +188,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
 
   return (
     <div style={{ minHeight: '100vh', background: colors.bg, fontFamily: "'Montserrat', -apple-system, 'Segoe UI', sans-serif" }}>
-      <div style={{ display: 'flex', minHeight: '100vh' }}>
+      <div className="admin-shell-row" style={{ display: 'flex', minHeight: '100vh' }}>
         {/* Desktop sidebar */}
         <aside className="admin-sidebar" style={{ width: 216, flexShrink: 0, background: colors.sidebar, borderRight: `1px solid ${colors.border}`, display: 'flex', flexDirection: 'column', position: 'sticky', top: 0, height: '100vh' }}>
           {SidebarContent}
