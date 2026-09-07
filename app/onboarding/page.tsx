@@ -198,7 +198,7 @@ export default function OnboardingPage() {
         <span style={{ fontSize: "16px", fontWeight: 700, color: "#fff" }}>Finlo</span>
       </div>
 
-      <div style={{ ...cardStyle, position: "relative", zIndex: 1 }}>
+      <div className="finlo-onboard-card" style={{ ...cardStyle, position: "relative", zIndex: 1 }}>
 
         {/* PROGRESS */}
         <div style={{ marginBottom: "32px" }}>
@@ -226,7 +226,7 @@ export default function OnboardingPage() {
           <div>
             <h2 style={{ fontSize: "24px", fontWeight: 700, color: "#fff", margin: "0 0 6px 0" }}>What&apos;s your currency?</h2>
             <p style={{ fontSize: "14px", color: "rgba(148,130,200,0.6)", margin: "0 0 28px 0" }}>We&apos;ll use this everywhere your money is shown.</p>
-            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
+            <div className="finlo-onboard-ccy" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
               {CURRENCIES.map(c => {
                 const active = currency === c.code;
                 return (

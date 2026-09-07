@@ -150,6 +150,9 @@ body {
     width: 100% !important;
     grid-template-columns: 1fr !important;
   }
+  .finlo-dash-row1 {
+    flex-direction: column !important;
+  }
   .finlo-grid-split,
   .finlo-grid-2,
   .finlo-grid-3,
@@ -177,6 +180,16 @@ body {
   }
   .finlo-dash-topbar {
     padding: 0 14px !important;
+  }
+}
+
+/* Onboarding — compact card + stacked currency options on mobile */
+@media (max-width: 767px) {
+  .finlo-onboard-card {
+    padding: 28px 20px !important;
+  }
+  .finlo-onboard-ccy {
+    grid-template-columns: 1fr !important;
   }
 }
 

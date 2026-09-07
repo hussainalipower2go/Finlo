@@ -326,7 +326,7 @@ export default function UpcomingPage() {
                     const daysUntil = Math.round((new Date(bill.dueDate).getTime() - Date.now()) / (1000 * 60 * 60 * 24))
                     return (
                       <Card key={bill.id} isGlass className="mb-3 border-l-4 border-yellow-500 bg-yellow-500/5">
-                        <div className="flex items-center justify-between">
+<div className="flex flex-wrap items-center justify-between gap-4">
                           <div>
                             <h4 className="font-semibold text-slate-900 dark:text-white">{bill.name}</h4>
                             <p className="text-sm text-slate-600 dark:text-slate-400">

@@ -769,7 +769,7 @@ function DashboardPage({ colors, transactions, recurring, budgets, openingBalanc
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
       {/* Row 1: Balance + Stats */}
-      <div style={{ display: "flex", gap: 16, alignItems: "stretch" }}>
+      <div className="finlo-dash-row1" style={{ display: "flex", gap: 16, alignItems: "stretch" }}>
         {/* Balance row - 70% */}
         <div className="finlo-grid-70" style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 16, flex: "0 0 70%" }}>
         {/* Current Balance */}
