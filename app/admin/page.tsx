@@ -56,7 +56,7 @@ export default function AdminOverviewPage() {
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(190px,1fr))', gap: 14, marginBottom: 18 }}>
           {Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} height={96} />)}
         </div>
-        <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 16 }}>
+        <div className="ace-grid-split" style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 16 }}>
           <Skeleton height={280} />
           <Skeleton height={280} />
         </div>
@@ -91,7 +91,7 @@ export default function AdminOverviewPage() {
         ))}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 16, marginBottom: 16 }}>
+      <div className="ace-grid-split" style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 16, marginBottom: 16 }}>
         <Card title="New signups (last 14 days)" icon={<Activity size={16} />} style={{ minWidth: 0 }}>
           {data.signups.every((d) => d.count === 0) ? (
             <EmptyState title="No signups yet" desc="Growth chart will appear here." />

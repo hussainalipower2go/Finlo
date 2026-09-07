@@ -141,7 +141,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
         </div>
         <span style={{ fontSize: 13.5, fontWeight: 700, color: colors.text, whiteSpace: 'nowrap' }}>Finlo Admin</span>
       </div>
-      <nav style={{ display: 'flex', gap: 4, overflowX: 'auto', flex: 1, scrollbarWidth: 'none' }}>
+      <nav className="admin-nav-scroll" style={{ display: 'flex', gap: 4, overflowX: 'auto', flex: 1, scrollbarWidth: 'none' }}>
         {NAV.map((n) => {
           const active = activeId === n.id
           return (

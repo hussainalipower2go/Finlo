@@ -145,7 +145,7 @@ export default function AdminSettingsPage() {
 
       {flagsError && <div style={{ marginBottom: 12 }}><ErrorBanner message={flagsError} /></div>}
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
+      <div className="ace-grid-2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
         <Card title="Feature flags" icon={<ToggleLeft size={16} />} style={{ minWidth: 0 }}>
           {!flagsReady ? (
             flags ? (

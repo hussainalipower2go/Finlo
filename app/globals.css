@@ -301,6 +301,16 @@ div[style*="linear-gradient(145deg"]:not([style*="position: fixed"]):not([style*
   .admin-main-pad {
     padding: 16px !important;
   }
+  .ace-grid-split,
+  .ace-grid-2 {
+    grid-template-columns: 1fr !important;
+  }
+  .admin-nav-scroll {
+    scrollbar-width: none;
+  }
+  .admin-nav-scroll::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 @keyframes admin-pulse {

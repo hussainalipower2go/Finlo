@@ -78,7 +78,7 @@ export default function AdminImportHealthPage() {
         <MiniStat label="Failed batches" value={`${failureTotal}`} tone={failureTotal > 0 ? '#f87171' : '#34d399'} icon={<AlertTriangle size={15} />} />
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
+      <div className="ace-grid-2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
         <Card title="Providers" icon={<Database size={16} />} style={{ minWidth: 0 }}>
           {data.providers.length === 0 ? (
             <EmptyState title="No import activity yet" desc="Batches will appear here as SMS/CSV imports run." />

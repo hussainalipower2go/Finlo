@@ -81,7 +81,7 @@ export default function AdminAnalyticsPage() {
       {error && <ErrorBanner message={error} />}
 
       {loading && !data ? (
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
+        <div className="ace-grid-2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16 }}>
           <Skeleton height={300} />
           <Skeleton height={300} />
         </div>
@@ -96,7 +96,7 @@ export default function AdminAnalyticsPage() {
             <MiniStat label="Net" value={`${fmt(data.totals.income - data.totals.expense)}`} tone={data.totals.income - data.totals.expense >= 0 ? '#34d399' : '#f87171'} />
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 16, marginBottom: 16 }}>
+          <div className="ace-grid-split" style={{ display: 'grid', gridTemplateColumns: '2fr 1fr', gap: 16, marginBottom: 16 }}>
             <Card title="Income vs expenses" icon={<TrendingUp size={16} />} style={{ minWidth: 0 }}>
               {!hasSeries ? (
                 <EmptyState title="No transactions yet" desc="Charts will populate as users add data." />
@@ -141,7 +141,7 @@ export default function AdminAnalyticsPage() {
             </Card>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
+          <div className="ace-grid-2" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
             <Card title="Transaction volume by day" icon={<TrendingUp size={16} />} style={{ minWidth: 0 }}>
               {!hasSeries ? (
                 <EmptyState title="No data yet" />
