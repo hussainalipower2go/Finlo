@@ -304,6 +304,21 @@ div[style*="linear-gradient(145deg"]:not([style*="position: fixed"]):not([style*
 }
 
 /* Admin dashboard shell responsiveness (app/admin) */
+.admin-mobile-header {
+  backdrop-filter: blur(22px) saturate(200%);
+  -webkit-backdrop-filter: blur(22px) saturate(200%);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.78), rgba(248, 250, 255, 0.55));
+  border-bottom: 1px solid rgba(255, 255, 255, 0.55);
+  box-shadow: 0 8px 24px rgba(31, 45, 90, 0.08);
+}
+
+html.dark .admin-mobile-header,
+.dark .admin-mobile-header {
+  background: linear-gradient(135deg, rgba(21, 29, 51, 0.85), rgba(26, 34, 60, 0.68));
+  border-bottom-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+}
+
 .admin-bottom-nav {
   display: none;
   position: fixed;

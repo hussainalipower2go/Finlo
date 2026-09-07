@@ -191,7 +191,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
         </aside>
 
         {/* Mobile top header */}
-        <div className="admin-mobile-header" style={{ display: 'none', position: 'sticky', top: 0, zIndex: 30, background: colors.sidebar, borderBottom: `1px solid ${colors.border}`, padding: '10px 12px' }}>
+        <div className="admin-mobile-header" style={{ display: 'none', position: 'sticky', top: 0, zIndex: 30, padding: '10px 12px' }}>
           {MobileNav}
         </div>
 

@@ -446,6 +446,7 @@ export default function FinloApp() {
     { id: "budgets" as Page, label: "Budgets", icon: <PieChart size={18} /> },
     { id: "analytics" as Page, label: "Analytics", icon: <BarChart2 size={18} /> },
     { id: "ai" as Page, label: "AI", icon: <Bot size={18} /> },
+    { id: "settings" as Page, label: "Settings", icon: <Settings size={18} /> },
   ];
 
   const navigateTo = (next: Page) => {
@@ -652,11 +653,11 @@ export default function FinloApp() {
           return (
             <button key={tab.id} onClick={() => { setSidebarOpen(false); navigateTo(tab.id); }}
               style={{
-                flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 3,
-                padding: "7px 4px", border: "none", cursor: "pointer", transition: "all 0.25s ease",
+                flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 2,
+                padding: "7px 2px", border: "none", cursor: "pointer", transition: "all 0.25s ease",
                 background: active ? (isDark ? "rgba(99,102,241,0.26)" : "rgba(99,102,241,0.14)") : "transparent",
                 borderRadius: 18, transform: active ? "translateY(-2px)" : "none",
-                color: active ? colors.accent : colors.textSub, fontSize: 10, fontWeight: active ? 700 : 500,
+                color: active ? colors.accent : colors.textSub, fontSize: 9, fontWeight: active ? 700 : 500,
                 fontFamily: "inherit",
                 boxShadow: active ? (isDark ? "inset 0 1px 0 rgba(255,255,255,0.12), 0 6px 16px rgba(99,102,241,0.38)" : "inset 0 1px 0 rgba(255,255,255,0.95), 0 6px 16px rgba(99,102,241,0.3)") : "none",
               }}>
