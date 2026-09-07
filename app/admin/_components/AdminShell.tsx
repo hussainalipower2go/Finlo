@@ -36,7 +36,6 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
 
   const activeId = NAV.find((n) => pathname === n.href || pathname.startsWith(`${n.href}/`))?.id ?? 'overview'
   const currentLabel = NAV.find((n) => n.id === activeId)?.label ?? 'Finlo Admin'
-  const onSettings = pathname === '/admin/settings'
 
   const [viewerEmail, setViewerEmail] = useState('')
   const [isDark, setIsDark] = useState(() => {
@@ -147,14 +146,6 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
         <div style={{ fontSize: 13, fontWeight: 600, color: colors.text, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{currentLabel}</div>
       </div>
       <div style={{ display: 'flex', gap: 6, flexShrink: 0 }}>
-        <Link
-          href="/admin/settings"
-          aria-label="Settings"
-          title="Settings"
-          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 8, borderRadius: 8, border: `1px solid ${colors.border}`, background: 'transparent', color: onSettings ? colors.accent : colors.sub, cursor: 'pointer' }}
-        >
-          <Settings size={15} />
-        </Link>
         <button
           onClick={toggleTheme}
           aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
