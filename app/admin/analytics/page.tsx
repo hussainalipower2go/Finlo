@@ -68,7 +68,7 @@ export default function AdminAnalyticsPage() {
         title="Analytics"
         desc="User growth and transaction trends across all users (aggregated server-side)"
         right={
-          <div style={{ display: 'flex', gap: 6 }}>
+          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
             {RANGES.map((r) => (
               <button key={r.key} onClick={() => setRange(r.key)} style={{ padding: '7px 13px', borderRadius: 9, border: `1px solid ${range === r.key ? '#818cf8' : ace.cardBorder}`, background: range === r.key ? ace.softBg : 'transparent', color: range === r.key ? ace.accentText : ace.sub, fontSize: 12.5, fontWeight: 600, cursor: 'pointer' }}>
                 {r.label}

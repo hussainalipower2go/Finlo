@@ -276,7 +276,8 @@ export default function AdminSettingsPage() {
         ) : !logs || logs.length === 0 ? (
           <EmptyState title="No audit entries yet" desc="Administrative actions (role changes, status changes, flag toggles) are recorded here." />
         ) : (
-          <div style={{ overflowX: 'auto' }}>
+          <>
+          <div className="admin-table-wrap" style={{ overflowX: 'auto' }}>
             <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: 640 }}>
               <thead>
                 <tr>
@@ -300,6 +301,27 @@ export default function AdminSettingsPage() {
               </tbody>
             </table>
           </div>
+
+          <div className="admin-audit-cards">
+            {logs.map((l) => (
+              <div key={l.id} style={{ background: 'var(--ace-soft-bg)', border: `1px solid ${ace.cardBorder}`, borderRadius: 14, padding: 14 }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                  <Badge>{l.action.replace(/_/g, ' ')}</Badge>
+                  <span style={{ fontSize: 11, color: ace.sub, marginLeft: 'auto' }}>{new Date(l.created_at).toLocaleString()}</span>
+                </div>
+                <div style={{ marginTop: 8, fontSize: 12.5, color: ace.text }}>
+                  <b style={{ fontWeight: 600 }}>Admin:</b> {l.admin_email || '—'}
+                </div>
+                <div style={{ marginTop: 2, fontSize: 12, color: ace.sub }}>
+                  <b style={{ fontWeight: 600, color: ace.text }}>Target:</b> {l.target_type ?? '—'}{l.target_id ? ` · ${l.target_id.slice(0, 8)}…` : ''}
+                </div>
+                <div style={{ marginTop: 8, fontSize: 11.5, color: ace.sub, wordBreak: 'break-word', background: ace.inputBg, border: `1px solid ${ace.cardBorder}`, borderRadius: 9, padding: 8 }}>
+                  {Object.keys(l.metadata ?? {}).length ? JSON.stringify(l.metadata) : '—'}
+                </div>
+              </div>
+            ))}
+          </div>
+          </>
         )}
       </Card>
     </div>
