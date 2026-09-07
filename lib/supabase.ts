@@ -1,7 +1,7 @@
 import { createBrowserClient } from '@supabase/ssr'
 import type { SupabaseClient } from '@supabase/supabase-js'
 
-type Client = SupabaseClient<any, 'public'>
+type Client = SupabaseClient
 
 const isConfigured = () =>
   Boolean(

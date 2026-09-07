@@ -13,7 +13,6 @@ import {
   CreditCard,
   LayoutDashboard,
   LogOut,
-  Menu,
   Repeat2,
   Settings,
   Sparkles,
@@ -60,9 +59,6 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
             </span>
           </div>
           <div className="flex items-center gap-2">
-            <button className="hidden md:flex h-9 w-9 items-center justify-center rounded-lg text-[#66718a] hover:bg-[#f1f4f9]" aria-label="Open menu">
-              <Menu className="h-4 w-4" />
-            </button>
             <GlassButton
               variant="secondary"
               size="sm"
