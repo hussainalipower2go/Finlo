@@ -117,7 +117,7 @@ export default function AdminErrorsPage() {
                     <div style={{ fontSize: 13, color: ace.text, lineHeight: 1.5, wordBreak: 'break-word' }}>{e.message}</div>
                     {e.user_id && <div style={{ fontSize: 11, color: ace.sub, marginTop: 2 }}>user: {e.user_id.slice(0, 8)}…</div>}
                   </div>
-                  <ChevronDown size={16} style={{ color: ace.sub, flexShrink: 0, transform: isOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s', marginTop: 4 }} />
+                  <ChevronDown size={16} style={{ color: ace.sub, flexShrink: 0, transform: isOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.12s', marginTop: 4 }} />
                 </div>
 
                 {isOpen && (

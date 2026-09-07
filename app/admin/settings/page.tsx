@@ -336,7 +336,7 @@ function Toggle({ on, disabled, onClick }: { on: boolean; disabled?: boolean; on
       aria-pressed={on}
       style={{ width: 40, height: 22, borderRadius: 999, border: 'none', background: on ? '#10b981' : ace.cardBorder, position: 'relative', cursor: disabled ? 'not-allowed' : 'pointer', flexShrink: 0, padding: 0, opacity: disabled ? 0.6 : 1 }}
     >
-      <span style={{ position: 'absolute', top: 3, left: on ? 20 : 3, width: 16, height: 16, borderRadius: '50%', background: '#fff', boxShadow: '0 1px 2px rgba(0,0,0,0.25)', transition: 'left 0.15s ease' }} />
+      <span style={{ position: 'absolute', top: 3, left: on ? 20 : 3, width: 16, height: 16, borderRadius: '50%', background: '#fff', boxShadow: '0 1px 2px rgba(0,0,0,0.25)', transition: 'left 0.12s ease' }} />
     </button>
   )
 }

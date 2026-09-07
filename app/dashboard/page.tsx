@@ -486,7 +486,7 @@ export default function FinloApp() {
         borderRadius: 18, overflow: "hidden",
         boxShadow: isDark ? "0 14px 44px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.05)" : "0 14px 44px rgba(31,45,90,0.14), inset 0 1px 0 rgba(255,255,255,0.9)",
         display: "flex", flexDirection: "column",
-        transition: "width 0.2s", position: "fixed", left: 12, top: 12,
+        transition: "width 0.16s", position: "fixed", left: 12, top: 12,
         height: "calc(100vh - 24px)", minHeight: 0, flexShrink: 0, zIndex: 10
       }}>
         {/* Logo */}
@@ -508,7 +508,7 @@ export default function FinloApp() {
                   color: active ? colors.accent : colors.textSub,
                   fontWeight: active ? 600 : 400, fontSize: 13.5,
                   boxShadow: active ? (isDark ? "inset 0 1px 0 rgba(255,255,255,0.1)" : "inset 0 1px 0 rgba(255,255,255,0.9)") : "none",
-                  marginBottom: 2, transition: "all 0.15s", textAlign: "left",
+                  marginBottom: 2, transition: "all 0.12s", textAlign: "left",
                 }}
                 onMouseEnter={e => { if (!active) (e.currentTarget as HTMLButtonElement).style.background = colors.hover; }}
                 onMouseLeave={e => { if (!active) (e.currentTarget as HTMLButtonElement).style.background = "transparent"; }}
@@ -548,7 +548,7 @@ export default function FinloApp() {
       {sidebarOpen && <div className="finlo-dash-backdrop" onClick={() => setSidebarOpen(false)} />}
 
       {/* ── Main ── */}
-      <div className="finlo-dash-maincol" style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0, paddingLeft: sidebarOpen ? 244 : 76, transition: "padding-left 0.2s" }}>
+      <div className="finlo-dash-maincol" style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0, paddingLeft: sidebarOpen ? 244 : 76, transition: "padding-left 0.16s" }}>
         {/* Topbar */}
         <header className="finlo-dash-topbar" style={{
           margin: "14px 20px", borderRadius: 22, overflow: "hidden",
@@ -630,7 +630,7 @@ export default function FinloApp() {
       <button
         onClick={() => setShowAddModal(true)}
         className="finlo-dash-fab"
-        style={{ position: "fixed", bottom: 28, right: 28, width: 52, height: 52, borderRadius: "50%", background: "linear-gradient(135deg,#6366f1,#818cf8)", border: "none", color: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 20px rgba(99,102,241,0.4)", zIndex: 100, transition: "transform 0.15s" }}
+        style={{ position: "fixed", bottom: 28, right: 28, width: 52, height: 52, borderRadius: "50%", background: "linear-gradient(135deg,#6366f1,#818cf8)", border: "none", color: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 20px rgba(99,102,241,0.4)", zIndex: 100, transition: "transform 0.12s" }}
         onMouseEnter={e => (e.currentTarget.style.transform = "scale(1.08)")}
         onMouseLeave={e => (e.currentTarget.style.transform = "scale(1)")}
       >
@@ -656,14 +656,14 @@ export default function FinloApp() {
             <button key={tab.id} onClick={() => { setSidebarOpen(false); navigateTo(tab.id); }}
               style={{
                 flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 3,
-                padding: "7px 4px", border: "none", cursor: "pointer", transition: "all 0.25s ease",
+                padding: "7px 4px", border: "none", cursor: "pointer", transition: "all 0.2s ease",
                 background: active ? (isDark ? "rgba(99,102,241,0.26)" : "rgba(99,102,241,0.14)") : "transparent",
                 borderRadius: 18, transform: active ? "translateY(-2px)" : "none",
                 color: active ? colors.accent : colors.textSub, fontSize: 10, fontWeight: active ? 700 : 500,
                 fontFamily: "inherit",
                 boxShadow: active ? (isDark ? "inset 0 1px 0 rgba(255,255,255,0.12), 0 6px 16px rgba(99,102,241,0.38)" : "inset 0 1px 0 rgba(255,255,255,0.95), 0 6px 16px rgba(99,102,241,0.3)") : "none",
               }}>
-              <span style={{ transition: "transform 0.25s ease", transform: active ? "scale(1.12)" : "scale(1)" }}>{tab.icon}</span>
+              <span style={{ transition: "transform 0.2s ease", transform: active ? "scale(1.12)" : "scale(1)" }}>{tab.icon}</span>
               <span>{tab.label}</span>
             </button>
           );
@@ -1450,7 +1450,7 @@ function BudgetsPage({ colors, budgets, currency, onAddBudget }: { colors: Color
                 <span>Limit: <b style={{ color: colors.text }}>{fmtN(b.limit)}</b></span>
               </div>
               <div style={{ height: 7, borderRadius: 4, background: colors.inputBg, overflow: "hidden" }}>
-                <div style={{ height: "100%", width: `${pct}%`, borderRadius: 4, background: barColor, transition: "width 0.4s" }} />
+                <div style={{ height: "100%", width: `${pct}%`, borderRadius: 4, background: barColor, transition: "width 0.32s" }} />
               </div>
               <div style={{ display: "flex", justifyContent: "space-between", marginTop: 6, fontSize: 11 }}>
                 <span style={{ color: barColor, fontWeight: 600 }}>{pct}% used</span>
@@ -2069,8 +2069,8 @@ function SettingsPage({ colors, isDark, toggleTheme, displayName, userEmail, onS
             <div style={{ fontWeight: 500, fontSize: 13, color: colors.text }}>{isDark ? "Dark Mode" : "Light Mode"}</div>
             <div style={{ fontSize: 12, color: colors.textSub }}>Switch between light and dark theme</div>
           </div>
-          <button onClick={toggleTheme} style={{ width: 52, height: 28, borderRadius: 20, border: "none", background: isDark ? "#6366f1" : colors.cardBorder, cursor: "pointer", position: "relative", transition: "background 0.2s" }}>
-            <span style={{ position: "absolute", top: 3, width: 22, height: 22, borderRadius: "50%", background: "#fff", transition: "left 0.2s", left: isDark ? 27 : 3 }} />
+          <button onClick={toggleTheme} style={{ width: 52, height: 28, borderRadius: 20, border: "none", background: isDark ? "#6366f1" : colors.cardBorder, cursor: "pointer", position: "relative", transition: "background 0.16s" }}>
+            <span style={{ position: "absolute", top: 3, width: 22, height: 22, borderRadius: "50%", background: "#fff", transition: "left 0.16s", left: isDark ? 27 : 3 }} />
           </button>
         </div>
       </div>
@@ -2292,7 +2292,7 @@ function AddModal({ colors, onClose, addType, setAddType, recurringNames, curren
           {/* Type Toggle */}
           <div style={{ display: "flex", gap: 0, borderRadius: 10, background: colors.inputBg, padding: 4 }}>
             {(["expense", "income"] as const).map(t => (
-              <button key={t} onClick={() => setAddType(t)} style={{ flex: 1, padding: "8px", borderRadius: 8, border: "none", background: addType === t ? colors.card : "transparent", color: addType === t ? (t === "income" ? "#10b981" : "#ef4444") : colors.textSub, fontWeight: addType === t ? 700 : 400, fontSize: 13, cursor: "pointer", boxShadow: addType === t ? "0 1px 4px rgba(0,0,0,0.08)" : "none", transition: "all 0.15s", textTransform: "capitalize" }}>
+              <button key={t} onClick={() => setAddType(t)} style={{ flex: 1, padding: "8px", borderRadius: 8, border: "none", background: addType === t ? colors.card : "transparent", color: addType === t ? (t === "income" ? "#10b981" : "#ef4444") : colors.textSub, fontWeight: addType === t ? 700 : 400, fontSize: 13, cursor: "pointer", boxShadow: addType === t ? "0 1px 4px rgba(0,0,0,0.08)" : "none", transition: "all 0.12s", textTransform: "capitalize" }}>
                 {t}
               </button>
             ))}

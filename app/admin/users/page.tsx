@@ -298,7 +298,7 @@ function UserCard({ u, actingId, expanded, onToggle, onAction }: { u: AdminUser;
           <div style={{ fontSize: 12, color: ace.sub, marginTop: 1 }}>{u.email}</div>
         </div>
         <button aria-label="Toggle details" onClick={onToggle} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 6, borderRadius: 8, border: `1px solid ${ace.cardBorder}`, background: 'transparent', color: ace.sub, cursor: 'pointer' }}>
-          <ChevronDown size={15} style={{ transform: expanded ? 'rotate(180deg)' : 'none', transition: 'transform 0.2s' }} />
+          <ChevronDown size={15} style={{ transform: expanded ? 'rotate(180deg)' : 'none', transition: 'transform 0.16s' }} />
         </button>
       </div>
 

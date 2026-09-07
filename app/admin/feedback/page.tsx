@@ -120,7 +120,7 @@ export default function AdminFeedbackPage() {
                     <div style={{ fontSize: 14, fontWeight: 600, color: ace.text }}>{f.title}</div>
                     <div style={{ fontSize: 12.5, color: ace.sub, marginTop: 2 }}>from {f.user_email || 'unknown user'}</div>
                   </div>
-                  <ChevronDown size={16} style={{ color: ace.sub, flexShrink: 0, transform: isOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.15s', marginTop: 4 }} />
+                  <ChevronDown size={16} style={{ color: ace.sub, flexShrink: 0, transform: isOpen ? 'rotate(180deg)' : 'none', transition: 'transform 0.12s', marginTop: 4 }} />
                 </div>
 
                 {isOpen && (

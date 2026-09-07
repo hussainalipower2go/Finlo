@@ -57,14 +57,14 @@ function Toggle({ on, onClick, colors }: { on: boolean; onClick: () => void; col
         width: 44, height: 24, borderRadius: 999, border: 'none',
         background: on ? colors.accent : colors.cardBorder,
         position: 'relative', cursor: 'pointer', flexShrink: 0, padding: 0,
-        transition: 'background 0.15s ease',
+        transition: 'background 0.12s ease',
       }}
     >
       <span
         style={{
           position: 'absolute', top: 3, left: on ? 23 : 3, width: 18, height: 18,
           borderRadius: '50%', background: '#fff',
-          boxShadow: '0 1px 2px rgba(0,0,0,0.25)', transition: 'left 0.15s ease',
+          boxShadow: '0 1px 2px rgba(0,0,0,0.25)', transition: 'left 0.12s ease',
         }}
       />
     </button>

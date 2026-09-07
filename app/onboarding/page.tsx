@@ -166,7 +166,7 @@ export default function OnboardingPage() {
     cursor: "pointer",
     textAlign: "left",
     fontFamily: "inherit",
-    transition: "border-color 150ms ease, background 150ms ease",
+    transition: "border-color 120ms ease, background 120ms ease",
   };
 
   return (
@@ -215,7 +215,7 @@ export default function OnboardingPage() {
               <div key={i} style={{
                 flex: 1, height: "4px", borderRadius: "999px",
                 background: i < step ? "linear-gradient(90deg, #7c3aed, #4f46e5)" : "rgba(109,40,217,0.15)",
-                transition: "background 200ms ease",
+                transition: "background 160ms ease",
               }} />
             ))}
           </div>
@@ -378,7 +378,7 @@ export default function OnboardingPage() {
               background: canContinue ? "linear-gradient(90deg, #7c3aed 0%, #4f46e5 100%)" : "rgba(109,40,217,0.18)",
               boxShadow: canContinue ? "0 4px 24px rgba(109,40,217,0.35)" : "none",
               opacity: canContinue ? 1 : 0.6,
-              transition: "opacity 150ms ease",
+              transition: "opacity 120ms ease",
             }}
             onMouseOver={e => { if (canContinue) { e.currentTarget.style.background = "linear-gradient(90deg, #8b5cf6 0%, #6366f1 100%)"; } }}
             onMouseOut={e => { if (canContinue) { e.currentTarget.style.background = "linear-gradient(90deg, #7c3aed 0%, #4f46e5 100%)"; } }}

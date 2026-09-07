@@ -514,7 +514,7 @@ export function LoginPage() {
               }}>{error}</div>
             )}
             <button onClick={handleLogin} disabled={loading}
-              style={{ width: "100%", padding: "15px", background: "linear-gradient(90deg, #7c3aed 0%, #4f46e5 100%)", border: "none", borderRadius: "14px", fontSize: "16px", fontWeight: 600, color: "#fff", cursor: loading ? "not-allowed" : "pointer", fontFamily: "inherit", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px", boxShadow: "0 2px 10px rgba(109,40,217,0.22)", marginBottom: "24px", opacity: loading ? 0.6 : 1, transition: "transform 0.15s ease" }}
+              style={{ width: "100%", padding: "15px", background: "linear-gradient(90deg, #7c3aed 0%, #4f46e5 100%)", border: "none", borderRadius: "14px", fontSize: "16px", fontWeight: 600, color: "#fff", cursor: loading ? "not-allowed" : "pointer", fontFamily: "inherit", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px", boxShadow: "0 2px 10px rgba(109,40,217,0.22)", marginBottom: "24px", opacity: loading ? 0.6 : 1, transition: "transform 0.12s ease" }}
               onMouseOver={e => { if (!loading) { e.currentTarget.style.background = "linear-gradient(90deg, #8b5cf6 0%, #6366f1 100%)"; e.currentTarget.style.transform = "translateY(-1px)"; } }}
               onMouseOut={e => { e.currentTarget.style.background = "linear-gradient(90deg, #7c3aed 0%, #4f46e5 100%)"; e.currentTarget.style.transform = "translateY(0)"; }}
             >

@@ -219,8 +219,8 @@ export function ImportCenter({ colors, supabase }: {
           <div style={{ fontWeight: 500, fontSize: 13.5, color: colors.text }}>Import SMS transactions</div>
           <div style={{ fontSize: 11.5, color: colors.textSub }}>Allow the Android app to send parsed alerts here</div>
         </div>
-        <button onClick={() => setEnabled(!enabled)} style={{ width: 52, height: 28, borderRadius: 20, border: "none", background: enabled ? "#10b981" : colors.cardBorder, cursor: "pointer", position: "relative", transition: "background 0.2s" }}>
-          <span style={{ position: "absolute", top: 3, width: 22, height: 22, borderRadius: "50%", background: "#fff", transition: "left 0.2s", left: enabled ? 27 : 3 }} />
+        <button onClick={() => setEnabled(!enabled)} style={{ width: 52, height: 28, borderRadius: 20, border: "none", background: enabled ? "#10b981" : colors.cardBorder, cursor: "pointer", position: "relative", transition: "background 0.16s" }}>
+          <span style={{ position: "absolute", top: 3, width: 22, height: 22, borderRadius: "50%", background: "#fff", transition: "left 0.16s", left: enabled ? 27 : 3 }} />
         </button>
       </div>
 
