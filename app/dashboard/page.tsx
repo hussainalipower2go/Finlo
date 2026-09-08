@@ -452,6 +452,15 @@ export default function FinloApp() {
   };
 
   const handleDeleteInstallment = async (id: string) => {
+    const { data: plan } = await supabase.from("installments").select("item_name").eq("id", id).single();
+    const item = (plan?.item_name as string) || "";
+    if (item) {
+      const { error: delErr } = await supabase
+        .from("expenses")
+        .delete()
+        .ilike("title", `Installment: ${item}`);
+      if (delErr) console.error("Failed to delete installment expenses:", delErr.message);
+    }
     await deleteInstallmentClient(id);
     setRealInstallments(await getUserInstallmentsClient());
   };
