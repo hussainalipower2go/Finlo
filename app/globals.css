@@ -202,22 +202,6 @@ body {
   }
 }
 
-/* Transactions mobile cards (app/dashboard/page.tsx TransactionsPage) */
-.finlo-tx-cards {
-  display: none;
-}
-
-@media (max-width: 640px) {
-  .finlo-table-wrap {
-    display: none !important;
-  }
-  .finlo-tx-cards {
-    display: flex !important;
-    flex-direction: column;
-    gap: 10px;
-  }
-}
-
 @media (max-width: 767px) {
   .finlo-dash-bottomnav {
     display: flex !important;
@@ -275,15 +259,6 @@ body {
 @media (max-width: 420px) {
   .finlo-dash-topbar {
     margin: var(--f-pad-xs) var(--f-pad-xs) !important;
-  }
-  .finlo-dash-bottomnav .finlo-bnav-label {
-    font-size: 8.2px;
-  }
-}
-
-@media (max-width: 360px) {
-  .finlo-dash-bottomnav .finlo-bnav-label {
-    display: none;
   }
 }
 

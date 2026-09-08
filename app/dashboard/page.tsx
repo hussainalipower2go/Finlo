@@ -29,7 +29,7 @@ import {
 import { formatCurrency, currencySymbol } from "@/lib/format";
 
 // ── Types ──────────────────────────────────────────────────────────────────
-type Page = "dashboard" | "transactions" | "upcoming" | "budgets" | "analytics" | "ai" | "import" | "settings";
+type Page = "dashboard" | "transactions" | "upcoming" | "budgets" | "analytics" | "ai" | "settings";
 type Theme = "light" | "dark";
 
 interface Colors {
@@ -95,9 +95,9 @@ export default function FinloApp() {
   const [page, setPage] = useState<Page>(() => {
     if (typeof window !== "undefined") {
       const hash = window.location.hash.replace("#", "") as Page;
-      if (["dashboard", "transactions", "upcoming", "budgets", "analytics", "ai", "import", "settings"].includes(hash)) return hash;
+      if (["dashboard", "transactions", "upcoming", "budgets", "analytics", "ai", "settings"].includes(hash)) return hash;
       const saved = localStorage.getItem("finlo-page") as Page;
-      if (["dashboard", "transactions", "upcoming", "budgets", "analytics", "ai", "import", "settings"].includes(saved)) return saved;
+      if (["dashboard", "transactions", "upcoming", "budgets", "analytics", "ai", "settings"].includes(saved)) return saved;
     }
     return "dashboard";
   });
@@ -436,7 +436,6 @@ export default function FinloApp() {
     { id: "budgets", label: "Budgets", icon: <PieChart size={18} /> },
     { id: "analytics", label: "Analytics", icon: <BarChart2 size={18} /> },
     { id: "ai", label: "AI Assistant", icon: <Bot size={18} /> },
-    { id: "import", label: "Import", icon: <Download size={18} /> },
     { id: "settings", label: "Settings", icon: <Settings size={18} /> },
   ];
 
@@ -447,7 +446,6 @@ export default function FinloApp() {
     { id: "budgets" as Page, label: "Budgets", icon: <PieChart size={18} /> },
     { id: "analytics" as Page, label: "Analytics", icon: <BarChart2 size={18} /> },
     { id: "ai" as Page, label: "AI", icon: <Bot size={18} /> },
-    { id: "import" as Page, label: "Import", icon: <Download size={18} /> },
   ];
 
   const navigateTo = (next: Page) => {
@@ -553,7 +551,7 @@ export default function FinloApp() {
       <div className="finlo-dash-maincol" style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0, paddingLeft: sidebarOpen ? 244 : 76, transition: "padding-left 0.16s" }}>
         {/* Topbar */}
         <header className="finlo-dash-topbar" style={{
-          margin: "14px 20px", borderRadius: 22,
+          margin: "14px 20px", borderRadius: 22, overflow: "hidden",
           padding: "0 28px", height: 62, display: "flex", alignItems: "center", justifyContent: "space-between",
           border: `1px solid ${isDark ? "rgba(255,255,255,0.14)" : "rgba(255,255,255,0.75)"}`,
           background: isDark ? "rgba(28,29,40,0.5)" : "rgba(255,255,255,0.5)",
@@ -570,7 +568,6 @@ export default function FinloApp() {
               {page === "budgets" && "Budgets"}
               {page === "analytics" && "Analytics"}
               {page === "ai" && "AI Assistant"}
-              {page === "import" && "Import"}
               {page === "settings" && "Settings"}
             </div>
             <div style={{ fontSize: 12, color: colors.textSub, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
@@ -596,7 +593,7 @@ export default function FinloApp() {
             {showNotifications && (
               <>
                 <div onClick={() => setShowNotifications(false)} style={{ position: "fixed", inset: 0, zIndex: 200 }} />
-                <div style={{ position: "fixed", top: 76, right: 20, width: 340, maxWidth: "calc(100vw - 32px)", maxHeight: "calc(100dvh - 100px)", overflowY: "auto", background: colors.card, border: `1px solid ${colors.cardBorder}`, borderRadius: 14, boxShadow: "0 20px 50px rgba(0,0,0,0.25)", padding: "16px", zIndex: 201 }}>
+                <div style={{ position: "absolute", top: 56, right: 16, width: 340, maxWidth: "calc(100vw - 32px)", maxHeight: 420, overflowY: "auto", background: colors.card, border: `1px solid ${colors.cardBorder}`, borderRadius: 14, boxShadow: "0 20px 50px rgba(0,0,0,0.25)", padding: "16px", zIndex: 201 }}>
                   <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12, color: colors.text }}>Notifications</div>
                   {notifications.length === 0 ? (
                     <div style={{ fontSize: 13, color: colors.textSub, padding: "12px 4px" }}>No notifications right now. You are all caught up. ✓</div>
@@ -625,7 +622,6 @@ export default function FinloApp() {
           {page === "budgets" && <BudgetsPage colors={colors} budgets={realBudgets} currency={currency} onAddBudget={handleAddBudget} />}
           {page === "analytics" && <AnalyticsPage colors={colors} transactions={realTransactions} currency={currency} />}
           {page === "ai" && <AIPage colors={colors} transactions={realTransactions} currency={currency} />}
-          {page === "import" && <ImportPage colors={colors} supabase={supabase} />}
           {page === "settings" && <SettingsPage colors={colors} isDark={isDark} toggleTheme={handleToggleTheme} displayName={displayName} userEmail={userEmail} onSignOut={handleSignOut} currency={currency} onCurrencyChange={handleCurrencyChange} supabase={supabase} />}
         </main>
       </div>
@@ -668,7 +664,7 @@ export default function FinloApp() {
                 boxShadow: active ? (isDark ? "inset 0 1px 0 rgba(255,255,255,0.12), 0 6px 16px rgba(99,102,241,0.38)" : "inset 0 1px 0 rgba(255,255,255,0.95), 0 6px 16px rgba(99,102,241,0.3)") : "none",
               }}>
               <span style={{ transition: "transform 0.2s ease", transform: active ? "scale(1.12)" : "scale(1)" }}>{tab.icon}</span>
-              <span className="finlo-bnav-label">{tab.label}</span>
+              <span>{tab.label}</span>
             </button>
           );
         })}
@@ -1102,55 +1098,6 @@ function TransactionsPage({ colors, transactions, onDeleteTransaction, currency 
                 disabled={deletingId === t.id}
                 onClick={async (e) => {
                   e.stopPropagation();
-                  if (!confirm(`Delete "${t.description}"?`)) return;
-                  setDeletingId(t.id);
-                  try {
-                    await onDeleteTransaction(t.id, t.source);
-                  } catch (err) {
-                    console.error(err);
-                    alert("Failed to delete transaction");
-                  } finally {
-                    setDeletingId("");
-                  }
-                }}
-                title="Delete"
-                style={{ width: 32, height: 32, borderRadius: 8, border: "none", background: "rgba(239,68,68,0.1)", color: "#ef4444", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", opacity: deletingId === t.id ? 0.5 : 1 }}
-              >
-                <Trash2 size={14} />
-              </button>
-            </div>
-          </div>
-        ))}
-      </div>
-      {/* Mobile card view (shown <=640px) */}
-      <div className="finlo-tx-cards">
-        {filtered.length === 0 ? (
-          <div style={{ padding: "32px", textAlign: "center", color: colors.textSub, borderRadius: 16, background: colors.card, border: `1px solid ${colors.cardBorder}` }}>
-            <Search size={28} style={{ marginBottom: 8, opacity: 0.4 }} />
-            <div style={{ fontWeight: 600, fontSize: 13 }}>No transactions found</div>
-            <div style={{ fontSize: 12, marginTop: 4 }}>Try adjusting your search or filters</div>
-          </div>
-        ) : filtered.map((t) => (
-          <div key={t.id} style={{ padding: 14, borderRadius: 16, background: colors.card, border: `1px solid ${colors.cardBorder}`, display: "flex", flexDirection: "column", gap: 10 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <div style={{ width: 36, height: 36, borderRadius: 10, background: t.type === "income" ? "rgba(16,185,129,0.1)" : "rgba(239,68,68,0.1)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                {t.type === "income" ? <TrendingUp size={15} color="#10b981" /> : <ShoppingCart size={15} color="#ef4444" />}
-              </div>
-              <div style={{ flex: 1, minWidth: 0 }}>
-                <div style={{ fontWeight: 600, fontSize: 13, color: colors.text, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{t.description}</div>
-                <div style={{ fontSize: 11.5, color: colors.textSub, marginTop: 1 }}>{t.date}</div>
-              </div>
-              <span style={{ fontWeight: 700, fontSize: 14, color: t.type === "income" ? "#10b981" : "#ef4444", flexShrink: 0 }}>
-                {t.type === "income" ? "+" : "-"}{currencySymbol(currency)}{t.amount.toLocaleString()}
-              </span>
-            </div>
-            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-              <span style={{ fontSize: 11.5, padding: "3px 10px", borderRadius: 6, background: colors.inputBg, color: colors.textSub, display: "inline-block" }}>{t.category}</span>
-              <span style={{ fontSize: 11.5, padding: "3px 10px", borderRadius: 6, background: colors.inputBg, color: colors.textSub, display: "inline-block" }}>{t.method}</span>
-              <div style={{ flex: 1 }} />
-              <button
-                disabled={deletingId === t.id}
-                onClick={async () => {
                   if (!confirm(`Delete "${t.description}"?`)) return;
                   setDeletingId(t.id);
                   try {
@@ -2183,6 +2130,9 @@ function SettingsPage({ colors, isDark, toggleTheme, displayName, userEmail, onS
         )}
       </div>
 
+      {/* SMS Import Center */}
+      <ImportCenter colors={colors} supabase={supabase} />
+
       {/* Save */}
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
         <button onClick={handleSave} style={{ display: "flex", alignItems: "center", gap: 8, padding: "12px 26px", borderRadius: 12, border: "none", background: "#6366f1", color: "#fff", fontSize: 14, fontWeight: 600, cursor: "pointer", boxShadow: "0 4px 16px rgba(99,102,241,0.35)" }}>
@@ -2196,15 +2146,6 @@ function SettingsPage({ colors, isDark, toggleTheme, displayName, userEmail, onS
       <button onClick={onSignOut} style={{ display: "flex", alignItems: "center", gap: 8, padding: "12px 20px", borderRadius: 12, border: `1px solid ${colors.cardBorder}`, background: colors.card, color: colors.textSub, fontSize: 13, fontWeight: 500, cursor: "pointer", width: "fit-content" }}>
         <LogOut size={15} /> Sign Out
       </button>
-    </div>
-  );
-}
-
-// ── Import Page ─────────────────────────────────────────────────────────────
-function ImportPage({ colors, supabase }: { colors: Colors; supabase: ReturnType<typeof createClient> }) {
-  return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-      <ImportCenter colors={colors} supabase={supabase} />
     </div>
   );
 }
