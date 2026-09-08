@@ -104,6 +104,7 @@ export default function FinloApp() {
   const [theme, setTheme] = useState<Theme>("light");
   const [showAddModal, setShowAddModal] = useState(false);
   const [addType, setAddType] = useState<"income" | "expense">("expense");
+  const [installmentPayTarget, setInstallmentPayTarget] = useState<Installment | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   useEffect(() => {
@@ -427,26 +428,17 @@ export default function FinloApp() {
     setRealInstallments(await getUserInstallmentsClient());
   };
 
-  const handleMarkInstallmentPaid = async (id: string, opts: { itemName: string; monthlyInstallment: number; paidDate: string; category: string; method: string }) => {
-    const { data: planRow } = await supabase.from("installments").select("paid_count,total_months,next_due_date").eq("id", id).single();
+  const handleMarkInstallmentPaid = async (target: Installment) => {
+    const { data: planRow } = await supabase.from("installments").select("paid_count,total_months,next_due_date").eq("id", target.id).single();
     const currentPaid = Number(planRow?.paid_count) || 0;
     const totalMonths = Number(planRow?.total_months) || 1;
     const paid = currentPaid + 1;
-    await addExpenseClient({
-      user_id: "",
-      description: `Installment: ${opts.itemName}`,
-      category: opts.category as ExpenseCategory,
-      amount: Number(opts.monthlyInstallment),
-      date: opts.paidDate,
-      payment_method: opts.method as PaymentMethod,
-      status: "completed" as const,
-    });
     if (paid >= totalMonths) {
-      await updateInstallmentClient(id, { paid_count: paid, status: "completed", next_due_date: null });
+      await updateInstallmentClient(target.id, { paid_count: paid, status: "completed", next_due_date: null });
     } else {
       const base = planRow?.next_due_date ? new Date(planRow.next_due_date) : new Date();
       const next = new Date(base.getFullYear(), base.getMonth() + 1, base.getDate()).toISOString().slice(0, 10);
-      await updateInstallmentClient(id, { paid_count: paid, next_due_date: next });
+      await updateInstallmentClient(target.id, { paid_count: paid, next_due_date: next });
     }
     setRealInstallments(await getUserInstallmentsClient());
   };
@@ -682,7 +674,7 @@ export default function FinloApp() {
           {page === "budgets" && <BudgetsPage colors={colors} budgets={realBudgets} currency={currency} onAddBudget={handleAddBudget} />}
           {page === "analytics" && <AnalyticsPage colors={colors} transactions={realTransactions} currency={currency} />}
           {page === "ai" && <AIPage colors={colors} transactions={realTransactions} currency={currency} />}
-          {page === "installments" && <InstallmentsPage colors={colors} installments={realInstallments} onAdd={handleAddInstallment} onMarkPaid={(id, opts) => handleMarkInstallmentPaid(id, opts)} onDelete={handleDeleteInstallment} currency={currency} />}
+          {page === "installments" && <InstallmentsPage colors={colors} installments={realInstallments} onAdd={handleAddInstallment} onMarkPaid={(inst) => { setInstallmentPayTarget(inst); setAddType("expense"); setShowAddModal(true); }} onDelete={handleDeleteInstallment} currency={currency} />}
           {page === "settings" && <SettingsPage colors={colors} isDark={isDark} toggleTheme={handleToggleTheme} displayName={displayName} userEmail={userEmail} onSignOut={handleSignOut} currency={currency} onCurrencyChange={handleCurrencyChange} supabase={supabase} />}
         </main>
       </div>
@@ -732,7 +724,7 @@ export default function FinloApp() {
       </div>
 
       {/* Add Modal */}
-      {showAddModal && <AddModal colors={colors} onClose={() => setShowAddModal(false)} addType={addType} setAddType={setAddType} recurringNames={realRecurring.map((r) => r.name)} currency={currency} />}
+      {showAddModal && <AddModal colors={colors} onClose={() => { setShowAddModal(false); setInstallmentPayTarget(null); }} addType={addType} setAddType={setAddType} recurringNames={realRecurring.map((r) => r.name)} currency={currency} installmentTarget={installmentPayTarget} onMarkInstallmentPaid={handleMarkInstallmentPaid} />}
 
       {/* Balance Modal */}
       {showBalanceModal && <BalanceModal colors={colors} initialBalance={openingBalance} currentBalance={currentBalance} onClose={() => setShowBalanceModal(false)} onSave={saveOpeningBalance} onAdjust={adjustOpeningBalance} currency={currency} />}
@@ -2216,16 +2208,11 @@ function InstallmentsPage({ colors, installments, onAdd, onMarkPaid, onDelete, c
   colors: Colors;
   installments: Installment[];
   onAdd: (data: { item_name: string; total_price: number; down_payment: number; monthly_installment: number; total_months: number; total_interest: number; next_due_date?: string; notes?: string }) => Promise<void>;
-  onMarkPaid: (id: string, opts: { itemName: string; monthlyInstallment: number; paidDate: string; category: string; method: string }) => Promise<void>;
+  onMarkPaid: (inst: Installment) => void;
   onDelete: (id: string) => Promise<void>;
   currency: string;
 }) {
   const [showAdd, setShowAdd] = useState(false);
-  const [payTarget, setPayTarget] = useState<Installment | null>(null);
-  const [payDate, setPayDate] = useState<string>(new Date().toISOString().slice(0, 10));
-  const [payCategory, setPayCategory] = useState("Other");
-  const [payMethod, setPayMethod] = useState("Cash");
-  const [paySaving, setPaySaving] = useState(false);
   const [itemName, setItemName] = useState("");
   const [price, setPrice] = useState(0);
   const [downPayment, setDownPayment] = useState(0);
@@ -2384,7 +2371,7 @@ function InstallmentsPage({ colors, installments, onAdd, onMarkPaid, onDelete, c
 
               <div style={{ display: "flex", gap: 8 }}>
                 {!done && (
-                  <button onClick={() => { setPayTarget(inst); setPayDate(new Date().toISOString().slice(0, 10)); setPayCategory("Other"); setPayMethod("Cash"); }} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 14px", borderRadius: 9, border: "none", background: "rgba(16,185,129,0.15)", color: "#10b981", fontSize: 12.5, fontWeight: 700, cursor: "pointer" }}>
+                  <button onClick={() => onMarkPaid(inst)} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 14px", borderRadius: 9, border: "none", background: "rgba(16,185,129,0.15)", color: "#10b981", fontSize: 12.5, fontWeight: 700, cursor: "pointer" }}>
                     <Check size={14} /> Mark paid
                   </button>
                 )}
@@ -2395,68 +2382,6 @@ function InstallmentsPage({ colors, installments, onAdd, onMarkPaid, onDelete, c
             </div>
           );
         })
-      )}
-
-      {/* Payment modal */}
-      {payTarget && (
-        <div onClick={() => setPayTarget(null)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.45)", backdropFilter: "blur(4px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 200, padding: 16 }}>
-          <div onClick={(e) => e.stopPropagation()} style={{ width: "min(420px, 100%)", borderRadius: 20, background: colors.card, border: `1px solid ${colors.cardBorder}`, boxShadow: "0 20px 60px rgba(0,0,0,0.2)", padding: 20 }}>
-            <div style={{ fontSize: 16, fontWeight: 700, color: colors.text, marginBottom: 4 }}>Mark installment paid</div>
-            <div style={{ fontSize: 13, color: colors.textSub, marginBottom: 16 }}>{payTarget.item_name} · {formatCurrency(Number(payTarget.monthly_installment), currency)} · {payTarget.paid_count}/{payTarget.total_months} paid</div>
-
-            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-              <div>
-                <Label colors={colors}>Amount ({currency})</Label>
-                <input value={formatCurrency(Number(payTarget.monthly_installment), currency).replace(/[^0-9,.]/g, "")} readOnly style={inp(colors)} />
-              </div>
-              <div>
-                <Label colors={colors}>Category</Label>
-                <select value={payCategory} onChange={(e) => setPayCategory(e.target.value)} style={inp(colors)}>
-                  {["Food", "Transport", "Rent", "Utilities", "Shopping", "Entertainment", "Health", "Education", "Subscriptions", "Family", "Travel", "Other"].map((c) => <option key={c} value={c}>{c}</option>)}
-                </select>
-              </div>
-              <div>
-                <Label colors={colors}>Payment method</Label>
-                <select value={payMethod} onChange={(e) => setPayMethod(e.target.value)} style={inp(colors)}>
-                  {["Cash", "Bank", "Debit Card", "Credit Card", "Easypaisa", "JazzCash", "Other"].map((m) => <option key={m} value={m}>{m}</option>)}
-                </select>
-              </div>
-              <div>
-                <Label colors={colors}>Date paid</Label>
-                <input type="date" value={payDate} onChange={(e) => setPayDate(e.target.value)} style={inp(colors)} />
-              </div>
-            </div>
-
-            <div style={{ display: "flex", gap: 10, marginTop: 18 }}>
-              <button
-                disabled={paySaving}
-                onClick={async () => {
-                  setPaySaving(true);
-                  try {
-                    const catMap: Record<string, string> = { Food: "food", Transport: "transport", Rent: "rent", Utilities: "utilities", Shopping: "shopping", Entertainment: "entertainment", Health: "health", Education: "education", Subscriptions: "subscriptions", Family: "family", Travel: "travel", Other: "other" };
-                    const methodMap: Record<string, string> = { Cash: "cash", Bank: "bank", "Debit Card": "debit_card", "Credit Card": "credit_card", Easypaisa: "easypaisa", JazzCash: "jazzcash", Other: "other" };
-                    await onMarkPaid(payTarget.id, {
-                      itemName: payTarget.item_name,
-                      monthlyInstallment: Number(payTarget.monthly_installment),
-                      paidDate: payDate,
-                      category: catMap[payCategory] || "other",
-                      method: methodMap[payMethod] || "other",
-                    });
-                    setPayTarget(null);
-                  } catch (e) {
-                    alert(e instanceof Error ? e.message : "Could not mark as paid");
-                  } finally {
-                    setPaySaving(false);
-                  }
-                }}
-                style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, padding: "12px", borderRadius: 10, border: "none", background: "#10b981", color: "#fff", fontSize: 14, fontWeight: 700, cursor: "pointer", opacity: paySaving ? 0.6 : 1 }}
-              >
-                <Check size={15} /> {paySaving ? "Saving..." : "Confirm payment"}
-              </button>
-              <button onClick={() => setPayTarget(null)} style={{ padding: "12px 18px", borderRadius: 10, border: `1px solid ${colors.cardBorder}`, background: "transparent", color: colors.textSub, fontSize: 14, cursor: "pointer" }}>Cancel</button>
-            </div>
-          </div>
-        </div>
       )}
     </div>
   );
@@ -2471,12 +2396,12 @@ function inp(colors: Colors): React.CSSProperties {
 }
 
 // ── Add Modal ───────────────────────────────────────────────────────────────
-function AddModal({ colors, onClose, addType, setAddType, recurringNames, currency }: { colors: Colors; onClose: () => void; addType: "income" | "expense"; setAddType: (t: "income" | "expense") => void; recurringNames: string[]; currency: string }) {
-  const [amount, setAmount] = useState("");
-  const [desc, setDesc] = useState("");
+function AddModal({ colors, onClose, addType, setAddType, recurringNames, currency, installmentTarget, onMarkInstallmentPaid }: { colors: Colors; onClose: () => void; addType: "income" | "expense"; setAddType: (t: "income" | "expense") => void; recurringNames: string[]; currency: string; installmentTarget?: Installment | null; onMarkInstallmentPaid?: (target: Installment) => Promise<void>; }) {
+  const [amount, setAmount] = useState(installmentTarget ? String(installmentTarget.monthly_installment) : "");
+  const [desc, setDesc] = useState(installmentTarget ? `Installment: ${installmentTarget.item_name}` : "");
   const [showSuggest, setShowSuggest] = useState(false);
   const [showSuggestNL, setShowSuggestNL] = useState(false);
-  const [category, setCategory] = useState("Food");
+  const [category, setCategory] = useState(installmentTarget ? "Other" : "Food");
   const [customCat, setCustomCat] = useState("");
   const [method, setMethod] = useState("Cash");
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
@@ -2562,7 +2487,7 @@ function AddModal({ colors, onClose, addType, setAddType, recurringNames, curren
     <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.45)", backdropFilter: "blur(4px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 200 }} onClick={onClose}>
       <div onClick={e => e.stopPropagation()} style={{ width: "min(440px, calc(100vw - 32px))", borderRadius: 20, background: colors.card, border: `1px solid ${colors.cardBorder}`, boxShadow: "0 20px 60px rgba(0,0,0,0.2)", overflow: "hidden" }}>
         <div style={{ padding: "18px 22px", borderBottom: `1px solid ${colors.cardBorder}`, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <span style={{ fontWeight: 700, fontSize: 16, color: colors.text }}>Add Transaction</span>
+          <span style={{ fontWeight: 700, fontSize: 16, color: colors.text }}>{installmentTarget ? `Pay installment: ${installmentTarget.item_name}` : "Add Transaction"}</span>
           <div style={{ display: "flex", alignItems: "center", gap: 8, position: "relative" }}>
             <button
               onClick={(e) => { e.stopPropagation(); setShowScanOptions(v => !v); }}
@@ -2612,7 +2537,7 @@ function AddModal({ colors, onClose, addType, setAddType, recurringNames, curren
           {/* Type Toggle */}
           <div style={{ display: "flex", gap: 0, borderRadius: 10, background: colors.inputBg, padding: 4 }}>
             {(["expense", "income"] as const).map(t => (
-              <button key={t} onClick={() => setAddType(t)} style={{ flex: 1, padding: "8px", borderRadius: 8, border: "none", background: addType === t ? colors.card : "transparent", color: addType === t ? (t === "income" ? "#10b981" : "#ef4444") : colors.textSub, fontWeight: addType === t ? 700 : 400, fontSize: 13, cursor: "pointer", boxShadow: addType === t ? "0 1px 4px rgba(0,0,0,0.08)" : "none", transition: "all 0.12s", textTransform: "capitalize" }}>
+              <button key={t} onClick={() => setAddType(t)} disabled={!!installmentTarget} style={{ flex: 1, padding: "8px", borderRadius: 8, border: "none", background: addType === t ? colors.card : "transparent", color: addType === t ? (t === "income" ? "#10b981" : "#ef4444") : colors.textSub, fontWeight: addType === t ? 700 : 400, fontSize: 13, cursor: installmentTarget ? "not-allowed" : "pointer", boxShadow: addType === t ? "0 1px 4px rgba(0,0,0,0.08)" : "none", transition: "all 0.12s", textTransform: "capitalize", opacity: installmentTarget && t === "income" ? 0.4 : 1 }}>
                 {t}
               </button>
             ))}
@@ -2784,6 +2709,9 @@ function AddModal({ colors, onClose, addType, setAddType, recurringNames, curren
                       : method === "Debit Card" ? "debit_card" : method === "Credit Card" ? "credit_card"
                       : method === "Easypaisa" ? "easypaisa" : method === "JazzCash" ? "jazzcash" : "other";
                     await addExpenseClient({ user_id: "", amount: amt, description: finalDesc || "", category: cat as ExpenseCategory, date, payment_method: pm as PaymentMethod, status: "completed" as const });
+                    if (installmentTarget && onMarkInstallmentPaid) {
+                      await onMarkInstallmentPaid(installmentTarget);
+                    }
                   }
                   onClose();
                 } catch (e: unknown) {
@@ -2794,7 +2722,7 @@ function AddModal({ colors, onClose, addType, setAddType, recurringNames, curren
                 }
               }}
             >
-              {loading ? "Saving..." : `Add ${addType.charAt(0).toUpperCase() + addType.slice(1)}`}
+              {loading ? "Saving..." : installmentTarget ? "Save Expense & Mark Paid" : `Add ${addType.charAt(0).toUpperCase() + addType.slice(1)}`}
             </button>
             <button onClick={onClose} style={{ padding: "11px 18px", borderRadius: 10, border: `1px solid ${colors.cardBorder}`, background: "transparent", color: colors.textSub, fontSize: 14, cursor: "pointer" }}>Cancel</button>
           </div>
