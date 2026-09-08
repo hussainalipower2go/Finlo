@@ -2382,16 +2382,16 @@ function InstallmentsPage({ colors, installments, onAdd, onMarkPaid, onDelete, c
                 {inst.next_due_date && <span style={{ fontSize: 11.5, color: colors.textSub }}>Next due: {new Date(inst.next_due_date).toLocaleDateString()}</span>}
               </div>
 
-              {!done && (
-                <div style={{ display: "flex", gap: 8 }}>
+              <div style={{ display: "flex", gap: 8 }}>
+                {!done && (
                   <button onClick={() => { setPayTarget(inst); setPayDate(new Date().toISOString().slice(0, 10)); setPayCategory("Other"); setPayMethod("Cash"); }} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 14px", borderRadius: 9, border: "none", background: "rgba(16,185,129,0.15)", color: "#10b981", fontSize: 12.5, fontWeight: 700, cursor: "pointer" }}>
                     <Check size={14} /> Mark paid
                   </button>
-                  <button onClick={() => { if (confirm(`Delete "${inst.item_name}" plan?`)) onDelete(inst.id); }} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 14px", borderRadius: 9, border: "none", background: "rgba(239,68,68,0.12)", color: "#ef4444", fontSize: 12.5, fontWeight: 700, cursor: "pointer" }}>
-                    <Trash2 size={14} /> Delete
-                  </button>
-                </div>
-              )}
+                )}
+                <button onClick={() => { if (confirm(done ? `Delete completed "${inst.item_name}" installment and its history?` : `Delete "${inst.item_name}" plan?`)) onDelete(inst.id); }} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 14px", borderRadius: 9, border: "none", background: "rgba(239,68,68,0.12)", color: "#ef4444", fontSize: 12.5, fontWeight: 700, cursor: "pointer" }}>
+                  <Trash2 size={14} /> Delete
+                </button>
+              </div>
             </div>
           );
         })
