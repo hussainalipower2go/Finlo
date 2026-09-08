@@ -968,10 +968,10 @@ function DashboardPage({ colors, transactions, recurring, installments, budgets,
         </div>
 
         {/* Upcoming Payments */}
-        <div style={{ padding: "22px 24px", borderRadius: 16, background: colors.card, border: `1px solid ${colors.cardBorder}` }}>
+        <div style={{ padding: "22px 24px", borderRadius: 16, background: colors.card, border: `1px solid ${colors.cardBorder}`, containerType: "inline-size" }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16, gap: 8 }}>
-            <span style={{ fontWeight: 700, whiteSpace: "nowrap", lineHeight: 1.25, fontSize: "clamp(11px, 3.4vw, 15px)" }}>Upcoming Payments / Installments</span>
-            <button onClick={onViewAllUpcoming} style={{ fontSize: "clamp(10.5px, 3vw, 12px)", color: "#6366f1", background: "none", border: "none", cursor: "pointer", fontWeight: 600, whiteSpace: "nowrap", flexShrink: 0 }}>View all</button>
+            <span style={{ fontWeight: 700, whiteSpace: "nowrap", lineHeight: 1.25, fontSize: "clamp(11px, 2.9cqw, 15px)" }}>Upcoming Payments / Installments</span>
+            <button onClick={onViewAllUpcoming} style={{ fontSize: "clamp(10px, 2.4cqw, 12px)", color: "#6366f1", background: "none", border: "none", cursor: "pointer", fontWeight: 600, whiteSpace: "nowrap", flexShrink: 0 }}>View all</button>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             {upcomingList.length === 0 ? (
