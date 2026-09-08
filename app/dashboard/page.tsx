@@ -427,13 +427,24 @@ export default function FinloApp() {
     setRealInstallments(await getUserInstallmentsClient());
   };
 
-  const handleMarkInstallmentPaid = async (id: string, currentPaid: number, totalMonths: number) => {
+  const handleMarkInstallmentPaid = async (id: string, opts: { itemName: string; monthlyInstallment: number; paidDate: string; category: string; method: string }) => {
+    const { data: planRow } = await supabase.from("installments").select("paid_count,total_months,next_due_date").eq("id", id).single();
+    const currentPaid = Number(planRow?.paid_count) || 0;
+    const totalMonths = Number(planRow?.total_months) || 1;
     const paid = currentPaid + 1;
+    await addExpenseClient({
+      user_id: "",
+      description: `Installment: ${opts.itemName}`,
+      category: opts.category as ExpenseCategory,
+      amount: Number(opts.monthlyInstallment),
+      date: opts.paidDate,
+      payment_method: opts.method as PaymentMethod,
+      status: "completed" as const,
+    });
     if (paid >= totalMonths) {
       await updateInstallmentClient(id, { paid_count: paid, status: "completed", next_due_date: null });
     } else {
-      const { data } = await supabase.from("installments").select("next_due_date").eq("id", id).single();
-      const base = data?.next_due_date ? new Date(data.next_due_date) : new Date();
+      const base = planRow?.next_due_date ? new Date(planRow.next_due_date) : new Date();
       const next = new Date(base.getFullYear(), base.getMonth() + 1, base.getDate()).toISOString().slice(0, 10);
       await updateInstallmentClient(id, { paid_count: paid, next_due_date: next });
     }
@@ -662,7 +673,7 @@ export default function FinloApp() {
           {page === "budgets" && <BudgetsPage colors={colors} budgets={realBudgets} currency={currency} onAddBudget={handleAddBudget} />}
           {page === "analytics" && <AnalyticsPage colors={colors} transactions={realTransactions} currency={currency} />}
           {page === "ai" && <AIPage colors={colors} transactions={realTransactions} currency={currency} />}
-          {page === "installments" && <InstallmentsPage colors={colors} installments={realInstallments} onAdd={handleAddInstallment} onMarkPaid={handleMarkInstallmentPaid} onDelete={handleDeleteInstallment} currency={currency} />}
+          {page === "installments" && <InstallmentsPage colors={colors} installments={realInstallments} onAdd={handleAddInstallment} onMarkPaid={(id, opts) => handleMarkInstallmentPaid(id, opts)} onDelete={handleDeleteInstallment} currency={currency} />}
           {page === "settings" && <SettingsPage colors={colors} isDark={isDark} toggleTheme={handleToggleTheme} displayName={displayName} userEmail={userEmail} onSignOut={handleSignOut} currency={currency} onCurrencyChange={handleCurrencyChange} supabase={supabase} />}
         </main>
       </div>
@@ -2196,11 +2207,16 @@ function InstallmentsPage({ colors, installments, onAdd, onMarkPaid, onDelete, c
   colors: Colors;
   installments: Installment[];
   onAdd: (data: { item_name: string; total_price: number; down_payment: number; monthly_installment: number; total_months: number; total_interest: number; next_due_date?: string; notes?: string }) => Promise<void>;
-  onMarkPaid: (id: string, currentPaid: number, totalMonths: number) => Promise<void>;
+  onMarkPaid: (id: string, opts: { itemName: string; monthlyInstallment: number; paidDate: string; category: string; method: string }) => Promise<void>;
   onDelete: (id: string) => Promise<void>;
   currency: string;
 }) {
   const [showAdd, setShowAdd] = useState(false);
+  const [payTarget, setPayTarget] = useState<Installment | null>(null);
+  const [payDate, setPayDate] = useState<string>(new Date().toISOString().slice(0, 10));
+  const [payCategory, setPayCategory] = useState("Other");
+  const [payMethod, setPayMethod] = useState("Cash");
+  const [paySaving, setPaySaving] = useState(false);
   const [itemName, setItemName] = useState("");
   const [price, setPrice] = useState(0);
   const [downPayment, setDownPayment] = useState(0);
@@ -2359,7 +2375,7 @@ function InstallmentsPage({ colors, installments, onAdd, onMarkPaid, onDelete, c
 
               {!done && (
                 <div style={{ display: "flex", gap: 8 }}>
-                  <button onClick={() => onMarkPaid(inst.id, inst.paid_count, inst.total_months)} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 14px", borderRadius: 9, border: "none", background: "rgba(16,185,129,0.15)", color: "#10b981", fontSize: 12.5, fontWeight: 700, cursor: "pointer" }}>
+                  <button onClick={() => { setPayTarget(inst); setPayDate(new Date().toISOString().slice(0, 10)); setPayCategory("Other"); setPayMethod("Cash"); }} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 14px", borderRadius: 9, border: "none", background: "rgba(16,185,129,0.15)", color: "#10b981", fontSize: 12.5, fontWeight: 700, cursor: "pointer" }}>
                     <Check size={14} /> Mark paid
                   </button>
                   <button onClick={() => { if (confirm(`Delete "${inst.item_name}" plan?`)) onDelete(inst.id); }} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 14px", borderRadius: 9, border: "none", background: "rgba(239,68,68,0.12)", color: "#ef4444", fontSize: 12.5, fontWeight: 700, cursor: "pointer" }}>
@@ -2370,6 +2386,68 @@ function InstallmentsPage({ colors, installments, onAdd, onMarkPaid, onDelete, c
             </div>
           );
         })
+      )}
+
+      {/* Payment modal */}
+      {payTarget && (
+        <div onClick={() => setPayTarget(null)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.45)", backdropFilter: "blur(4px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 200, padding: 16 }}>
+          <div onClick={(e) => e.stopPropagation()} style={{ width: "min(420px, 100%)", borderRadius: 20, background: colors.card, border: `1px solid ${colors.cardBorder}`, boxShadow: "0 20px 60px rgba(0,0,0,0.2)", padding: 20 }}>
+            <div style={{ fontSize: 16, fontWeight: 700, color: colors.text, marginBottom: 4 }}>Mark installment paid</div>
+            <div style={{ fontSize: 13, color: colors.textSub, marginBottom: 16 }}>{payTarget.item_name} · {formatCurrency(Number(payTarget.monthly_installment), currency)} · {payTarget.paid_count}/{payTarget.total_months} paid</div>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              <div>
+                <Label colors={colors}>Amount ({currency})</Label>
+                <input value={formatCurrency(Number(payTarget.monthly_installment), currency).replace(/[^0-9,.]/g, "")} readOnly style={inp(colors)} />
+              </div>
+              <div>
+                <Label colors={colors}>Category</Label>
+                <select value={payCategory} onChange={(e) => setPayCategory(e.target.value)} style={inp(colors)}>
+                  {["Food", "Transport", "Rent", "Utilities", "Shopping", "Entertainment", "Health", "Education", "Subscriptions", "Family", "Travel", "Other"].map((c) => <option key={c} value={c}>{c}</option>)}
+                </select>
+              </div>
+              <div>
+                <Label colors={colors}>Payment method</Label>
+                <select value={payMethod} onChange={(e) => setPayMethod(e.target.value)} style={inp(colors)}>
+                  {["Cash", "Bank", "Debit Card", "Credit Card", "Easypaisa", "JazzCash", "Other"].map((m) => <option key={m} value={m}>{m}</option>)}
+                </select>
+              </div>
+              <div>
+                <Label colors={colors}>Date paid</Label>
+                <input type="date" value={payDate} onChange={(e) => setPayDate(e.target.value)} style={inp(colors)} />
+              </div>
+            </div>
+
+            <div style={{ display: "flex", gap: 10, marginTop: 18 }}>
+              <button
+                disabled={paySaving}
+                onClick={async () => {
+                  setPaySaving(true);
+                  try {
+                    const catMap: Record<string, string> = { Food: "food", Transport: "transport", Rent: "rent", Utilities: "utilities", Shopping: "shopping", Entertainment: "entertainment", Health: "health", Education: "education", Subscriptions: "subscriptions", Family: "family", Travel: "travel", Other: "other" };
+                    const methodMap: Record<string, string> = { Cash: "cash", Bank: "bank", "Debit Card": "debit_card", "Credit Card": "credit_card", Easypaisa: "easypaisa", JazzCash: "jazzcash", Other: "other" };
+                    await onMarkPaid(payTarget.id, {
+                      itemName: payTarget.item_name,
+                      monthlyInstallment: Number(payTarget.monthly_installment),
+                      paidDate: payDate,
+                      category: catMap[payCategory] || "other",
+                      method: methodMap[payMethod] || "other",
+                    });
+                    setPayTarget(null);
+                  } catch (e) {
+                    alert(e instanceof Error ? e.message : "Could not mark as paid");
+                  } finally {
+                    setPaySaving(false);
+                  }
+                }}
+                style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", gap: 6, padding: "12px", borderRadius: 10, border: "none", background: "#10b981", color: "#fff", fontSize: 14, fontWeight: 700, cursor: "pointer", opacity: paySaving ? 0.6 : 1 }}
+              >
+                <Check size={15} /> {paySaving ? "Saving..." : "Confirm payment"}
+              </button>
+              <button onClick={() => setPayTarget(null)} style={{ padding: "12px 18px", borderRadius: 10, border: `1px solid ${colors.cardBorder}`, background: "transparent", color: colors.textSub, fontSize: 14, cursor: "pointer" }}>Cancel</button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
