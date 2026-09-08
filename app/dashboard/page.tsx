@@ -51,7 +51,7 @@ const hasImportSource = (t: Transaction) => t.importSource && t.importSource !==
 interface UpcomingItem {
   id: string; name: string; amount: number; date: string;
   status: "Confirmed" | "Expected" | "Planned" | "Recurring";
-  type: "income" | "expense"; icon: string; frequency?: string;
+  type: "income" | "expense"; icon: string; frequency?: string; kind?: "recurring" | "installment";
 }
 interface Budget {
   id: string; category: string; limit: number; spent: number; icon: string; color: string;
@@ -668,9 +668,9 @@ export default function FinloApp() {
 
         {/* Page Content */}
         <main className="finlo-dash-main" style={{ flex: 1, padding: "24px 28px", overflowY: "auto" }}>
-          {page === "dashboard" && <DashboardPage colors={colors} transactions={realTransactions} recurring={realRecurring} budgets={realBudgets} openingBalance={openingBalance} onEditBalance={() => setShowBalanceModal(true)} onViewAllUpcoming={() => navigateTo("upcoming")} onMarkPaid={markRecurringPaid} currency={currency} />}
+          {page === "dashboard" && <DashboardPage colors={colors} transactions={realTransactions} recurring={realRecurring} installments={realInstallments} budgets={realBudgets} openingBalance={openingBalance} onEditBalance={() => setShowBalanceModal(true)} onViewAllUpcoming={() => navigateTo("upcoming")} onMarkPaid={markRecurringPaid} onMarkInstallment={(inst) => { setInstallmentPayTarget(inst); setAddType("expense"); setShowAddModal(true); }} currency={currency} />}
           {page === "transactions" && <TransactionsPage colors={colors} transactions={realTransactions} onDeleteTransaction={handleDeleteTransaction} currency={currency} />}
-          {page === "upcoming" && <UpcomingPage colors={colors} transactions={realTransactions} recurring={realRecurring} supabase={supabase} currency={currency} />}
+          {page === "upcoming" && <UpcomingPage colors={colors} transactions={realTransactions} recurring={realRecurring} installments={realInstallments} supabase={supabase} onPayInstallment={(id) => { const inst = realInstallments.find((i) => i.id === id); if (inst) { setInstallmentPayTarget(inst); setAddType("expense"); setShowAddModal(true); } }} onDeleteInstallment={handleDeleteInstallment} currency={currency} />}
           {page === "budgets" && <BudgetsPage colors={colors} budgets={realBudgets} currency={currency} onAddBudget={handleAddBudget} />}
           {page === "analytics" && <AnalyticsPage colors={colors} transactions={realTransactions} currency={currency} />}
           {page === "ai" && <AIPage colors={colors} transactions={realTransactions} currency={currency} />}
@@ -733,7 +733,7 @@ export default function FinloApp() {
 }
 
 // ── Dashboard Page ──────────────────────────────────────────────────────────
-function DashboardPage({ colors, transactions, recurring, budgets, openingBalance, onEditBalance, onViewAllUpcoming, onMarkPaid, currency }: { colors: Colors; transactions: Transaction[]; recurring: UpcomingItem[]; budgets: Budget[]; openingBalance: number; onEditBalance: () => void; onViewAllUpcoming: () => void; onMarkPaid: (id: string, frequency?: string) => Promise<void>; currency: string }) {
+function DashboardPage({ colors, transactions, recurring, installments, budgets, openingBalance, onEditBalance, onViewAllUpcoming, onMarkPaid, onMarkInstallment, currency }: { colors: Colors; transactions: Transaction[]; recurring: UpcomingItem[]; installments: Installment[]; budgets: Budget[]; openingBalance: number; onEditBalance: () => void; onViewAllUpcoming: () => void; onMarkPaid: (id: string, frequency?: string) => Promise<void>; onMarkInstallment: (inst: Installment) => void; currency: string }) {
   const [showCalcModal, setShowCalcModal] = useState(false);
 
   const nowMs = new Date().getTime();
@@ -760,7 +760,21 @@ function DashboardPage({ colors, transactions, recurring, budgets, openingBalanc
       return true;
     });
   };
-  const upcomingList = [...upcomingRecurring, ...overdueRecurring].sort((a, b) => {
+  const installmentItems = installments
+    .filter((i) => i.status === "active" && i.next_due_date)
+    .map((i) => ({
+      id: i.id,
+      name: `Installment: ${i.item_name}`,
+      amount: Number(i.monthly_installment),
+      date: i.next_due_date as string,
+      status: "Recurring" as const,
+      type: "expense" as const,
+      icon: "wallet",
+      kind: "installment" as const,
+      ts: new Date(i.next_due_date as string).getTime(),
+    }))
+    .filter((x) => !isNaN(x.ts));
+  const upcomingList = [...upcomingRecurring, ...overdueRecurring, ...installmentItems].sort((a, b) => {
     const aPaid = checkPaidDash(a);
     const bPaid = checkPaidDash(b);
     if (aPaid !== bPaid) return aPaid ? 1 : -1;
@@ -956,12 +970,12 @@ function DashboardPage({ colors, transactions, recurring, budgets, openingBalanc
         {/* Upcoming Payments */}
         <div style={{ padding: "22px 24px", borderRadius: 16, background: colors.card, border: `1px solid ${colors.cardBorder}` }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
-            <span style={{ fontWeight: 700, fontSize: 15 }}>Upcoming Payments</span>
+            <span style={{ fontWeight: 700, fontSize: 15 }}>Upcoming Payments / Installments</span>
             <button onClick={onViewAllUpcoming} style={{ fontSize: 12, color: "#6366f1", background: "none", border: "none", cursor: "pointer", fontWeight: 600 }}>View all</button>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             {upcomingList.length === 0 ? (
-              <div style={{ fontSize: 13, color: colors.textSub, padding: "16px 4px", textAlign: "center" }}>No upcoming payments</div>
+              <div style={{ fontSize: 13, color: colors.textSub, padding: "16px 4px", textAlign: "center" }}>No upcoming payments or installments</div>
             ) : (
               upcomingList.map((p, i) => {
                 const days = Math.round((p.ts - nowMs) / (24 * 60 * 60 * 1000));
@@ -982,7 +996,14 @@ function DashboardPage({ colors, transactions, recurring, budgets, openingBalanc
                     </div>
                     {!isPaid && (
                       <button
-                        onClick={async () => { await onMarkPaid(p.id, p.frequency); }}
+                        onClick={() => {
+                          if (p.kind === "installment") {
+                            const inst = installments.find((i) => i.id === p.id);
+                            if (inst) onMarkInstallment(inst);
+                          } else {
+                            void onMarkPaid(p.id, p.frequency);
+                          }
+                        }}
                         title="Mark as paid / clear"
                         style={{ width: 30, height: 30, borderRadius: 8, border: "none", background: "rgba(16,185,129,0.1)", color: "#10b981", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0 }}
                       >
@@ -1176,7 +1197,7 @@ function TransactionsPage({ colors, transactions, onDeleteTransaction, currency 
 }
 
 // ── Upcoming Page ───────────────────────────────────────────────────────────
-function UpcomingPage({ colors, transactions, recurring, supabase, currency }: { colors: Colors; transactions: Transaction[]; recurring: UpcomingItem[]; supabase: ReturnType<typeof createClient>; currency: string }) {
+function UpcomingPage({ colors, transactions, recurring, installments, supabase, onPayInstallment, onDeleteInstallment, currency }: { colors: Colors; transactions: Transaction[]; recurring: UpcomingItem[]; installments: Installment[]; supabase: ReturnType<typeof createClient>; onPayInstallment: (id: string) => void; onDeleteInstallment: (id: string) => Promise<void>; currency: string }) {
   const [showAddRecurring, setShowAddRecurring] = useState(false);
   const [deletingId, setDeletingId] = useState<string | null>(null);
 
@@ -1224,6 +1245,22 @@ function UpcomingPage({ colors, transactions, recurring, supabase, currency }: {
     if (aPaid !== bPaid) return aPaid ? 1 : -1;
     return 0;
   });
+  const upcomingInstallments = installments
+    .filter((i) => i.status === "active" && i.next_due_date)
+    .slice()
+    .sort((a, b) => new Date(a.next_due_date as string).getTime() - new Date(b.next_due_date as string).getTime());
+  const checkPaidInst = (inst: Installment) => {
+    const rName = (inst.item_name || "").toLowerCase();
+    if (rName.length < 3) return false;
+    return transactions.some((t) => {
+      if (t.type !== "expense") return false;
+      if ((t.date || "").slice(0, 7) !== curMonthUp) return false;
+      const tDesc = (t.description || "").toLowerCase();
+      if (!(tDesc.includes(rName) || rName.includes(tDesc))) return false;
+      if (Math.abs(t.amount - Number(inst.monthly_installment)) > 5) return false;
+      return true;
+    });
+  };
   const expectedIncome = incomeItems.reduce((s, t) => s + t.amount, 0);
   const expectedExpenses = expenseItems.reduce((s, t) => s + t.amount, 0);
   const fmtN = (n: number) => formatCurrency(n, currency);
@@ -1333,6 +1370,41 @@ function UpcomingPage({ colors, transactions, recurring, supabase, currency }: {
               );
             })}
           </div>
+        </div>
+      </div>
+
+      {/* Upcoming Installments */}
+      <div style={{ padding: "22px 24px", borderRadius: 16, background: colors.card, border: `1px solid ${colors.cardBorder}` }}>
+        <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 14, display: "flex", alignItems: "center", gap: 8 }}>
+          <DollarSign size={16} color="#6366f1" /> Upcoming Installments
+        </div>
+        <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+          {upcomingInstallments.length === 0 && <div style={{ fontSize: 12, color: colors.textSub, padding: 12 }}>No active installment plans.</div>}
+          {upcomingInstallments.map(inst => {
+            const isPaid = checkPaidInst(inst);
+            const instName = `Installment: ${inst.item_name}`;
+            return (
+              <div key={inst.id} style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 14px", borderRadius: 12, background: isPaid ? "rgba(16,185,129,0.06)" : "rgba(99,102,241,0.05)", borderLeft: `3px solid ${isPaid ? "#10b981" : "#6366f1"}` }}>
+                <div style={{ width: 38, height: 38, borderRadius: 10, background: isPaid ? "rgba(16,185,129,0.12)" : "rgba(99,102,241,0.12)", display: "flex", alignItems: "center", justifyContent: "center", color: isPaid ? "#10b981" : "#6366f1" }}><DollarSign size={16} /></div>
+                <div style={{ flex: 1 }}>
+                  <div style={{ fontWeight: 600, fontSize: 13, color: isPaid ? "#10b981" : colors.text }}>{instName}</div>
+                  <div style={{ fontSize: 11, color: colors.textSub }}>Due: {inst.next_due_date} · {inst.paid_count}/{inst.total_months} paid</div>
+                </div>
+                <div style={{ textAlign: "right" }}>
+                  <div style={{ fontWeight: 700, color: isPaid ? "#10b981" : colors.text }}>{fmtN(Number(inst.monthly_installment))}</div>
+                  <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 7px", borderRadius: 5, background: isPaid ? "rgba(16,185,129,0.15)" : "rgba(99,102,241,0.12)", color: isPaid ? "#10b981" : "#6366f1" }}>{isPaid ? "Paid ✓" : "Unpaid"}</span>
+                </div>
+                {!isPaid && (
+                  <button onClick={() => onPayInstallment(inst.id)} title="Pay installment" style={{ width: 32, height: 32, borderRadius: 8, border: "none", background: "rgba(16,185,129,0.1)", color: "#10b981", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
+                    <Check size={14} />
+                  </button>
+                )}
+                <button onClick={() => { if (confirm(`Delete "${inst.item_name}" installment and its history?`)) void onDeleteInstallment(inst.id); }} title="Delete installment" style={{ width: 32, height: 32, borderRadius: 8, border: "none", background: "rgba(239,68,68,0.1)", color: "#ef4444", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
+                  <Trash2 size={14} />
+                </button>
+              </div>
+            );
+          })}
         </div>
       </div>
 
