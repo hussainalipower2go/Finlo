@@ -10,6 +10,8 @@ import {
   Expense,
   RecurringExpense,
   Budget,
+  Installment,
+  InstallmentStatus,
 } from './types'
 
 const supabase = createClient()
@@ -437,4 +439,129 @@ export async function upsertBudgetClient(
   }
 
   return data
+}
+
+/**
+ * Get all installment plans for the current user
+ */
+export async function getUserInstallmentsClient(): Promise<Installment[]> {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (!user) return []
+
+  const { data, error } = await supabase
+    .from('installments')
+    .select('*')
+    .eq('user_id', user.id)
+    .order('created_at', { ascending: false })
+
+  if (error) {
+    console.error('Error fetching installments:', error.message || error)
+    return []
+  }
+
+  return (data || []).map((row) => ({
+    id: row.id,
+    user_id: row.user_id,
+    item_name: row.item_name,
+    total_price: Number(row.total_price) || 0,
+    down_payment: Number(row.down_payment) || 0,
+    monthly_installment: Number(row.monthly_installment) || 0,
+    total_months: Number(row.total_months) || 1,
+    total_interest: Number(row.total_interest) || 0,
+    paid_count: Number(row.paid_count) || 0,
+    next_due_date: row.next_due_date || null,
+    frequency: row.frequency || 'monthly',
+    status: (row.status || 'active') as InstallmentStatus,
+    notes: row.notes || null,
+    created_at: row.created_at || '',
+    updated_at: row.updated_at || '',
+  }))
+}
+
+/**
+ * Add a new installment plan
+ */
+export async function addInstallmentClient(
+  installment: Omit<Installment, 'id' | 'user_id' | 'created_at' | 'updated_at'>
+) {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (!user) throw new Error('Not authenticated')
+
+  const { data, error } = await supabase
+    .from('installments')
+    .insert([
+      {
+        user_id: user.id,
+        item_name: installment.item_name,
+        total_price: installment.total_price,
+        down_payment: installment.down_payment,
+        monthly_installment: installment.monthly_installment,
+        total_months: installment.total_months,
+        total_interest: installment.total_interest,
+        paid_count: installment.paid_count ?? 0,
+        next_due_date: installment.next_due_date || null,
+        frequency: installment.frequency || 'monthly',
+        status: installment.status || 'active',
+        notes: installment.notes || null,
+      },
+    ])
+    .select()
+    .single()
+
+  if (error) {
+    throw new Error(`Failed to add installment: ${error.message}`)
+  }
+
+  return data
+}
+
+/**
+ * Update an installment plan
+ */
+export async function updateInstallmentClient(
+  id: string,
+  updates: Partial<Omit<Installment, 'id' | 'user_id' | 'created_at'>>
+) {
+  const { data, error } = await supabase
+    .from('installments')
+    .update({
+      ...updates,
+      total_price: updates.total_price,
+      down_payment: updates.down_payment,
+      monthly_installment: updates.monthly_installment,
+      total_months: updates.total_months,
+      total_interest: updates.total_interest,
+      paid_count: updates.paid_count,
+      next_due_date: updates.next_due_date || null,
+      frequency: updates.frequency,
+      status: updates.status,
+      notes: updates.notes,
+      updated_at: new Date().toISOString(),
+    })
+    .eq('id', id)
+    .select()
+    .single()
+
+  if (error) {
+    throw new Error(`Failed to update installment: ${error.message}`)
+  }
+
+  return data
+}
+
+/**
+ * Delete an installment plan
+ */
+export async function deleteInstallmentClient(id: string) {
+  const { error } = await supabase.from('installments').delete().eq('id', id)
+
+  if (error) {
+    throw new Error(`Failed to delete installment: ${error.message}`)
+  }
 }

@@ -5,9 +5,9 @@ import { createClient } from "@/lib/supabase";
 import type { RealtimeChannel } from "@supabase/supabase-js";
 import { jsPDF } from "jspdf";
 import { FinloLogoImg } from "@/components/branding/FinloLogoImg";
-import { getUserTransactionsClient, getUserIncomeClient, getUserExpensesClient, getUserRecurringExpensesClient, getBudgetsForMonthClient, addIncomeClient, addExpenseClient, upsertBudgetClient } from "@/lib/database-client";
+import { getUserTransactionsClient, getUserIncomeClient, getUserExpensesClient, getUserRecurringExpensesClient, getBudgetsForMonthClient, addIncomeClient, addExpenseClient, upsertBudgetClient, getUserInstallmentsClient, addInstallmentClient, updateInstallmentClient, deleteInstallmentClient } from "@/lib/database-client";
 import { ImportCenter } from "@/components/imports/ImportCenter";
-import { IncomeSource, ExpenseCategory, PaymentMethod } from "@/lib/types";
+import { IncomeSource, ExpenseCategory, PaymentMethod, type Installment } from "@/lib/types";
 import {
   LayoutDashboard, ArrowLeftRight, Calendar, PieChart,
   BarChart2, Bot, Settings, Bell, Moon, Sun, Plus, X,
@@ -29,7 +29,7 @@ import {
 import { formatCurrency, currencySymbol } from "@/lib/format";
 
 // ── Types ──────────────────────────────────────────────────────────────────
-type Page = "dashboard" | "transactions" | "upcoming" | "budgets" | "analytics" | "ai" | "settings";
+type Page = "dashboard" | "transactions" | "upcoming" | "budgets" | "analytics" | "ai" | "installments" | "settings";
 type Theme = "light" | "dark";
 
 interface Colors {
@@ -95,9 +95,9 @@ export default function FinloApp() {
   const [page, setPage] = useState<Page>(() => {
     if (typeof window !== "undefined") {
       const hash = window.location.hash.replace("#", "") as Page;
-      if (["dashboard", "transactions", "upcoming", "budgets", "analytics", "ai", "settings"].includes(hash)) return hash;
+      if (["dashboard", "transactions", "upcoming", "budgets", "analytics", "ai", "installments", "settings"].includes(hash)) return hash;
       const saved = localStorage.getItem("finlo-page") as Page;
-      if (["dashboard", "transactions", "upcoming", "budgets", "analytics", "ai", "settings"].includes(saved)) return saved;
+      if (["dashboard", "transactions", "upcoming", "budgets", "analytics", "ai", "installments", "settings"].includes(saved)) return saved;
     }
     return "dashboard";
   });
@@ -123,6 +123,7 @@ export default function FinloApp() {
   const [realTransactions, setRealTransactions] = useState<Transaction[]>([]);
   const [realRecurring, setRealRecurring] = useState<UpcomingItem[]>([]);
   const [realBudgets, setRealBudgets] = useState<Budget[]>([]);
+  const [realInstallments, setRealInstallments] = useState<Installment[]>([]);
   const [openingBalance, setOpeningBalance] = useState(0);
   const [showBalanceModal, setShowBalanceModal] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
@@ -151,6 +152,17 @@ export default function FinloApp() {
       notifications.push({ title: `Overdue: ${r.name}`, body: `Was due ${Math.abs(days)} day(s) ago — ${formatCurrency(Number(r.amount), currency)}`, color: "#ef4444", icon: <AlertCircle size={15} /> });
     } else if (days <= 2) {
       notifications.push({ title: `Due ${days <= 0 ? "today" : days === 1 ? "tomorrow" : "in 2 days"}: ${r.name}`, body: `${formatCurrency(Number(r.amount), currency)}`, color: "#f59e0b", icon: <Calendar size={15} /> });
+    }
+  });
+  realInstallments.forEach((inst) => {
+    if (!inst.next_due_date || inst.status !== "active") return;
+    const ts = new Date(inst.next_due_date).getTime();
+    if (isNaN(ts)) return;
+    const days = Math.round((ts - nowMs) / (24 * 60 * 60 * 1000));
+    if (days < 0) {
+      notifications.push({ title: `Installment overdue: ${inst.item_name}`, body: `Was due ${Math.abs(days)} day(s) ago — ${formatCurrency(Number(inst.monthly_installment), currency)} (${inst.paid_count}/${inst.total_months} paid)`, color: "#ef4444", icon: <AlertCircle size={15} /> });
+    } else if (days <= 2) {
+      notifications.push({ title: `Installment due ${days <= 0 ? "today" : days === 1 ? "tomorrow" : "in 2 days"}: ${inst.item_name}`, body: `${formatCurrency(Number(inst.monthly_installment), currency)} (${inst.paid_count}/${inst.total_months} paid)`, color: "#f59e0b", icon: <DollarSign size={15} /> });
     }
   });
   realBudgets.forEach((b) => {
@@ -299,6 +311,7 @@ export default function FinloApp() {
           };
         })
       );
+      setRealInstallments(await getUserInstallmentsClient());
       try {
         const pendingRes = await fetch("/api/import/pending");
         if (pendingRes.ok) {
@@ -325,6 +338,7 @@ export default function FinloApp() {
         .on("postgres_changes", { event: "*", schema: "public", table: "expenses", filter: `user_id=eq.${uid}` }, onChange)
         .on("postgres_changes", { event: "*", schema: "public", table: "recurring_expenses", filter: `user_id=eq.${uid}` }, onChange)
         .on("postgres_changes", { event: "*", schema: "public", table: "budgets", filter: `user_id=eq.${uid}` }, onChange)
+        .on("postgres_changes", { event: "*", schema: "public", table: "installments", filter: `user_id=eq.${uid}` }, onChange)
         .subscribe();
       channel = c;
     });
@@ -408,6 +422,29 @@ export default function FinloApp() {
     await supabase.from("recurring_expenses").update({ next_due_date: next }).eq("id", id).throwOnError();
   };
 
+  const handleAddInstallment = async (data: { item_name: string; total_price: number; down_payment: number; monthly_installment: number; total_months: number; total_interest: number; next_due_date?: string; notes?: string }) => {
+    await addInstallmentClient({ ...data, paid_count: 0, frequency: "monthly", status: "active" });
+    setRealInstallments(await getUserInstallmentsClient());
+  };
+
+  const handleMarkInstallmentPaid = async (id: string, currentPaid: number, totalMonths: number) => {
+    const paid = currentPaid + 1;
+    if (paid >= totalMonths) {
+      await updateInstallmentClient(id, { paid_count: paid, status: "completed", next_due_date: null });
+    } else {
+      const { data } = await supabase.from("installments").select("next_due_date").eq("id", id).single();
+      const base = data?.next_due_date ? new Date(data.next_due_date) : new Date();
+      const next = new Date(base.getFullYear(), base.getMonth() + 1, base.getDate()).toISOString().slice(0, 10);
+      await updateInstallmentClient(id, { paid_count: paid, next_due_date: next });
+    }
+    setRealInstallments(await getUserInstallmentsClient());
+  };
+
+  const handleDeleteInstallment = async (id: string) => {
+    await deleteInstallmentClient(id);
+    setRealInstallments(await getUserInstallmentsClient());
+  };
+
   const handleSignOut = async () => {
     await supabase.auth.signOut();
     router.push("/auth/login");
@@ -436,6 +473,7 @@ export default function FinloApp() {
     { id: "budgets", label: "Budgets", icon: <PieChart size={18} /> },
     { id: "analytics", label: "Analytics", icon: <BarChart2 size={18} /> },
     { id: "ai", label: "AI Assistant", icon: <Bot size={18} /> },
+    { id: "installments", label: "Installments", icon: <DollarSign size={18} /> },
     { id: "settings", label: "Settings", icon: <Settings size={18} /> },
   ];
 
@@ -444,6 +482,7 @@ export default function FinloApp() {
     { id: "transactions" as Page, label: "Money", icon: <ArrowLeftRight size={18} /> },
     { id: "upcoming" as Page, label: "Upcoming", icon: <Calendar size={18} /> },
     { id: "budgets" as Page, label: "Budgets", icon: <PieChart size={18} /> },
+    { id: "installments" as Page, label: "Install", icon: <DollarSign size={18} /> },
     { id: "analytics" as Page, label: "Analytics", icon: <BarChart2 size={18} /> },
     { id: "ai" as Page, label: "AI", icon: <Bot size={18} /> },
   ];
@@ -568,6 +607,7 @@ export default function FinloApp() {
               {page === "budgets" && "Budgets"}
               {page === "analytics" && "Analytics"}
               {page === "ai" && "AI Assistant"}
+              {page === "installments" && "Installments"}
               {page === "settings" && "Settings"}
             </div>
             <div style={{ fontSize: 12, color: colors.textSub, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
@@ -622,6 +662,7 @@ export default function FinloApp() {
           {page === "budgets" && <BudgetsPage colors={colors} budgets={realBudgets} currency={currency} onAddBudget={handleAddBudget} />}
           {page === "analytics" && <AnalyticsPage colors={colors} transactions={realTransactions} currency={currency} />}
           {page === "ai" && <AIPage colors={colors} transactions={realTransactions} currency={currency} />}
+          {page === "installments" && <InstallmentsPage colors={colors} installments={realInstallments} onAdd={handleAddInstallment} onMarkPaid={handleMarkInstallmentPaid} onDelete={handleDeleteInstallment} currency={currency} />}
           {page === "settings" && <SettingsPage colors={colors} isDark={isDark} toggleTheme={handleToggleTheme} displayName={displayName} userEmail={userEmail} onSignOut={handleSignOut} currency={currency} onCurrencyChange={handleCurrencyChange} supabase={supabase} />}
         </main>
       </div>
@@ -2148,6 +2189,198 @@ function SettingsPage({ colors, isDark, toggleTheme, displayName, userEmail, onS
       </button>
     </div>
   );
+}
+
+// ── Installments Page ───────────────────────────────────────────────────────
+function InstallmentsPage({ colors, installments, onAdd, onMarkPaid, onDelete, currency }: {
+  colors: Colors;
+  installments: Installment[];
+  onAdd: (data: { item_name: string; total_price: number; down_payment: number; monthly_installment: number; total_months: number; total_interest: number; next_due_date?: string; notes?: string }) => Promise<void>;
+  onMarkPaid: (id: string, currentPaid: number, totalMonths: number) => Promise<void>;
+  onDelete: (id: string) => Promise<void>;
+  currency: string;
+}) {
+  const [showAdd, setShowAdd] = useState(false);
+  const [itemName, setItemName] = useState("");
+  const [price, setPrice] = useState(0);
+  const [downPayment, setDownPayment] = useState(0);
+  const [months, setMonths] = useState(12);
+  const [rate, setRate] = useState(15);
+  const [nextDue, setNextDue] = useState<string>(() => {
+    const d = new Date();
+    d.setDate(1);
+    return d.toISOString().slice(0, 10);
+  });
+  const [saving, setSaving] = useState(false);
+
+  const financed = Math.max(0, price - downPayment);
+  const monthlyRate = rate / 100 / 12;
+  const emi = monthlyRate === 0 || months <= 0
+    ? financed / (months || 1)
+    : (financed * monthlyRate * Math.pow(1 + monthlyRate, months)) / (Math.pow(1 + monthlyRate, months) - 1);
+  const totalPayable = emi * months + downPayment;
+  const totalInterest = Math.max(0, totalPayable - price);
+
+  const active = installments.filter((i) => i.status === "active");
+  const monthlyOutgoing = active.reduce((s, i) => s + Number(i.monthly_installment), 0);
+  const nextDueSoon = (date?: string | null) => {
+    if (!date) return null;
+    const days = Math.round((new Date(date).getTime() - new Date().getTime()) / (24 * 60 * 60 * 1000));
+    return days;
+  };
+
+  const doAdd = async () => {
+    if (!itemName.trim() || price <= 0 || months <= 0) {
+      alert("Please fill in the item name, price and number of months.");
+      return;
+    }
+    setSaving(true);
+    try {
+      await onAdd({
+        item_name: itemName.trim(),
+        total_price: price,
+        down_payment: downPayment,
+        monthly_installment: Math.round(emi * 100) / 100,
+        total_months: months,
+        total_interest: Math.round(totalInterest * 100) / 100,
+        next_due_date: nextDue,
+        notes: undefined,
+      });
+      setShowAdd(false);
+      setItemName("");
+      setPrice(0);
+      setDownPayment(0);
+      setMonths(12);
+      setRate(15);
+    } catch (e) {
+      alert(e instanceof Error ? e.message : "Could not add installment plan");
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+      {/* Add button */}
+      <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+        <div>
+          <div style={{ fontSize: 15, fontWeight: 700, color: colors.text }}>Your Installment Plans</div>
+          <div style={{ fontSize: 12.5, color: colors.textSub, marginTop: 2 }}>
+            {active.length} active · Monthly outgoing: {formatCurrency(monthlyOutgoing, currency)}
+          </div>
+        </div>
+        <button onClick={() => setShowAdd(v => !v)} style={{ display: "flex", alignItems: "center", gap: 7, padding: "10px 16px", borderRadius: 10, border: "none", background: "linear-gradient(135deg,#6366f1,#818cf8)", color: "#fff", fontSize: 13.5, fontWeight: 700, cursor: "pointer", boxShadow: "0 4px 14px rgba(99,102,241,0.3)" }}>
+          <Plus size={15} /> {showAdd ? "Cancel" : "Add Installment"}
+        </button>
+      </div>
+
+      {/* Add form */}
+      {showAdd && (
+        <div style={{ display: "flex", flexDirection: "column", gap: 12, padding: 18, borderRadius: 16, background: colors.card, border: `1px solid ${colors.cardBorder}` }}>
+          <div>
+            <Label colors={colors}>Item name</Label>
+            <input value={itemName} onChange={(e) => setItemName(e.target.value)} placeholder="e.g. iPhone 15 Pro" style={inp(colors)} />
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+            <div>
+              <Label colors={colors}>Total price ({currency})</Label>
+              <input type="number" value={price || ""} onChange={(e) => setPrice(parseFloat(e.target.value) || 0)} style={inp(colors)} />
+            </div>
+            <div>
+              <Label colors={colors}>Down payment</Label>
+              <input type="number" value={downPayment || ""} onChange={(e) => setDownPayment(parseFloat(e.target.value) || 0)} style={inp(colors)} />
+            </div>
+            <div>
+              <Label colors={colors}>Months</Label>
+              <input type="number" min={1} value={months || ""} onChange={(e) => setMonths(parseInt(e.target.value) || 1)} style={inp(colors)} />
+            </div>
+            <div>
+              <Label colors={colors}>Annual rate (%)</Label>
+              <input type="number" min={0} value={rate || ""} onChange={(e) => setRate(parseFloat(e.target.value) || 0)} style={inp(colors)} />
+            </div>
+          </div>
+          <div>
+            <Label colors={colors}>First installment due</Label>
+            <input type="date" value={nextDue} onChange={(e) => setNextDue(e.target.value)} style={inp(colors)} />
+          </div>
+          {price > 0 && months > 0 && (
+            <div style={{ padding: 12, borderRadius: 12, background: "rgba(99,102,241,0.08)", border: `1px solid rgba(99,102,241,0.25)` }}>
+              <div style={{ fontSize: 12.5, color: colors.textSub }}>Estimated monthly installment</div>
+              <div style={{ fontSize: 24, fontWeight: 800, color: colors.text, marginTop: 2 }}>{formatCurrency(Math.round(emi), currency)}</div>
+              <div style={{ fontSize: 11.5, color: colors.textSub }}>Total payable: {formatCurrency(Math.round(totalPayable), currency)} · Interest: {formatCurrency(Math.round(totalInterest), currency)}</div>
+            </div>
+          )}
+          <button onClick={doAdd} disabled={saving} style={{ padding: "12px", borderRadius: 11, border: "none", background: "#6366f1", color: "#fff", fontSize: 14, fontWeight: 700, cursor: "pointer", opacity: saving ? 0.6 : 1 }}>
+            {saving ? "Saving..." : "Save Installment"}
+          </button>
+        </div>
+      )}
+
+      {/* List */}
+      {installments.length === 0 ? (
+        <div style={{ padding: "36px 20px", textAlign: "center", borderRadius: 16, background: colors.card, border: `1px solid ${colors.cardBorder}`, color: colors.textSub }}>
+          <DollarSign size={30} style={{ marginBottom: 8, opacity: 0.4 }} />
+          <div style={{ fontWeight: 600 }}>No installment plans yet</div>
+          <div style={{ fontSize: 12.5, marginTop: 4 }}>Add a purchase and we&apos;ll track each payment + remind you before the due date.</div>
+        </div>
+      ) : (
+        installments.map((inst) => {
+          const days = nextDueSoon(inst.next_due_date);
+          const progress = inst.total_months > 0 ? Math.min(100, (inst.paid_count / inst.total_months) * 100) : 0;
+          const done = inst.status === "completed";
+          return (
+            <div key={inst.id} style={{ padding: 16, borderRadius: 16, background: colors.card, border: `1px solid ${colors.cardBorder}`, display: "flex", flexDirection: "column", gap: 12, opacity: done ? 0.7 : 1 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <div style={{ width: 40, height: 40, borderRadius: 11, background: "rgba(99,102,241,0.12)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                  <DollarSign size={18} color="#818cf8" />
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontWeight: 700, fontSize: 14, color: colors.text, textDecoration: done ? "line-through" : "none" }}>{inst.item_name}</div>
+                  <div style={{ fontSize: 12, color: colors.textSub, marginTop: 2 }}>
+                    {inst.paid_count}/{inst.total_months} paid · {formatCurrency(Number(inst.monthly_installment), currency)}/mo
+                  </div>
+                </div>
+                <span style={{ fontSize: 11.5, fontWeight: 700, padding: "4px 10px", borderRadius: 999, background: done ? "rgba(16,185,129,0.15)" : days !== null && days <= 2 ? "rgba(239,68,68,0.15)" : "rgba(99,102,241,0.12)", color: done ? "#10b981" : days !== null && days <= 2 ? "#ef4444" : "#818cf8", whiteSpace: "nowrap" }}>
+                  {done ? "Done" : days === null ? "No due date" : days < 0 ? `${Math.abs(days)}d overdue` : days === 0 ? "Due today" : days === 1 ? "Due tomorrow" : `Due in ${days}d`}
+                </span>
+              </div>
+
+              {/* progress bar */}
+              <div style={{ height: 7, borderRadius: 999, background: colors.inputBg, overflow: "hidden" }}>
+                <div style={{ height: "100%", width: `${progress}%`, borderRadius: 999, background: "linear-gradient(90deg,#6366f1,#818cf8)", transition: "width 0.3s" }} />
+              </div>
+
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                <span style={{ fontSize: 11.5, color: colors.textSub }}>Total: {formatCurrency(Number(inst.total_price), currency)}</span>
+                <span style={{ fontSize: 11.5, color: colors.textSub }}>Down: {formatCurrency(Number(inst.down_payment), currency)}</span>
+                <span style={{ fontSize: 11.5, color: colors.textSub }}>Interest: {formatCurrency(Number(inst.total_interest), currency)}</span>
+                {inst.next_due_date && <span style={{ fontSize: 11.5, color: colors.textSub }}>Next due: {new Date(inst.next_due_date).toLocaleDateString()}</span>}
+              </div>
+
+              {!done && (
+                <div style={{ display: "flex", gap: 8 }}>
+                  <button onClick={() => onMarkPaid(inst.id, inst.paid_count, inst.total_months)} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 14px", borderRadius: 9, border: "none", background: "rgba(16,185,129,0.15)", color: "#10b981", fontSize: 12.5, fontWeight: 700, cursor: "pointer" }}>
+                    <Check size={14} /> Mark paid
+                  </button>
+                  <button onClick={() => { if (confirm(`Delete "${inst.item_name}" plan?`)) onDelete(inst.id); }} style={{ display: "flex", alignItems: "center", gap: 6, padding: "8px 14px", borderRadius: 9, border: "none", background: "rgba(239,68,68,0.12)", color: "#ef4444", fontSize: 12.5, fontWeight: 700, cursor: "pointer" }}>
+                    <Trash2 size={14} /> Delete
+                  </button>
+                </div>
+              )}
+            </div>
+          );
+        })
+      )}
+    </div>
+  );
+}
+
+function Label({ colors, children }: { colors: Colors; children: ReactNode }) {
+  return <div style={{ fontSize: 12, fontWeight: 600, color: colors.textSub, marginBottom: 5 }}>{children}</div>;
+}
+
+function inp(colors: Colors): React.CSSProperties {
+  return { width: "100%", padding: "10px 13px", borderRadius: 9, border: `1px solid ${colors.cardBorder}`, background: colors.inputBg, color: colors.text, fontSize: 13.5, outline: "none", boxSizing: "border-box", fontFamily: "inherit" };
 }
 
 // ── Add Modal ───────────────────────────────────────────────────────────────

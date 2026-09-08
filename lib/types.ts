@@ -777,6 +777,27 @@ export type Budget = {
   updated_at: string
 }
 
+// ── Installments ───────────────────────────────────────────────────────────────
+export type InstallmentStatus = 'active' | 'completed' | 'cancelled'
+
+export type Installment = {
+  id: string
+  user_id: string
+  item_name: string
+  total_price: number
+  down_payment: number
+  monthly_installment: number
+  total_months: number
+  total_interest: number
+  paid_count: number
+  next_due_date?: string | null
+  frequency: string
+  status: InstallmentStatus
+  notes?: string | null
+  created_at?: string
+  updated_at?: string
+}
+
 // ── Enums ────────────────────────────────────────────────────────────────────────
 export enum FinancialGoalStatus {
   Active = 'active',
