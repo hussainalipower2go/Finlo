@@ -29,7 +29,7 @@ import {
 import { formatCurrency, currencySymbol } from "@/lib/format";
 
 // ── Types ──────────────────────────────────────────────────────────────────
-type Page = "dashboard" | "transactions" | "upcoming" | "budgets" | "analytics" | "ai" | "installments" | "settings";
+type Page = "dashboard" | "transactions" | "upcoming" | "budgets" | "analytics" | "ai" | "settings";
 type Theme = "light" | "dark";
 
 interface Colors {
@@ -95,9 +95,9 @@ export default function FinloApp() {
   const [page, setPage] = useState<Page>(() => {
     if (typeof window !== "undefined") {
       const hash = window.location.hash.replace("#", "") as Page;
-      if (["dashboard", "transactions", "upcoming", "budgets", "analytics", "ai", "installments", "settings"].includes(hash)) return hash;
+      if (["dashboard", "transactions", "upcoming", "budgets", "analytics", "ai", "settings"].includes(hash)) return hash;
       const saved = localStorage.getItem("finlo-page") as Page;
-      if (["dashboard", "transactions", "upcoming", "budgets", "analytics", "ai", "installments", "settings"].includes(saved)) return saved;
+      if (["dashboard", "transactions", "upcoming", "budgets", "analytics", "ai", "settings"].includes(saved)) return saved;
     }
     return "dashboard";
   });
@@ -436,7 +436,6 @@ export default function FinloApp() {
     { id: "budgets", label: "Budgets", icon: <PieChart size={18} /> },
     { id: "analytics", label: "Analytics", icon: <BarChart2 size={18} /> },
     { id: "ai", label: "AI Assistant", icon: <Bot size={18} /> },
-    { id: "installments", label: "Installment Plan", icon: <DollarSign size={18} /> },
     { id: "settings", label: "Settings", icon: <Settings size={18} /> },
   ];
 
@@ -446,7 +445,6 @@ export default function FinloApp() {
     { id: "upcoming" as Page, label: "Upcoming", icon: <Calendar size={18} /> },
     { id: "budgets" as Page, label: "Budgets", icon: <PieChart size={18} /> },
     { id: "analytics" as Page, label: "Analytics", icon: <BarChart2 size={18} /> },
-    { id: "installments" as Page, label: "Install", icon: <DollarSign size={18} /> },
     { id: "ai" as Page, label: "AI", icon: <Bot size={18} /> },
   ];
 
@@ -570,7 +568,6 @@ export default function FinloApp() {
               {page === "budgets" && "Budgets"}
               {page === "analytics" && "Analytics"}
               {page === "ai" && "AI Assistant"}
-              {page === "installments" && "Installment Plan"}
               {page === "settings" && "Settings"}
             </div>
             <div style={{ fontSize: 12, color: colors.textSub, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
@@ -625,7 +622,6 @@ export default function FinloApp() {
           {page === "budgets" && <BudgetsPage colors={colors} budgets={realBudgets} currency={currency} onAddBudget={handleAddBudget} />}
           {page === "analytics" && <AnalyticsPage colors={colors} transactions={realTransactions} currency={currency} />}
           {page === "ai" && <AIPage colors={colors} transactions={realTransactions} currency={currency} />}
-          {page === "installments" && <InstallmentsPage colors={colors} transactions={realTransactions} currency={currency} />}
           {page === "settings" && <SettingsPage colors={colors} isDark={isDark} toggleTheme={handleToggleTheme} displayName={displayName} userEmail={userEmail} onSignOut={handleSignOut} currency={currency} onCurrencyChange={handleCurrencyChange} supabase={supabase} />}
         </main>
       </div>
@@ -2150,125 +2146,6 @@ function SettingsPage({ colors, isDark, toggleTheme, displayName, userEmail, onS
       <button onClick={onSignOut} style={{ display: "flex", alignItems: "center", gap: 8, padding: "12px 20px", borderRadius: 12, border: `1px solid ${colors.cardBorder}`, background: colors.card, color: colors.textSub, fontSize: 13, fontWeight: 500, cursor: "pointer", width: "fit-content" }}>
         <LogOut size={15} /> Sign Out
       </button>
-    </div>
-  );
-}
-
-// ── Installment Plan Page ───────────────────────────────────────────────────
-function InstallmentsPage({ colors, transactions, currency }: { colors: Colors; transactions: Transaction[]; currency: string }) {
-  const [amount, setAmount] = useState<number>(50000);
-  const [months, setMonths] = useState<number>(12);
-  const [downPayment, setDownPayment] = useState<number>(0);
-  const [rate, setRate] = useState<number>(15);
-
-  const [showSummary, setShowSummary] = useState(false);
-
-  const financed = amount - downPayment;
-  const monthlyRate = rate / 100 / 12;
-  const emi = monthlyRate === 0 ? financed / months : (financed * monthlyRate * Math.pow(1 + monthlyRate, months)) / (Math.pow(1 + monthlyRate, months) - 1);
-  const totalPayable = emi * months + downPayment;
-  const totalInterest = totalPayable - amount;
-  const [suggested, setSuggested] = useState(false);
-  const aiSuggestion = !suggested ? null : (() => {
-    const base = financed / months;
-    const fees = base * (rate / 100) * 0.5;
-    return { base, fees };
-  })();
-
-  const balance = transactions.reduce((s, t) => s + (t.type === "income" ? t.amount : -t.amount), 0);
-
-  return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-      <div style={{ fontSize: 13, color: colors.textSub }}>
-        Plan a purchase on installments — see your monthly payment and affordability at a glance.
-      </div>
-
-      {/* Inputs */}
-      <div style={{ display: "flex", flexDirection: "column", gap: 14, padding: 20, borderRadius: 16, background: colors.card, border: `1px solid ${colors.cardBorder}` }}>
-        <Field label={`Item Price (${currency})`}>
-          <input type="number" value={amount || ""} onChange={(e) => setAmount(parseFloat(e.target.value) || 0)} style={inputStyle(colors)} />
-        </Field>
-        <Field label="Down Payment">
-          <input type="number" value={downPayment || ""} onChange={(e) => setDownPayment(parseFloat(e.target.value) || 0)} style={inputStyle(colors)} />
-        </Field>
-        <Field label="Installments (months)">
-          <input type="number" min={1} max={120} value={months || ""} onChange={(e) => setMonths(parseInt(e.target.value) || 1)} style={inputStyle(colors)} />
-        </Field>
-        <Field label={`Annual Interest Rate (%)`}>
-          <input type="number" min={0} max={100} value={rate || ""} onChange={(e) => setRate(parseFloat(e.target.value) || 0)} style={inputStyle(colors)} />
-        </Field>
-        <button onClick={() => setShowSummary(v => !v)} disabled={months <= 0 || amount <= 0}
-          style={{ padding: "13px", borderRadius: 12, border: "none", background: "linear-gradient(135deg,#6366f1,#818cf8)", color: "#fff", fontSize: 14, fontWeight: 700, cursor: "pointer", boxShadow: "0 4px 16px rgba(99,102,241,0.35)" }}>
-          {showSummary ? "Hide breakdown" : "Calculate plan"}
-        </button>
-      </div>
-
-      {/* Result */}
-      {showSummary && amount > 0 && months > 0 ? (
-        <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-          {/* Big EMI card */}
-          <div style={{ padding: 24, borderRadius: 18, background: "linear-gradient(135deg,#6366f1,#8b5cf6)", color: "#fff", border: "none", boxShadow: "0 16px 40px rgba(99,102,241,0.35)" }}>
-            <div style={{ fontSize: 12, opacity: 0.9, fontWeight: 500 }}>Monthly Installment</div>
-            <div style={{ fontSize: 34, fontWeight: 800, marginTop: 4 }}>{currencySymbol(currency)}{Math.round(emi).toLocaleString()}</div>
-            <div style={{ fontSize: 12, opacity: 0.9, marginTop: 6 }}>for {months} months</div>
-          </div>
-
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-            <StatBox colors={colors} label="Financed Amount" value={`${currencySymbol(currency)}${financed.toLocaleString()}`} />
-            <StatBox colors={colors} label="Total Payable" value={`${currencySymbol(currency)}${Math.round(totalPayable).toLocaleString()}`} />
-            <StatBox colors={colors} label="Total Interest" value={`${currencySymbol(currency)}${Math.round(totalInterest).toLocaleString()}`} accent="#ef4444" />
-            <StatBox colors={colors} label="Current Balance" value={`${currencySymbol(currency)}${Math.round(balance).toLocaleString()}`} />
-          </div>
-
-          {/* Affordability */}
-          <div style={{ padding: 18, borderRadius: 16, background: emi <= balance ? "rgba(16,185,129,0.1)" : "rgba(239,68,68,0.1)", border: `1px solid ${emi <= balance ? "rgba(16,185,129,0.35)" : "rgba(239,68,68,0.35)"}` }}>
-            <div style={{ fontWeight: 700, fontSize: 14, color: emi <= balance ? "#10b981" : "#ef4444" }}>
-              {emi <= balance ? "✓ Affordable" : "✗ Not affordable right now"}
-            </div>
-            <div style={{ fontSize: 12.5, color: colors.textSub, marginTop: 4 }}>
-              {emi <= balance
-                ? `Your monthly installment (${currencySymbol(currency)}${Math.round(emi).toLocaleString()}) fits within your current balance.`
-                : `Your monthly installment (${currencySymbol(currency)}${Math.round(emi).toLocaleString()}) exceeds your current balance of ${currencySymbol(currency)}${Math.round(balance).toLocaleString()}.`}
-            </div>
-          </div>
-
-          {/* AI suggestion */}
-          <button
-            onClick={() => setSuggested(v => !v)}
-            style={{ alignSelf: "flex-start", display: "flex", alignItems: "center", gap: 8, padding: "10px 18px", borderRadius: 10, border: `1px solid ${colors.cardBorder}`, background: colors.card, color: colors.accent, fontSize: 13, fontWeight: 600, cursor: "pointer" }}>
-            <Sparkles size={15} /> {suggested ? "Hide suggestion" : "Get a smarter plan"}
-          </button>
-          {aiSuggestion && (
-            <div style={{ padding: 18, borderRadius: 16, background: "rgba(99,102,241,0.08)", border: `1px solid rgba(99,102,241,0.25)` }}>
-              <div style={{ fontWeight: 700, fontSize: 14, color: colors.text, marginBottom: 8 }}>✨ Smarter plan for you</div>
-              <li style={{ fontSize: 12.5, color: colors.textSub, marginLeft: 16, marginBottom: 6 }}>Try a <b>{Math.min(months + 3, 24)}</b>-month plan to lower your installment to <b>{currencySymbol(currency)}{Math.round(aiSuggestion.base + aiSuggestion.fees).toLocaleString()}</b>/mo.</li>
-              <li style={{ fontSize: 12.5, color: colors.textSub, marginLeft: 16 }}>Increasing your down payment by {currencySymbol(currency)}10,000 could cut interest significantly.</li>
-            </div>
-          )}
-        </div>
-      ) : null}
-    </div>
-  );
-}
-
-function Field({ label, children }: { label: string; children: ReactNode }) {
-  return (
-    <div>
-      <div style={{ fontSize: 12.5, fontWeight: 600, color: "var(--ace-sub, #64748b)", marginBottom: 6 }}>{label}</div>
-      {children}
-    </div>
-  );
-}
-
-function inputStyle(colors: Colors): React.CSSProperties {
-  return { width: "100%", padding: "11px 14px", borderRadius: 10, border: `1px solid ${colors.cardBorder}`, background: colors.inputBg, color: colors.text, fontSize: 14, outline: "none", boxSizing: "border-box" };
-}
-
-function StatBox({ colors, label, value, accent }: { colors: Colors; label: string; value: string; accent?: string }) {
-  return (
-    <div style={{ padding: 16, borderRadius: 14, background: colors.card, border: `1px solid ${colors.cardBorder}` }}>
-      <div style={{ fontSize: 11.5, color: colors.textSub, fontWeight: 500 }}>{label}</div>
-      <div style={{ fontSize: 18, fontWeight: 700, color: accent || colors.text, marginTop: 4, overflowWrap: "anywhere" }}>{value}</div>
     </div>
   );
 }
