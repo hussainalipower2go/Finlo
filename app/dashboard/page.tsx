@@ -129,7 +129,7 @@ export default function FinloApp() {
   const [showBalanceModal, setShowBalanceModal] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
   const [dueAlert, setDueAlert] = useState<{ kind: "recurring" | "installment"; id: string; name: string; amount: number; date: string; overdue: number }[] | null>(null);
-  const dueAlertShownRef = useRef(false);
+  const dueAlertKey = "finlo_due_alert_2x";
   const [autoClearMessages, setAutoClearMessages] = useState<{ title: string; body: string }[]>([]);
   const [smsPending, setSmsPending] = useState(0);
 
@@ -316,18 +316,28 @@ export default function FinloApp() {
       );
 const insts = await getUserInstallmentsClient();
       setRealInstallments(insts);
-      if (!dueAlertShownRef.current) {
-        const urgent = [
-          ...recs.map((r) => ({ kind: "recurring" as const, id: r.id, name: r.name, amount: Number(r.amount), date: String(r.next_due_date || "") })),
-          ...insts.filter((i) => i.status === "active" && i.next_due_date)
-            .map((i) => ({ kind: "installment" as const, id: i.id, name: `Installment: ${i.item_name}`, amount: Number(i.monthly_installment), date: String(i.next_due_date || "") })),
-        ]
-          .filter((x) => !!x.date)
-          .map((x) => ({ ...x, overdue: Math.round((new Date(x.date).getTime() - Date.now()) / 86400000) }))
-          .filter((x) => x.overdue <= 0)
-          .sort((a, b) => a.date.localeCompare(b.date));
-        if (urgent.length > 0) {
-          dueAlertShownRef.current = true;
+      const urgent = [
+        ...recs.map((r) => ({ kind: "recurring" as const, id: r.id, name: r.name, amount: Number(r.amount), date: String(r.next_due_date || "") })),
+        ...insts.filter((i) => i.status === "active" && i.next_due_date)
+          .map((i) => ({ kind: "installment" as const, id: i.id, name: `Installment: ${i.item_name}`, amount: Number(i.monthly_installment), date: String(i.next_due_date || "") })),
+      ]
+        .filter((x) => !!x.date)
+        .map((x) => ({ ...x, overdue: Math.round((new Date(x.date).getTime() - Date.now()) / 86400000) }))
+        .filter((x) => x.overdue <= 0)
+        .sort((a, b) => a.date.localeCompare(b.date));
+      if (urgent.length > 0) {
+        const today = new Date().toISOString().slice(0, 10);
+        let rec = { d: "", c: 0 };
+        try {
+          const raw = localStorage.getItem(dueAlertKey);
+          if (raw) rec = JSON.parse(raw) as { d: string; c: number };
+        } catch {
+          rec = { d: "", c: 0 };
+        }
+        if (rec.d !== today) rec = { d: today, c: 0 };
+        if (rec.c < 2) {
+          rec.c += 1;
+          try { localStorage.setItem(dueAlertKey, JSON.stringify(rec)); } catch { /* ignore */ }
           setDueAlert(urgent);
         }
       }
