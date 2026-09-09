@@ -2304,9 +2304,9 @@ function SettingsPage({ colors, isDark, toggleTheme, displayName, userEmail, onS
                   ? "Browser settings se allow karein (padlock → Site settings → Notifications)"
                   : pushStatus === "unsupported"
                     ? "Is browser mein push supported nahi"
-                    : pushStatus === "error"
-                      ? "Status check fail hua. Dobara try karein."
-                      : "Enable karo taake app band hone par bhi alert aaye"}
+: pushStatus === "error"
+                  ? "Status check fail hua. Dobara try karein."
+                  : "Enable karo taake app band hone par bhi alert aaye. Mobile par nahi ho raha to pehle \"Add to Home Screen\" karein (iPhone ke liye zaroori)"}
             </div>
           </div>
           {pushStatus === "enabled"

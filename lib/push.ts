@@ -72,26 +72,28 @@ function base64FromKey(key: ArrayBuffer | null): string {
  * the PushManager subscription against the signed-in user. Returns true when a
  * working subscription exists.
  */
-export async function setupPushSubscription(): Promise<boolean> {
+export async function setupPushSubscription(force = false): Promise<boolean> {
   if (!isPushSupported()) return false;
   try {
     if (!masterPushEnabled()) return false;
     if (Notification.permission === "denied") return false;
 
-    let lastAttempted = "";
-    try {
-      lastAttempted = localStorage.getItem(ATTEMPTED_KEY) || "";
-    } catch {
-      /* ignore */
-    }
-    const today = new Date().toISOString().slice(0, 10);
-    if (lastAttempted === today) {
-      return Notification.permission === "granted";
-    }
-    try {
-      localStorage.setItem(ATTEMPTED_KEY, today);
-    } catch {
-      /* ignore */
+    if (!force) {
+      let lastAttempted = "";
+      try {
+        lastAttempted = localStorage.getItem(ATTEMPTED_KEY) || "";
+      } catch {
+        /* ignore */
+      }
+      const today = new Date().toISOString().slice(0, 10);
+      if (lastAttempted === today) {
+        return Notification.permission === "granted";
+      }
+      try {
+        localStorage.setItem(ATTEMPTED_KEY, today);
+      } catch {
+        /* ignore */
+      }
     }
 
     const registration = await navigator.serviceWorker.register("/sw.js");
@@ -111,8 +113,13 @@ export async function setupPushSubscription(): Promise<boolean> {
     }
 
     const supabase = createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return false;
     const { error } = await supabase.from("push_subscriptions").upsert(
       {
+        user_id: user.id,
         endpoint: subscription.endpoint,
         keys_p256dh: base64FromKey(subscription.getKey("p256dh")),
         keys_auth: base64FromKey(subscription.getKey("auth")),
@@ -148,7 +155,7 @@ export async function enablePush(): Promise<PushStatus> {
   } catch {
     /* ignore */
   }
-  const ok = await setupPushSubscription();
+  const ok = await setupPushSubscription(true);
   if (ok) return "enabled";
   return Notification.permission === "denied" ? "denied" : "idle";
 }

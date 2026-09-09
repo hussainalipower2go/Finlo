@@ -381,7 +381,7 @@ export default function SettingsPage() {
                             ? 'Is browser mein push notifications supported nahi'
                             : pushStatus === 'error'
                               ? 'Status check nahi ho saka. Dobara try karein.'
-                              : 'Enable karo taake app band hone par bhi due payments ka alert mobile par aaye'}
+                              : 'Enable karo taake app band hone par bhi due payments ka alert mobile par aaye. Agar mobile par enable nahi ho raha to pehle browser menu se "Add to Home Screen" karein (iPhone ke liye zaroori).'}
                     </div>
                   </div>
                   {pushStatus === 'enabled'
