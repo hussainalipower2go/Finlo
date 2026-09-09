@@ -28,6 +28,7 @@ import {
 } from "recharts";
 import { formatCurrency, currencySymbol } from "@/lib/format";
 import { autoEnablePush, requestPushForDue, getPushStatus, notifPref, setNotifPref, NOTIF_PREF_BILLS, NOTIF_PREF_BUDGET, NOTIF_PREF_INCOME, type PushStatus } from "@/lib/push";
+import { parseBankSms } from "@/lib/sms-parse";
 
 // ── Types ──────────────────────────────────────────────────────────────────
 type Page = "dashboard" | "transactions" | "upcoming" | "budgets" | "analytics" | "ai" | "installments" | "settings";
@@ -109,6 +110,19 @@ export default function FinloApp() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [pushStatus, setPushStatus] = useState<PushStatus>("idle");
   const [showPushHint, setShowPushHint] = useState(false);
+  const [pendingSms, setPendingSms] = useState<string | null>(() => {
+    if (typeof window !== "undefined") {
+      const encoded = new URLSearchParams(window.location.search).get("sms");
+      if (encoded) {
+        try {
+          return decodeURIComponent(atob(encoded.replace(/-/g, "+").replace(/_/g, "/")));
+        } catch {
+          /* ignore */
+        }
+      }
+    }
+    return null;
+  });
 
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 1023px)");
@@ -120,6 +134,14 @@ export default function FinloApp() {
       clearTimeout(t);
     };
   }, []);
+  useEffect(() => {
+    if (typeof window !== "undefined" && window.location.search.includes("sms=")) {
+      const url = new URL(window.location.href);
+      url.searchParams.delete("sms");
+      window.history.replaceState(null, "", url.pathname + url.search + url.hash);
+    }
+  }, []);
+
   useEffect(() => {
     void (async () => {
       const r = await autoEnablePush();
@@ -790,8 +812,13 @@ const insts = await getUserInstallmentsClient();
         </div>
       )}
 
+      {/* SMS auto-add modal */}
+      {pendingSms !== null && (
+        <SmsAddModal colors={colors} currency={currency} initialText={pendingSms} onClose={() => setPendingSms(null)} />
+      )}
+
       {/* Add Modal */}
-      {showAddModal && <AddModal colors={colors} onClose={() => { setShowAddModal(false); setInstallmentPayTarget(null); }} addType={addType} setAddType={setAddType} recurringNames={realRecurring.map((r) => r.name)} currency={currency} installmentTarget={installmentPayTarget} onMarkInstallmentPaid={handleMarkInstallmentPaid} />}
+      {showAddModal && <AddModal colors={colors} onClose={() => { setShowAddModal(false); setInstallmentPayTarget(null); }} addType={addType} setAddType={setAddType} recurringNames={realRecurring.map((r) => r.name)} currency={currency} installmentTarget={installmentPayTarget} onMarkInstallmentPaid={handleMarkInstallmentPaid} onPasteSms={() => setPendingSms("")} />}
 
       {/* Balance Modal */}
       {showBalanceModal && <BalanceModal colors={colors} initialBalance={openingBalance} currentBalance={currentBalance} onClose={() => setShowBalanceModal(false)} onSave={saveOpeningBalance} onAdjust={adjustOpeningBalance} currency={currency} />}
@@ -2607,7 +2634,7 @@ function inp(colors: Colors): React.CSSProperties {
 }
 
 // ── Add Modal ───────────────────────────────────────────────────────────────
-function AddModal({ colors, onClose, addType, setAddType, recurringNames, currency, installmentTarget, onMarkInstallmentPaid }: { colors: Colors; onClose: () => void; addType: "income" | "expense"; setAddType: (t: "income" | "expense") => void; recurringNames: string[]; currency: string; installmentTarget?: Installment | null; onMarkInstallmentPaid?: (target: Installment) => Promise<void>; }) {
+function AddModal({ colors, onClose, addType, setAddType, recurringNames, currency, installmentTarget, onMarkInstallmentPaid, onPasteSms }: { colors: Colors; onClose: () => void; addType: "income" | "expense"; setAddType: (t: "income" | "expense") => void; recurringNames: string[]; currency: string; installmentTarget?: Installment | null; onMarkInstallmentPaid?: (target: Installment) => Promise<void>; onPasteSms?: () => void; }) {
   const [amount, setAmount] = useState(installmentTarget ? String(installmentTarget.monthly_installment) : "");
   const [desc, setDesc] = useState(installmentTarget ? `Installment: ${installmentTarget.item_name}` : "");
   const [showSuggest, setShowSuggest] = useState(false);
@@ -2727,6 +2754,16 @@ function AddModal({ colors, onClose, addType, setAddType, recurringNames, curren
                 >
                   <Camera size={15} /> Scan slip
                 </button>
+                {onPasteSms && (
+                  <button
+                    onClick={(e) => { e.stopPropagation(); setShowScanOptions(false); onPasteSms(); }}
+                    style={{ display: "flex", alignItems: "center", gap: 10, width: "100%", padding: "11px 14px", border: "none", background: "transparent", color: colors.text, fontSize: 13, cursor: "pointer", fontWeight: 500 }}
+                    onMouseEnter={(e) => (e.currentTarget.style.background = colors.inputBg)}
+                    onMouseLeave={(e) => (e.currentTarget.style.background = "transparent")}
+                  >
+                    <Smartphone size={15} /> Paste bank SMS
+                  </button>
+                )}
               </div>
             )}
             <button onClick={onClose} style={{ width: 30, height: 30, borderRadius: 8, border: "none", background: colors.inputBg, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: colors.textSub }}><X size={15} /></button>
@@ -2945,6 +2982,172 @@ function AddModal({ colors, onClose, addType, setAddType, recurringNames, curren
           onClose={() => setShowCamera(false)}
         />
       )}
+    </div>
+  );
+}
+
+// ── SMS Auto-Add Modal (bank SMS → transaction) ────────────────────────────
+function SmsAddModal({ colors, currency, initialText, onClose }: { colors: Colors; currency: string; initialText: string; onClose: () => void }) {
+  const [text, setText] = useState(initialText);
+  const [analyzed, setAnalyzed] = useState(false);
+  const [kind, setKind] = useState<"income" | "expense">("expense");
+  const [amount, setAmount] = useState("");
+  const [category, setCategory] = useState("Other");
+  const [source, setSource] = useState("Other");
+  const [method, setMethod] = useState("Bank");
+  const [date, setDate] = useState(new Date().toISOString().slice(0, 10));
+  const [desc, setDesc] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const expenseCategories = ["Food", "Transport", "Rent", "Utilities", "Shopping", "Entertainment", "Health", "Education", "Subscriptions", "Family", "Travel", "Other"];
+  const incomeSources = ["Salary", "Freelance", "Business", "Client Payment", "Other"];
+  const methods = ["Cash", "Bank", "Debit Card", "Credit Card", "Easypaisa", "JazzCash", "Other"];
+
+  useEffect(() => {
+    if (text.trim()) analyze(text);
+    /* eslint-disable-next-line react-hooks/set-state-in-effect */
+    else setAnalyzed(false);
+    /* eslint-disable-next-line react-hooks/exhaustive-deps */
+  }, []);
+
+  function analyze(raw: string) {
+    const parsed = parseBankSms(raw);
+    if (!parsed) {
+      setError("Is SMS mein transaction nahi mila (amount ya debit/credit wala text nahi).");
+      setAnalyzed(false);
+      return;
+    }
+    setError("");
+    setKind(parsed.kind);
+    setAmount(String(parsed.amount));
+    setDate(parsed.date);
+    setDesc(parsed.description);
+    if (parsed.kind === "income") setSource(parsed.source);
+    else setCategory(parsed.category);
+    setAnalyzed(true);
+  }
+
+  const inputStyle = {
+    width: "100%", padding: "10px 12px", borderRadius: 9, border: `1px solid ${colors.cardBorder}`,
+    background: colors.inputBg, color: colors.text, fontSize: 13, outline: "none", boxSizing: "border-box" as const,
+  };
+
+  async function save() {
+    const amt = Number(amount.replace(/,/g, ""));
+    if (!amt || amt <= 0) { setError("Valid amount enter karo"); return; }
+    const d = desc.trim() || "Bank transaction";
+    setLoading(true);
+    setError("");
+    try {
+      if (kind === "income") {
+        const src = source === "Salary" ? "salary" : source === "Freelance" ? "freelance" : source === "Business" ? "business" : source === "Client Payment" ? "client_payment" : "other";
+        await addIncomeClient({ user_id: "", amount: amt, source: src as IncomeSource, date, status: "confirmed" as const, notes: d });
+      } else {
+        const cat = category === "Food" ? "food" : category === "Transport" ? "transport"
+          : category === "Rent" ? "rent" : category === "Utilities" ? "utilities"
+          : category === "Shopping" ? "shopping" : category === "Entertainment" ? "entertainment"
+          : category === "Health" ? "health" : category === "Education" ? "education"
+          : category === "Subscriptions" ? "subscriptions" : category === "Family" ? "family"
+          : category === "Travel" ? "travel" : "other";
+        const pm = method === "Cash" ? "cash" : method === "Bank" ? "bank"
+          : method === "Debit Card" ? "debit_card" : method === "Credit Card" ? "credit_card"
+          : method === "Easypaisa" ? "easypaisa" : method === "JazzCash" ? "jazzcash" : "other";
+        await addExpenseClient({ user_id: "", amount: amt, description: d, category: cat as ExpenseCategory, date, payment_method: pm as PaymentMethod, status: "completed" as const });
+      }
+      window.location.reload();
+    } catch (e: unknown) {
+      setError(e instanceof Error ? e.message : "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  return (
+    <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.45)", backdropFilter: "blur(4px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 210, padding: 20 }} onClick={onClose}>
+      <div onClick={e => e.stopPropagation()} style={{ width: "min(460px, calc(100vw - 32px))", borderRadius: 20, background: colors.card, border: `1px solid ${colors.cardBorder}`, boxShadow: "0 20px 60px rgba(0,0,0,0.2)", overflow: "hidden", maxHeight: "90vh", overflowY: "auto" }}>
+        <div style={{ padding: "18px 22px", borderBottom: `1px solid ${colors.cardBorder}`, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+          <span style={{ fontWeight: 700, fontSize: 16, color: colors.text, display: "flex", alignItems: "center", gap: 8 }}><Smartphone size={17} color="#6366f1" /> Bank SMS → Transaction</span>
+          <button onClick={onClose} style={{ width: 30, height: 30, borderRadius: 8, border: "none", background: colors.inputBg, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: colors.textSub }}><X size={15} /></button>
+        </div>
+
+        <div style={{ padding: "20px 22px", display: "flex", flexDirection: "column", gap: 14 }}>
+          <div>
+            <div style={{ fontSize: 12, color: colors.textSub, marginBottom: 6 }}>Bank SMS text {initialText ? "(auto-analyzed)" : "(yahan paste karke Analyze dabao)"}</div>
+            <textarea value={text} onChange={e => setText(e.target.value)} rows={3} style={{ ...inputStyle, resize: "vertical", fontFamily: "inherit", lineHeight: 1.45 }} placeholder="e.g. Rs.1,500.00 debited from account 1234 on 12-Aug. Avl Bal 25,000" />
+            <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
+              <button onClick={() => analyze(text)} style={{ padding: "8px 14px", borderRadius: 8, border: "none", background: "#6366f1", color: "#fff", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>Analyze</button>
+              <button onClick={() => setText("")} style={{ padding: "8px 14px", borderRadius: 8, border: `1px solid ${colors.cardBorder}`, background: "transparent", color: colors.textSub, fontSize: 12, cursor: "pointer" }}>Clear</button>
+            </div>
+          </div>
+
+          {analyzed ? (
+            <>
+              <div style={{ padding: "12px 14px", borderRadius: 12, background: "rgba(16,185,129,0.08)", border: "1px solid rgba(16,185,129,0.25)", fontSize: 12.5, color: colors.text }}>
+                ✓ Transaction mil gayi: <b>{kind === "income" ? "Income" : "Expense"}</b> · <b>{currencySymbol(currency)}{formatCurrency(Number(amount.replace(/,/g, "")), currency)}</b> · <b>{kind === "income" ? source : category}</b> · <b>{date}</b>
+              </div>
+
+              <div style={{ display: "flex", gap: 0, borderRadius: 10, background: colors.inputBg, padding: 4 }}>
+                {(["expense", "income"] as const).map(t => (
+                  <button key={t} onClick={() => setKind(t)} style={{ flex: 1, padding: "8px", borderRadius: 8, border: "none", background: kind === t ? colors.card : "transparent", color: kind === t ? (t === "income" ? "#10b981" : "#ef4444") : colors.textSub, fontWeight: kind === t ? 700 : 400, fontSize: 13, cursor: "pointer", boxShadow: kind === t ? "0 1px 4px rgba(0,0,0,0.08)" : "none", textTransform: "capitalize" }}>{t}</button>
+                ))}
+              </div>
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                <div>
+                  <label style={{ fontSize: 12, color: colors.textSub, display: "block", marginBottom: 5 }}>Amount ({currency})</label>
+                  <input value={amount} onChange={e => setAmount(e.target.value)} style={inputStyle} />
+                </div>
+                <div>
+                  <label style={{ fontSize: 12, color: colors.textSub, display: "block", marginBottom: 5 }}>Date</label>
+                  <input type="date" value={date} onChange={e => setDate(e.target.value)} style={inputStyle} />
+                </div>
+              </div>
+
+              <div>
+                <label style={{ fontSize: 12, color: colors.textSub, display: "block", marginBottom: 5 }}>Description</label>
+                <input value={desc} onChange={e => setDesc(e.target.value)} style={inputStyle} />
+              </div>
+
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+                <div>
+                  <label style={{ fontSize: 12, color: colors.textSub, display: "block", marginBottom: 5 }}>{kind === "income" ? "Source" : "Category"}</label>
+                  {kind === "income" ? (
+                    <select value={source} onChange={e => setSource(e.target.value)} style={{ ...inputStyle, cursor: "pointer" }}>
+                      {incomeSources.map(c => <option key={c}>{c}</option>)}
+                    </select>
+                  ) : (
+                    <select value={category} onChange={e => setCategory(e.target.value)} style={{ ...inputStyle, cursor: "pointer" }}>
+                      {expenseCategories.map(c => <option key={c}>{c}</option>)}
+                    </select>
+                  )}
+                </div>
+                {kind === "expense" && (
+                  <div>
+                    <label style={{ fontSize: 12, color: colors.textSub, display: "block", marginBottom: 5 }}>Payment Method</label>
+                    <select value={method} onChange={e => setMethod(e.target.value)} style={{ ...inputStyle, cursor: "pointer" }}>
+                      {methods.map(m => <option key={m}>{m}</option>)}
+                    </select>
+                  </div>
+                )}
+              </div>
+
+              {error && <div style={{ fontSize: 12, color: "#ef4444", background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 8, padding: "8px 12px" }}>{error}</div>}
+
+              <div style={{ display: "flex", gap: 10, paddingTop: 4 }}>
+                <button disabled={loading} style={{ flex: 1, padding: "11px", borderRadius: 10, border: "none", background: loading ? "#9ca3af" : "#6366f1", color: "#fff", fontWeight: 700, fontSize: 14, cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1 }} onClick={save}>
+                  {loading ? "Saving..." : `Add ${kind.charAt(0).toUpperCase() + kind.slice(1)}`}
+                </button>
+                <button onClick={onClose} style={{ padding: "11px 18px", borderRadius: 10, border: `1px solid ${colors.cardBorder}`, background: "transparent", color: colors.textSub, fontSize: 14, cursor: "pointer" }}>Cancel</button>
+              </div>
+            </>
+          ) : (
+            <>
+              {error && <div style={{ fontSize: 12, color: "#ef4444", background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 8, padding: "8px 12px" }}>{error}</div>}
+              <div style={{ fontSize: 12.5, color: colors.textSub, lineHeight: 1.5 }}>Kam karne ka tareeka: SMS app mein bank ke message ko kholo → <b>Share</b> → <b>Finlo</b> → ye modal khud khulega aur transaction mil jayegi. Confirm karo → save ho jayegi. iPhone par &quot;Paste bank SMS&quot; bhi use kar sakte ho.</div>
+            </>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
