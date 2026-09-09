@@ -53,7 +53,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
       <div className="sticky top-0 z-40 border-b border-white/70 bg-white/50 backdrop-blur-[34px] shadow-[inset_0_1px_0_rgba(255,255,255,0.95),0_12px_40px_rgba(31,45,90,0.1)]">
         <Container className="py-3 flex justify-between items-center">
           <div className="flex items-center gap-3">
-            <Image src="/finlo-logo-horizontal.png" alt="Finlo" width={66} height={22} className="object-contain" />
+            <Image src="/finlo-logo-horizontal.png" alt="Finlo" width={121} height={40} className="object-contain" />
           </div>
           <div className="flex items-center gap-2">
             <GlassButton
