@@ -147,7 +147,7 @@ export default function OnboardingPage() {
   }
 
   const cardStyle: React.CSSProperties = {
-    background: "rgba(20,15,45,0.55)",
+    background: "rgba(255,255,255,0.9)",
     border: "1px solid rgba(10,25,61,0.22)",
     borderRadius: "24px",
     padding: "48px",
@@ -173,7 +173,7 @@ export default function OnboardingPage() {
     <div style={{
       minHeight: "100vh",
       width: "100%",
-      background: "#080b1a",
+      background: "#FEFBFE",
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
@@ -195,7 +195,7 @@ export default function OnboardingPage() {
       {/* LOGO */}
       <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "36px", position: "relative", zIndex: 1 }}>
         <FinloLogoImg size={36} />
-        <span style={{ fontSize: "16px", fontWeight: 700, color: "#fff" }}>Finlo</span>
+        <span style={{ fontSize: "16px", fontWeight: 700, color: "#0f172a" }}>Finlo</span>
       </div>
 
       <div className="finlo-onboard-card" style={{ ...cardStyle, position: "relative", zIndex: 1 }}>
@@ -203,10 +203,10 @@ export default function OnboardingPage() {
         {/* PROGRESS */}
         <div style={{ marginBottom: "32px" }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: "10px" }}>
-            <span style={{ fontSize: "13px", fontWeight: 500, color: "rgba(196,181,253,0.7)" }}>
+            <span style={{ fontSize: "13px", fontWeight: 500, color: "rgba(10,25,61,0.72)" }}>
               Step {step} of {TOTAL_STEPS}
             </span>
-            <span style={{ fontSize: "13px", color: "rgba(130,110,190,0.55)" }}>
+            <span style={{ fontSize: "13px", color: "rgba(100,116,139,0.7)" }}>
               {Math.round((step / TOTAL_STEPS) * 100)}%
             </span>
           </div>
@@ -224,8 +224,8 @@ export default function OnboardingPage() {
         {/* STEP 1 — CURRENCY */}
         {step === 1 && (
           <div>
-            <h2 style={{ fontSize: "24px", fontWeight: 700, color: "#fff", margin: "0 0 6px 0" }}>What&apos;s your currency?</h2>
-            <p style={{ fontSize: "14px", color: "rgba(148,130,200,0.6)", margin: "0 0 28px 0" }}>We&apos;ll use this everywhere your money is shown.</p>
+            <h2 style={{ fontSize: "24px", fontWeight: 700, color: "#1e293b", margin: "0 0 6px 0" }}>What&apos;s your currency?</h2>
+            <p style={{ fontSize: "14px", color: "rgba(71,85,105,0.8)", margin: "0 0 28px 0" }}>We&apos;ll use this everywhere your money is shown.</p>
             <div className="finlo-onboard-ccy" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "10px" }}>
               {CURRENCIES.map(c => {
                 const active = currency === c.code;
@@ -233,7 +233,7 @@ export default function OnboardingPage() {
                   <button key={c.code} type="button" onClick={() => setCurrency(c.code)}
                     style={{
                       ...optionBase,
-                      background: active ? "rgba(10,25,61,0.14)" : "rgba(10,8,30,0.85)",
+                      background: active ? "rgba(10,25,61,0.14)" : "rgba(255,255,255,0.92)",
                       border: active ? "1px solid rgba(10,25,61,0.6)" : "1px solid rgba(10,25,61,0.22)",
                     }}>
                     <span style={{
@@ -243,8 +243,8 @@ export default function OnboardingPage() {
                       fontSize: "12px", fontWeight: 700,
                     }}>{c.symbol.slice(0, 3)}</span>
                     <span>
-                      <div style={{ fontSize: "14px", fontWeight: 600, color: "#fff" }}>{c.code}</div>
-                      <div style={{ fontSize: "12px", color: "rgba(148,130,200,0.6)" }}>{c.label}</div>
+                      <div style={{ fontSize: "14px", fontWeight: 600, color: "#0f172a" }}>{c.code}</div>
+                      <div style={{ fontSize: "12px", color: "rgba(71,85,105,0.8)" }}>{c.label}</div>
                     </span>
                   </button>
                 );
@@ -256,13 +256,13 @@ export default function OnboardingPage() {
         {/* STEP 2 — MONTHLY INCOME */}
         {step === 2 && (
           <div>
-            <h2 style={{ fontSize: "24px", fontWeight: 700, color: "#fff", margin: "0 0 6px 0" }}>Typical monthly income</h2>
-            <p style={{ fontSize: "14px", color: "rgba(148,130,200,0.6)", margin: "0 0 28px 0" }}>A rough figure is fine — you can refine this later.</p>
-            <label style={{ display: "block", fontSize: "13px", fontWeight: 500, color: "rgba(196,181,253,0.85)", marginBottom: "8px" }}>Amount</label>
+            <h2 style={{ fontSize: "24px", fontWeight: 700, color: "#1e293b", margin: "0 0 6px 0" }}>Typical monthly income</h2>
+            <p style={{ fontSize: "14px", color: "rgba(71,85,105,0.8)", margin: "0 0 28px 0" }}>A rough figure is fine — you can refine this later.</p>
+            <label style={{ display: "block", fontSize: "13px", fontWeight: 500, color: "rgba(51,65,85,0.9)", marginBottom: "8px" }}>Amount</label>
             <div style={{ position: "relative" }}>
               <span style={{
                 position: "absolute", left: "16px", top: "50%", transform: "translateY(-50%)",
-                color: "rgba(167,139,250,0.85)", fontSize: "14px", fontWeight: 600, pointerEvents: "none",
+                color: "rgba(10,25,61,0.6)", fontSize: "14px", fontWeight: 600, pointerEvents: "none",
               }}>{selectedCurrency.symbol}</span>
               <input
                 type="number"
@@ -273,15 +273,15 @@ export default function OnboardingPage() {
                 placeholder="0"
                 style={{
                   width: "100%", padding: "16px 16px 16px 64px",
-                  background: "rgba(10,8,30,0.85)", border: "1px solid rgba(10,25,61,0.22)",
-                  borderRadius: "12px", fontSize: "20px", fontWeight: 600, color: "#fff",
+                  background: "rgba(255,255,255,0.92)", border: "1px solid rgba(10,25,61,0.22)",
+                  borderRadius: "12px", fontSize: "20px", fontWeight: 600, color: "#0f172a",
                   outline: "none", fontFamily: "inherit", boxSizing: "border-box",
                 }}
                 onFocus={e => e.target.style.borderColor = "rgba(10,25,61,0.55)"}
                 onBlur={e => e.target.style.borderColor = "rgba(10,25,61,0.22)"}
               />
             </div>
-            <p style={{ fontSize: "12px", color: "rgba(130,110,190,0.5)", margin: "10px 0 0 0" }}>
+            <p style={{ fontSize: "12px", color: "rgba(100,116,139,0.7)", margin: "10px 0 0 0" }}>
               This helps us estimate your Safe-to-Spend and runway from day one.
             </p>
           </div>
@@ -290,8 +290,8 @@ export default function OnboardingPage() {
         {/* STEP 3 — INCOME TYPE */}
         {step === 3 && (
           <div>
-            <h2 style={{ fontSize: "24px", fontWeight: 700, color: "#fff", margin: "0 0 6px 0" }}>How does your income arrive?</h2>
-            <p style={{ fontSize: "14px", color: "rgba(148,130,200,0.6)", margin: "0 0 28px 0" }}>This shapes how we forecast your upcoming money.</p>
+            <h2 style={{ fontSize: "24px", fontWeight: 700, color: "#1e293b", margin: "0 0 6px 0" }}>How does your income arrive?</h2>
+            <p style={{ fontSize: "14px", color: "rgba(71,85,105,0.8)", margin: "0 0 28px 0" }}>This shapes how we forecast your upcoming money.</p>
             <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
               {INCOME_TYPES.map(t => {
                 const active = incomeType === t.value;
@@ -299,7 +299,7 @@ export default function OnboardingPage() {
                   <button key={t.value} type="button" onClick={() => setIncomeType(t.value)}
                     style={{
                       ...optionBase,
-                      background: active ? "rgba(10,25,61,0.14)" : "rgba(10,8,30,0.85)",
+                      background: active ? "rgba(10,25,61,0.14)" : "rgba(255,255,255,0.92)",
                       border: active ? "1px solid rgba(10,25,61,0.6)" : "1px solid rgba(10,25,61,0.22)",
                     }}>
                     <span style={{
@@ -308,8 +308,8 @@ export default function OnboardingPage() {
                       display: "flex", alignItems: "center", justifyContent: "center",
                     }}>{t.icon}</span>
                     <span>
-                      <div style={{ fontSize: "14px", fontWeight: 600, color: "#fff" }}>{t.value}</div>
-                      <div style={{ fontSize: "12px", color: "rgba(148,130,200,0.6)" }}>{t.desc}</div>
+                      <div style={{ fontSize: "14px", fontWeight: 600, color: "#0f172a" }}>{t.value}</div>
+                      <div style={{ fontSize: "12px", color: "rgba(71,85,105,0.8)" }}>{t.desc}</div>
                     </span>
                   </button>
                 );
@@ -321,8 +321,8 @@ export default function OnboardingPage() {
         {/* STEP 4 — FINANCIAL GOAL */}
         {step === 4 && (
           <div>
-            <h2 style={{ fontSize: "24px", fontWeight: 700, color: "#fff", margin: "0 0 6px 0" }}>What matters most right now?</h2>
-            <p style={{ fontSize: "14px", color: "rgba(148,130,200,0.6)", margin: "0 0 28px 0" }}>We&apos;ll tailor your dashboard around this.</p>
+            <h2 style={{ fontSize: "24px", fontWeight: 700, color: "#1e293b", margin: "0 0 6px 0" }}>What matters most right now?</h2>
+            <p style={{ fontSize: "14px", color: "rgba(71,85,105,0.8)", margin: "0 0 28px 0" }}>We&apos;ll tailor your dashboard around this.</p>
             <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
               {GOALS.map(g => {
                 const active = goal === g.value;
@@ -330,13 +330,13 @@ export default function OnboardingPage() {
                   <button key={g.value} type="button" onClick={() => setGoal(g.value)}
                     style={{
                       ...optionBase,
-                      background: active ? "rgba(10,25,61,0.14)" : "rgba(10,8,30,0.85)",
+                      background: active ? "rgba(10,25,61,0.14)" : "rgba(255,255,255,0.92)",
                       border: active ? "1px solid rgba(10,25,61,0.6)" : "1px solid rgba(10,25,61,0.22)",
                       justifyContent: "space-between",
                     }}>
                     <span>
-                      <div style={{ fontSize: "14px", fontWeight: 600, color: "#fff" }}>{g.value}</div>
-                      <div style={{ fontSize: "12px", color: "rgba(148,130,200,0.6)" }}>{g.desc}</div>
+                      <div style={{ fontSize: "14px", fontWeight: 600, color: "#0f172a" }}>{g.value}</div>
+                      <div style={{ fontSize: "12px", color: "rgba(71,85,105,0.8)" }}>{g.desc}</div>
                     </span>
                     <span style={{
                       width: "20px", height: "20px", borderRadius: "50%", flexShrink: 0,
@@ -358,9 +358,9 @@ export default function OnboardingPage() {
           {step > 1 && (
             <button type="button" onClick={goBack}
               style={{
-                flex: "0 0 auto", padding: "15px 22px", background: "rgba(10,8,30,0.85)",
+                flex: "0 0 auto", padding: "15px 22px", background: "rgba(255,255,255,0.92)",
                 border: "1px solid rgba(10,25,61,0.25)", borderRadius: "14px",
-                fontSize: "15px", fontWeight: 600, color: "rgba(196,181,253,0.85)",
+                fontSize: "15px", fontWeight: 600, color: "rgba(51,65,85,0.9)",
                 cursor: "pointer", fontFamily: "inherit",
               }}
               onMouseOver={e => { e.currentTarget.style.borderColor = "rgba(10,25,61,0.4)"; }}
@@ -391,7 +391,7 @@ export default function OnboardingPage() {
         </div>
       </div>
 
-      <p style={{ marginTop: "24px", fontSize: "12px", color: "rgba(130,110,190,0.45)", position: "relative", zIndex: 1 }}>
+      <p style={{ marginTop: "24px", fontSize: "12px", color: "rgba(100,116,139,0.7)", position: "relative", zIndex: 1 }}>
         You can change any of this later in Settings.
       </p>
     </div>

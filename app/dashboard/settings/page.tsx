@@ -9,7 +9,7 @@ import {
 } from '@/lib/push'
 import {
   LayoutDashboard, ArrowLeftRight, Calendar, PieChart,
-  BarChart2, Bot, Settings, Bell, Moon, Sun,
+  BarChart2, Bot, Settings, Bell,
   User, MoreHorizontal, Download, Trash2,
 } from 'lucide-react'
 import type { User as SupabaseUser } from '@supabase/supabase-js'
@@ -308,9 +308,6 @@ export default function SettingsPage() {
             </div>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <button onClick={() => setAppTheme(isDark ? 'light' : 'dark')} aria-label="Toggle theme" style={{ width: 36, height: 36, borderRadius: 8, border: `1px solid ${colors.cardBorder}`, background: colors.card, color: colors.textSub, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', fontSize: 15 }}>
-              {isDark ? <Sun size={16} /> : <Moon size={16} />}
-            </button>
             <button style={{ width: 36, height: 36, borderRadius: 8, border: `1px solid ${colors.cardBorder}`, background: colors.card, color: colors.textSub, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', position: 'relative' }}>
               <Bell size={16} />
               <span style={{ position: 'absolute', top: 7, right: 7, width: 7, height: 7, borderRadius: '50%', background: '#ef4444' }} />

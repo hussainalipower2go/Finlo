@@ -94,8 +94,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
 
   const overlayStyle: React.CSSProperties = {
     position: 'fixed', inset: 0, zIndex: 9999, display: 'flex', alignItems: 'center', justifyContent: 'center',
-    padding: 24, background: 'linear-gradient(160deg,#080b1a 0%,#111a35 55%,#0b1024 100%)',
+    padding: 24, background: 'linear-gradient(160deg,#FEFBFE 0%,#FEFBFE 55%,#FEFBFE 100%)',
     fontFamily: "'Montserrat', -apple-system, sans-serif", textAlign: 'center', flexDirection: 'column',
+    color: '#0f172a',
   }
 
   if (gate.kind === 'maintenance') {
@@ -104,11 +105,11 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <div style={{ width: 62, height: 62, borderRadius: 18, background: 'rgba(10,25,61,0.15)', border: '1px solid rgba(10,25,61,0.35)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#0A193D', marginBottom: 22 }}>
           <Construction size={28} />
         </div>
-        <h1 style={{ fontSize: 26, fontWeight: 800, color: '#fff', margin: '0 0 10px 0' }}>Finlo is under maintenance</h1>
-        <p style={{ fontSize: 14, color: '#0A193D', lineHeight: 1.7, margin: '0 0 4px 0' }}>
+        <h1 style={{ fontSize: 26, fontWeight: 800, color: '#0A193D', margin: '0 0 10px 0' }}>Finlo is under maintenance</h1>
+        <p style={{ fontSize: 14, color: '#475569', lineHeight: 1.7, margin: '0 0 4px 0' }}>
           We&apos;re making things faster and smoother. Hang tight — we&apos;ll be back shortly.
         </p>
-        <p style={{ fontSize: 13, color: '#0A193D' }}>Sign in again in a few minutes.</p>
+        <p style={{ fontSize: 13, color: '#64748b' }}>Sign in again in a few minutes.</p>
       </div>
     )
   }
@@ -119,8 +120,8 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
         <div style={{ width: 62, height: 62, borderRadius: 18, background: 'rgba(239,68,68,0.12)', border: '1px solid rgba(239,68,68,0.35)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#f87171', marginBottom: 22 }}>
           <Lock size={28} />
         </div>
-        <h1 style={{ fontSize: 26, fontWeight: 800, color: '#fff', margin: '0 0 10px 0' }}>Account suspended</h1>
-        <p style={{ fontSize: 14, color: '#0A193D', lineHeight: 1.7, margin: '0 0 4px 0' }}>
+        <h1 style={{ fontSize: 26, fontWeight: 800, color: '#0A193D', margin: '0 0 10px 0' }}>Account suspended</h1>
+        <p style={{ fontSize: 14, color: '#475569', lineHeight: 1.7, margin: '0 0 4px 0' }}>
           Your account is currently suspended. If you believe this is a mistake,
           contact support.
         </p>

@@ -7,10 +7,8 @@ import { useToast } from "@/components/providers/ToastProvider";
 import { createClient } from "@/lib/supabase";
 import { FinloLogoImg } from "@/components/branding/FinloLogoImg";
 
-type Theme = "dark" | "light";
-
 export default function SignupPage() {
-  const [theme, setTheme] = useState<Theme>("dark");
+  const isDark = false;
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [email, setEmail] = useState("");
@@ -22,19 +20,6 @@ export default function SignupPage() {
   const router = useRouter();
   const { toast } = useToast();
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      try {
-        const saved = localStorage.getItem("finlo_auth_theme") as Theme | null;
-        if (saved === "light" || saved === "dark") setTheme(saved);
-      } catch {
-        /* ignore */
-      }
-    }, 0);
-    return () => clearTimeout(timer);
-  }, []);
-
-  const isDark = theme === "dark";
   const p = {
     bg: isDark ? "#080b1a" : "#FEFBFE",
     navBg: isDark ? "#080b1a" : "#FEFBFE",
@@ -61,19 +46,9 @@ export default function SignupPage() {
     track: isDark ? "rgba(255,255,255,0.07)" : "rgba(10,25,61,0.1)",
     featBg: isDark ? "rgba(10,25,61,0.18)" : "rgba(10,25,61,0.08)",
     featLine: isDark ? "rgba(10,25,61,0.35)" : "rgba(10,25,61,0.25)",
-    pillBg: isDark ? "rgba(20,16,50,0.85)" : "rgba(255,255,255,0.9)",
-    pillText: isDark ? "rgba(196,181,253,0.8)" : "rgba(10,25,61,0.85)",
+    pillBg: "rgba(255,255,255,0.9)",
+    pillText: "rgba(10,25,61,0.85)",
   };
-
-  function toggleTheme() {
-    const next = isDark ? "light" : "dark";
-    try {
-      localStorage.setItem("finlo_auth_theme", next);
-    } catch {
-      /* ignore */
-    }
-    setTheme(next);
-  }
 
   async function handleSignup() {
     if (loading) return;
@@ -416,28 +391,6 @@ export default function SignupPage() {
             background: `radial-gradient(ellipse at 60% 40%, ${p.radial} 0%, transparent 60%)`,
             pointerEvents: "none",
           }} />
-
-          {/* Theme toggle pill */}
-          <button onClick={toggleTheme} aria-label="Toggle theme" suppressHydrationWarning className="finlo-toggle" style={{
-            position: "absolute", top: "28px", right: "36px",
-            display: "flex", alignItems: "center", gap: "7px",
-            background: p.pillBg,
-            border: `1px solid ${p.line}`,
-            borderRadius: "100px", padding: "9px 18px",
-            fontSize: "13px", color: p.pillText,
-            cursor: "pointer", fontFamily: "inherit",
-          }}>
-            {isDark ? (
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
-              </svg>
-            ) : (
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
-              </svg>
-            )}
-            {isDark ? "Light mode" : "Dark mode"}
-          </button>
 
           {/* SIGNUP CARD */}
           <div className="finlo-card" style={{

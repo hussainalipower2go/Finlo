@@ -2,21 +2,21 @@
 @import "tailwindcss";
 
 :root {
-  --bg: #080b1a;
-  --panel: #0e0a26;
-  --panel-deep: #0a081e;
+  --bg: #FEFBFE;
+  --panel: #ffffff;
+  --panel-deep: #f8fafc;
   --primary: #0A193D;
   --primary-strong: #0A193D;
   --secondary: #0A193D;
   --accent: #0A193D;
   --accent-soft: #0A193D;
-  --text: #ffffff;
-  --text-soft: #E9EDFB;
-  --text-muted: #0A193D;
-  --text-faint: #0A193D;
-  --teal: #34d399;
-  --blue: #60a5fa;
-  --divider: rgba(10,25,61,0.15);
+  --text: #0f172a;
+  --text-soft: #334155;
+  --text-muted: #64748b;
+  --text-faint: #94a3b8;
+  --teal: #059669;
+  --blue: #2563eb;
+  --divider: rgba(10,25,61,0.08);
 
   /* Fluid spacing */
   --f-pad: clamp(12px, 2.5vw + 4px, 28px);
@@ -48,35 +48,35 @@
 }
 
 .dark {
-  --bg: #020417;
-  --panel: #050511;
-  --panel-deep: #03030a;
+  --bg: #FEFBFE;
+  --panel: #ffffff;
+  --panel-deep: #f8fafc;
   --primary: #0A193D;
   --primary-strong: #0A193D;
   --secondary: #0A193D;
   --accent: #0A193D;
   --accent-soft: #E9EDFB;
-  --text: #f8fafc;
-  --text-soft: #e2e8f0;
-  --text-muted: #cbd5e1;
-  --text-faint: #0A193D;
-  --teal: #38bdf8;
-  --blue: #93c5fd;
-  --divider: rgba(10,25,61,0.15);
+  --text: #0f172a;
+  --text-soft: #334155;
+  --text-muted: #64748b;
+  --text-faint: #94a3b8;
+  --teal: #059669;
+  --blue: #2563eb;
+  --divider: rgba(10,25,61,0.08);
 
-  /* Admin dashboard palette (dark) */
-  --ace-card: linear-gradient(145deg, rgba(43, 55, 84, 0.7), rgba(26, 34, 60, 0.42));
-  --ace-card-border: rgba(255, 255, 255, 0.08);
-  --ace-text: #f1f5f9;
-  --ace-sub: #94a3b8;
-  --ace-input-bg: rgba(15, 23, 42, 0.5);
-  --ace-soft-bg: rgba(15, 23, 42, 0.3);
+  /* Admin dashboard palette (light — dark mode removed) */
+  --ace-card: #ffffff;
+  --ace-card-border: rgba(15, 23, 42, 0.1);
+  --ace-text: #1e293b;
+  --ace-sub: #64748b;
+  --ace-input-bg: #ffffff;
+  --ace-soft-bg: rgba(10,25,61,0.07);
   --ace-accent-text: #0A193D;
-  --ace-sidebar: #151d33;
-  --ace-sidebar-text: #f1f5f9;
+  --ace-sidebar: #0f1730;
+  --ace-sidebar-text: #e2e8f0;
   --ace-sidebar-sub: #94a3b8;
-  --ace-sidebar-border: rgba(255, 255, 255, 0.07);
-  --ace-shell-bg: linear-gradient(160deg, #0b1220 0%, #111a35 55%, #0b1024 100%);
+  --ace-sidebar-border: rgba(255, 255, 255, 0.08);
+  --ace-shell-bg: linear-gradient(160deg, #FEFBFE 0%, #FEFBFE 55%, #FEFBFE 100%);
 }
 
 * {

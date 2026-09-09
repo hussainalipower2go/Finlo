@@ -6,7 +6,7 @@ import { usePathname, useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
 import {
   LayoutDashboard, Users, BarChart2, Database, AlertTriangle,
-  MessageSquare, Settings, ShieldCheck, LogOut, ExternalLink, Sun, Moon,
+  MessageSquare, Settings, ShieldCheck, LogOut, ExternalLink,
 } from 'lucide-react'
 
 const NAV = [
@@ -38,16 +38,11 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   const currentLabel = NAV.find((n) => n.id === activeId)?.label ?? 'Finlo Admin'
 
   const [viewerEmail, setViewerEmail] = useState('')
-  const [isDark, setIsDark] = useState(() => {
-    if (typeof window === 'undefined') return false
-    const saved = localStorage.getItem('finlo_theme')
-    return saved ? saved === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches
-  })
 
   useEffect(() => {
-    document.documentElement.classList.toggle('dark', isDark)
-    document.documentElement.classList.toggle('light', !isDark)
-  }, [isDark])
+    document.documentElement.classList.add('light')
+    document.documentElement.classList.remove('dark')
+  }, [])
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
@@ -55,14 +50,6 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
     })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
-  const toggleTheme = () => {
-    const next = !isDark
-    setIsDark(next)
-    localStorage.setItem('finlo_theme', next ? 'dark' : 'light')
-    document.documentElement.classList.toggle('dark', next)
-    document.documentElement.classList.toggle('light', !next)
-  }
 
   const handleSignOut = async () => {
     await supabase.auth.signOut()
@@ -81,12 +68,11 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
           <div style={{ fontSize: 10.5, color: colors.sub }}>Internal dashboard</div>
         </div>
         <button
-          onClick={toggleTheme}
-          aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
-          title={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
-          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 32, height: 32, borderRadius: 9, border: `1px solid ${colors.border}`, background: 'transparent', color: colors.sub, cursor: 'pointer', flexShrink: 0 }}
+          aria-label="Internal dashboard"
+          title="Finlo Admin"
+          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', width: 32, height: 32, borderRadius: 9, border: `1px solid ${colors.border}`, background: 'transparent', color: colors.sub, cursor: 'default', flexShrink: 0 }}
         >
-          {isDark ? <Sun size={15} /> : <Moon size={15} />}
+          <ShieldCheck size={15} />
         </button>
       </div>
 
@@ -154,13 +140,6 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
         >
           <Settings size={15} />
         </Link>
-        <button
-          onClick={toggleTheme}
-          aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
-          style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 8, borderRadius: 8, border: `1px solid ${colors.border}`, background: 'transparent', color: colors.sub, cursor: 'pointer' }}
-        >
-          {isDark ? <Sun size={15} /> : <Moon size={15} />}
-        </button>
         <button
           onClick={handleSignOut}
           aria-label="Sign out"

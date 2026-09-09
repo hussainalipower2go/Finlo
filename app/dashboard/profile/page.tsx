@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
 import {
   LayoutDashboard, ArrowLeftRight, Calendar, PieChart,
-  BarChart2, Bot, Settings, Bell, Moon, Sun, LogOut,
+  BarChart2, Bot, Settings, Bell, LogOut,
   User, MoreHorizontal, ShieldCheck, Mail, Check,
 } from 'lucide-react'
 import type { User as SupabaseUser } from '@supabase/supabase-js'
@@ -48,7 +48,7 @@ const navItems = [
 ]
 
 export default function ProfilePage() {
-  const [theme, setTheme] = useState<Theme>('light')
+  const [theme] = useState<Theme>('light')
   const [hasAuth, setHasAuth] = useState(false)
   const [user, setUser] = useState<SupabaseUser | null>(null)
   const [name, setName] = useState('')
@@ -221,9 +221,6 @@ export default function ProfilePage() {
             </div>
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <button onClick={() => setTheme(isDark ? 'light' : 'dark')} style={{ width: 36, height: 36, borderRadius: 8, border: `1px solid ${colors.cardBorder}`, background: colors.card, color: colors.textSub, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer' }}>
-              {isDark ? <Sun size={16} /> : <Moon size={16} />}
-            </button>
             <button style={{ width: 36, height: 36, borderRadius: 8, border: `1px solid ${colors.cardBorder}`, background: colors.card, color: colors.textSub, display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', position: 'relative' }}>
               <Bell size={16} />
               <span style={{ position: 'absolute', top: 7, right: 7, width: 7, height: 7, borderRadius: '50%', background: '#ef4444' }} />

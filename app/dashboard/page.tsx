@@ -9,7 +9,7 @@ import { ImportCenter } from "@/components/imports/ImportCenter";
 import { IncomeSource, ExpenseCategory, PaymentMethod, type Installment } from "@/lib/types";
 import {
   LayoutDashboard, ArrowLeftRight, Calendar, PieChart,
-  BarChart2, Bot, Settings, Bell, Moon, Sun, Plus, X,
+  BarChart2, Bot, Settings, Bell, Plus, X,
   TrendingUp, TrendingDown, AlertCircle, ChevronRight,
   Wallet, ShieldCheck, Timer, Home, Zap, Wifi, Dumbbell,
   ShoppingCart, Car, UtensilsCrossed, Heart,
@@ -234,8 +234,7 @@ export default function FinloApp() {
         "";
       setUserName(n);
       setUserEmail(u.email || "");
-      const savedTheme = u.user_metadata?.theme;
-      setTheme(savedTheme === "dark" ? "dark" : "light");
+      setTheme("light");
       const savedCurrency = u.user_metadata?.currency as string;
       setCurrency(savedCurrency || "PKR");
       const savedOpeningBalance = u.user_metadata?.opening_balance;
@@ -431,12 +430,6 @@ const insts = await getUserInstallmentsClient();
   const displayName = userName || "User";
   const userFirstName = displayName.split(" ")[0] || "User";
   const userInitial = userName ? userName.charAt(0).toUpperCase() : "U";
-
-  const handleToggleTheme = () => {
-    const next: Theme = isDark ? "light" : "dark";
-    setTheme(next);
-    supabase.auth.updateUser({ data: { theme: next } }).catch(() => {});
-  };
 
   const handleCurrencyChange = (c: string) => {
     setCurrency(c);
@@ -707,9 +700,6 @@ const insts = await getUserInstallmentsClient();
             <button onClick={() => navigateTo("settings")} title="Settings" style={{ width: 36, height: 36, borderRadius: 8, border: `1px solid ${colors.cardBorder}`, background: colors.card, color: page === "settings" ? colors.accent : colors.textSub, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
               <Settings size={16} />
             </button>
-            <button onClick={handleToggleTheme} style={{ width: 36, height: 36, borderRadius: 8, border: `1px solid ${colors.cardBorder}`, background: colors.card, color: colors.textSub, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
-              {isDark ? <Sun size={16} /> : <Moon size={16} />}
-            </button>
             <button onClick={() => setShowNotifications(v => !v)} style={{ width: 36, height: 36, borderRadius: 8, border: `1px solid ${colors.cardBorder}`, background: colors.card, color: colors.textSub, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", position: "relative" }}>
               <Bell size={16} />
               {notifications.length > 0 && <span style={{ position: "absolute", top: 7, right: 7, width: 7, height: 7, borderRadius: "50%", background: "#ef4444" }} />}
@@ -747,7 +737,7 @@ const insts = await getUserInstallmentsClient();
           {page === "analytics" && <AnalyticsPage colors={colors} transactions={realTransactions} currency={currency} />}
           {page === "ai" && <AIPage colors={colors} transactions={realTransactions} currency={currency} />}
           {page === "installments" && <InstallmentsPage colors={colors} installments={realInstallments} onAdd={handleAddInstallment} onMarkPaid={(inst) => { setInstallmentPayTarget(inst); setAddType("expense"); setShowAddModal(true); }} onDelete={handleDeleteInstallment} currency={currency} />}
-          {page === "settings" && <SettingsPage colors={colors} isDark={isDark} toggleTheme={handleToggleTheme} displayName={displayName} userEmail={userEmail} onSignOut={handleSignOut} currency={currency} onCurrencyChange={handleCurrencyChange} supabase={supabase} />}
+          {page === "settings" && <SettingsPage colors={colors} displayName={displayName} userEmail={userEmail} onSignOut={handleSignOut} currency={currency} onCurrencyChange={handleCurrencyChange} supabase={supabase} />}
         </main>
       </div>
 
@@ -2083,7 +2073,7 @@ function AIPage({ colors, transactions, currency }: { colors: Colors; transactio
 }
 
 // ── Settings Page ───────────────────────────────────────────────────────────
-function SettingsPage({ colors, isDark, toggleTheme, displayName, userEmail, onSignOut, currency, onCurrencyChange, supabase }: { colors: Colors; isDark: boolean; toggleTheme: () => void; displayName: string; userEmail: string; onSignOut: () => void; currency: string; onCurrencyChange: (c: string) => void; supabase: ReturnType<typeof createClient> }) {
+function SettingsPage({ colors, displayName, userEmail, onSignOut, currency, onCurrencyChange, supabase }: { colors: Colors; displayName: string; userEmail: string; onSignOut: () => void; currency: string; onCurrencyChange: (c: string) => void; supabase: ReturnType<typeof createClient> }) {
   const currencies = ["PKR", "USD", "AED", "SAR", "GBP", "EUR"];
   const profileInitial = (displayName || "U").charAt(0).toUpperCase();
   const [draftCurrency, setDraftCurrency] = useState(currency);
@@ -2332,20 +2322,6 @@ function SettingsPage({ colors, isDark, toggleTheme, displayName, userEmail, onS
               {c}
             </button>
           ))}
-        </div>
-      </div>
-
-      {/* Theme */}
-      <div style={{ padding: "22px 24px", borderRadius: 16, background: colors.card, border: `1px solid ${colors.cardBorder}` }}>
-        <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 14, display: "flex", alignItems: "center", gap: 8 }}>{isDark ? <Moon size={16} color="#0A193D" /> : <Sun size={16} color="#0A193D" />} Appearance</div>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <div>
-            <div style={{ fontWeight: 500, fontSize: 13, color: colors.text }}>{isDark ? "Dark Mode" : "Light Mode"}</div>
-            <div style={{ fontSize: 12, color: colors.textSub }}>Switch between light and dark theme</div>
-          </div>
-          <button onClick={toggleTheme} style={{ width: 52, height: 28, borderRadius: 20, border: "none", background: isDark ? "#0A193D" : colors.cardBorder, cursor: "pointer", position: "relative", transition: "background 0.16s" }}>
-            <span style={{ position: "absolute", top: 3, width: 22, height: 22, borderRadius: "50%", background: "#fff", transition: "left 0.16s", left: isDark ? 27 : 3 }} />
-          </button>
         </div>
       </div>
 
