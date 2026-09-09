@@ -128,9 +128,14 @@ body {
   padding: var(--f-pad) !important;
 }
 .finlo-dash-fab {
-  width: clamp(44px, 10vw, 54px) !important;
-  height: clamp(44px, 10vw, 54px) !important;
+  position: fixed;
   right: var(--f-pad-sm) !important;
+  bottom: 28px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--f-pad-xs);
+  z-index: 100;
 }
 .finlo-dash-bottomnav {
   left: var(--f-pad-sm) !important;

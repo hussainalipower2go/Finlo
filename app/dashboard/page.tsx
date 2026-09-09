@@ -534,7 +534,6 @@ const insts = await getUserInstallmentsClient();
     { id: "budgets" as Page, label: "Budgets", icon: <PieChart size={18} /> },
     { id: "installments" as Page, label: "Install", icon: <DollarSign size={18} /> },
     { id: "analytics" as Page, label: "Analytics", icon: <BarChart2 size={18} /> },
-    { id: "ai" as Page, label: "AI", icon: <Bot size={18} /> },
   ];
 
   const navigateTo = (next: Page) => {
@@ -717,16 +716,27 @@ const insts = await getUserInstallmentsClient();
         </main>
       </div>
 
-      {/* FAB */}
-      <button
-        onClick={() => setShowAddModal(true)}
-        className="finlo-dash-fab"
-        style={{ position: "fixed", bottom: 28, right: 28, width: 52, height: 52, borderRadius: "50%", background: "linear-gradient(135deg,#6366f1,#818cf8)", border: "none", color: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 20px rgba(99,102,241,0.4)", zIndex: 100, transition: "transform 0.12s" }}
-        onMouseEnter={e => (e.currentTarget.style.transform = "scale(1.08)")}
-        onMouseLeave={e => (e.currentTarget.style.transform = "scale(1)")}
-      >
-        <Plus size={22} />
-      </button>
+      {/* FAB - AI on top, Add below */}
+      <div className="finlo-dash-fab" style={{ position: "fixed", bottom: 28, right: 28, zIndex: 100, display: "flex", flexDirection: "column", alignItems: "center", gap: 10 }}>
+        <button
+          onClick={() => navigateTo("ai")}
+          style={{ width: 46, height: 46, borderRadius: "50%", background: isDark ? "linear-gradient(135deg,#334155,#4f46e5)" : "linear-gradient(135deg,#8b5cf6,#6366f1)", border: `2px solid ${colors.card}`, color: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 16px rgba(139,92,246,0.4)", transition: "transform 0.12s" }}
+          onMouseEnter={e => (e.currentTarget.style.transform = "scale(1.08)")}
+          onMouseLeave={e => (e.currentTarget.style.transform = "scale(1)")}
+          title="AI Assistant"
+        >
+          <Bot size={20} />
+        </button>
+        <button
+          onClick={() => setShowAddModal(true)}
+          style={{ width: 52, height: 52, borderRadius: "50%", background: "linear-gradient(135deg,#6366f1,#818cf8)", border: "none", color: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 20px rgba(99,102,241,0.4)", transition: "transform 0.12s" }}
+          onMouseEnter={e => (e.currentTarget.style.transform = "scale(1.08)")}
+          onMouseLeave={e => (e.currentTarget.style.transform = "scale(1)")}
+          title="Add"
+        >
+          <Plus size={22} />
+        </button>
+      </div>
 
       {/* Mobile bottom tab bar - glass liquid */}
       <div className="finlo-dash-bottomnav" style={{
