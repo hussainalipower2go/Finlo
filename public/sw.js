@@ -10,7 +10,7 @@ self.addEventListener("push", (event) => {
   let payload = {
     title: "Finlo",
     body: "A payment is due today. Check your Finlo app.",
-    url: "/dashboard/upcoming",
+    url: "/dashboard#upcoming",
   };
   try {
     const data = event.data ? event.data.json() : null;
@@ -24,7 +24,7 @@ self.addEventListener("push", (event) => {
       icon: "/logo.png",
       badge: "/logo.png",
       requireInteraction: true,
-      data: { url: payload.url || "/dashboard/upcoming" },
+      data: { url: payload.url || "/dashboard#upcoming" },
     })
   );
 });
@@ -32,7 +32,7 @@ self.addEventListener("push", (event) => {
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
   const target = new URL(
-    (event.notification.data && event.notification.data.url) || "/dashboard/upcoming",
+    (event.notification.data && event.notification.data.url) || "/dashboard#upcoming",
     self.location.origin
   ).href;
   event.waitUntil(

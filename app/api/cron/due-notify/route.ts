@@ -97,7 +97,7 @@ export async function GET(req: Request) {
     const message = JSON.stringify({
       title: items.length === 1 ? "Payment due today" : `${items.length} payments due today`,
       body: items.length === 1 ? items[0] : items.slice(0, 3).join(", ") + (items.length > 3 ? ` +${items.length - 3} more` : ""),
-      url: "/dashboard/upcoming",
+      url: "/dashboard#upcoming",
     });
 
     for (const sub of subs as unknown as SubRow[]) {

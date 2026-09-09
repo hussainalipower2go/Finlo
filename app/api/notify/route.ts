@@ -64,7 +64,7 @@ export async function POST(req: Request) {
     const message = JSON.stringify({
       title: payload.title,
       body: payload.body || "",
-      url: payload.url || "/dashboard/upcoming",
+      url: payload.url || "/dashboard#upcoming",
     });
 
     for (const sub of subs as PushRow[]) {

@@ -213,7 +213,7 @@ export async function requestPushForDue(items: { name: string; amount: number; d
           items.length === 1
             ? `${items[0].name} — ${new Intl.NumberFormat("en-PK").format(items[0].amount)} due ${new Date(items[0].date).toLocaleDateString()}`
             : items.slice(0, 3).map((i) => i.name).join(", ") + (items.length > 3 ? ` +${items.length - 3} more` : ""),
-        url: "/dashboard/upcoming",
+        url: "/dashboard#upcoming",
       }),
     });
   } catch {
