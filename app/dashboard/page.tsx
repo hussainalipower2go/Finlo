@@ -27,7 +27,7 @@ import {
   Cell, Legend, ComposedChart
 } from "recharts";
 import { formatCurrency, currencySymbol } from "@/lib/format";
-import { setupPushSubscription, requestPushForDue, getPushStatus, enablePush, disablePush, notifPref, setNotifPref, NOTIF_PREF_BILLS, NOTIF_PREF_BUDGET, NOTIF_PREF_INCOME, type PushStatus } from "@/lib/push";
+import { autoEnablePush, requestPushForDue, getPushStatus, enablePush, disablePush, notifPref, setNotifPref, NOTIF_PREF_BILLS, NOTIF_PREF_BUDGET, NOTIF_PREF_INCOME, type PushStatus } from "@/lib/push";
 
 // ── Types ──────────────────────────────────────────────────────────────────
 type Page = "dashboard" | "transactions" | "upcoming" | "budgets" | "analytics" | "ai" | "installments" | "settings";
@@ -119,7 +119,16 @@ export default function FinloApp() {
     };
   }, []);
   useEffect(() => {
-    void setupPushSubscription();
+    void (async () => {
+      const r = await autoEnablePush();
+      setPushStatus(r.status);
+      setShowPushHint(r.armed);
+      if (r.armed) {
+        const t = setTimeout(() => setShowPushHint(false), 14000);
+        window.addEventListener("pointerdown", () => setShowPushHint(false), { once: true });
+        return () => clearTimeout(t);
+      }
+    })();
   }, []);
   const [hasAuth, setHasAuth] = useState(false);
   const [userName, setUserName] = useState("");
@@ -770,6 +779,14 @@ const insts = await getUserInstallmentsClient();
           );
         })}
       </div>
+
+      {/* Push hint chip */}
+      {showPushHint && pushStatus !== "enabled" && (
+        <div style={{ position: "fixed", bottom: "calc(86px + env(safe-area-inset-bottom, 0px))", left: "50%", transform: "translateX(-50%)", zIndex: 220, background: isDark ? "rgba(28,29,40,0.92)" : "rgba(255,255,255,0.95)", border: `1px solid ${colors.cardBorder}`, borderRadius: 999, padding: "10px 16px", boxShadow: "0 10px 30px rgba(0,0,0,0.25)", display: "flex", alignItems: "center", gap: 8, fontSize: 12.5, fontWeight: 600, color: colors.text, cursor: "pointer", backdropFilter: "blur(12px)", pointerEvents: "auto" }}>
+          <span style={{ fontSize: 15 }}>🔔</span>
+          <span>Tap anywhere to allow notifications</span>
+        </div>
+      )}
 
       {/* Add Modal */}
       {showAddModal && <AddModal colors={colors} onClose={() => { setShowAddModal(false); setInstallmentPayTarget(null); }} addType={addType} setAddType={setAddType} recurringNames={realRecurring.map((r) => r.name)} currency={currency} installmentTarget={installmentPayTarget} onMarkInstallmentPaid={handleMarkInstallmentPaid} />}
@@ -2046,6 +2063,7 @@ function SettingsPage({ colors, isDark, toggleTheme, displayName, userEmail, onS
   const [deleting, setDeleting] = useState(false);
   const [deleteErr, setDeleteErr] = useState("");
   const [pushStatus, setPushStatus] = useState<PushStatus>("idle");
+  const [showPushHint, setShowPushHint] = useState(false);
   const [notifBills, setNotifBills] = useState(() => notifPref(NOTIF_PREF_BILLS, true));
   const [notifBudget, setNotifBudget] = useState(() => notifPref(NOTIF_PREF_BUDGET, true));
   const [notifIncome, setNotifIncome] = useState(() => notifPref(NOTIF_PREF_INCOME, true));

@@ -79,7 +79,7 @@ export async function setupPushSubscription(force = false): Promise<boolean> {
     if (!masterPushEnabled()) return false;
     if (Notification.permission === "denied") return false;
 
-    if (!force) {
+    if (Notification.permission === "default" && !force) {
       let lastAttempted = "";
       try {
         lastAttempted = localStorage.getItem(ATTEMPTED_KEY) || "";
@@ -87,9 +87,7 @@ export async function setupPushSubscription(force = false): Promise<boolean> {
         /* ignore */
       }
       const today = new Date().toISOString().slice(0, 10);
-      if (lastAttempted === today) {
-        return Notification.permission === "granted";
-      }
+      if (lastAttempted === today) return false;
       try {
         localStorage.setItem(ATTEMPTED_KEY, today);
       } catch {
@@ -174,6 +172,36 @@ export async function enablePush(): Promise<PushStatus> {
   const ok = await setupPushSubscription(true);
   if (ok) return "enabled";
   return Notification.permission === "denied" ? "denied" : "idle";
+}
+
+/**
+ * Fully automatic path: if permission is already granted the browser's push
+ * subscription is (re)created silently on every visit. If permission is still
+ * "default" a one-time first-tap prompt is armed, so the browser's own prompt
+ * appears on the user's very first tap anywhere — no Settings/Enable needed.
+ */
+export async function autoEnablePush(): Promise<{ status: PushStatus; armed: boolean }> {
+  if (!isPushSupported()) return { status: "unsupported", armed: false };
+  if (Notification.permission === "denied") return { status: "denied", armed: false };
+  if (Notification.permission === "granted") {
+    const ok = await setupPushSubscription(true);
+    return { status: ok ? "enabled" : "error", armed: false };
+  }
+  let wantOnce = true;
+  try {
+    if (localStorage.getItem(MASTER_KEY) === "0") wantOnce = false;
+  } catch {
+    /* ignore */
+  }
+  if (wantOnce) {
+    const handler = () => {
+      window.removeEventListener("pointerdown", handler, true);
+      void enablePush();
+    };
+    window.addEventListener("pointerdown", handler, true);
+    return { status: "idle", armed: true };
+  }
+  return { status: "idle", armed: false };
 }
 
 export async function disablePush(): Promise<void> {
