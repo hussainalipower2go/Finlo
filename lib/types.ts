@@ -275,6 +275,7 @@ export type Database = {
           auto_add_confidence: number
           notify_on_detect: boolean
           excluded_senders: Json | null
+          import_token: string | null
           updated_at: string | null
         }
         Insert: {
@@ -284,6 +285,7 @@ export type Database = {
           auto_add_confidence?: number
           notify_on_detect?: boolean
           excluded_senders?: Json | null
+          import_token?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -293,6 +295,7 @@ export type Database = {
           auto_add_confidence?: number
           notify_on_detect?: boolean
           excluded_senders?: Json | null
+          import_token?: string | null
           updated_at?: string | null
         }
         Relationships: []

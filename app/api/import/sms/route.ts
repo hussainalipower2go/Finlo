@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient as createServerClient } from '@/lib/supabase-server'
+import { adminDb } from '@/lib/admin/helpers'
 import { getAuthUser } from '../auth'
 import { analyzeSms, findDuplicate } from '@/services/sms-parser/index'
 import { looksFinancial } from '@/services/sms-parser/banks'
@@ -24,7 +25,23 @@ function truncatePreview(s: string): string {
  * auto-adds (mode=auto + confidence threshold) or queues for review.
  */
 export async function POST(req: NextRequest) {
-  const auth = await getAuthUser(req)
+  let auth = await getAuthUser(req)
+  if (!auth.ok) {
+    // External SMS-forwarder apps use a stable personal import token.
+    const token = req.headers.get('x-finlo-import-token')?.trim()
+    if (token) {
+      try {
+        const { data: row } = await adminDb()
+          .from('sms_import_settings')
+          .select('user_id')
+          .eq('import_token', token)
+          .maybeSingle()
+        if (row?.user_id) auth = { ok: true, userId: row.user_id }
+      } catch {
+        /* fall through to 401 */
+      }
+    }
+  }
   if (!auth.ok) {
     return NextResponse.json({ error: auth.error }, { status: auth.status })
   }

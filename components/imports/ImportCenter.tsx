@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useCallback, useEffect } from "react";
-import { Smartphone, MessageSquare, Play, ShieldCheck, Info, CheckCircle2, XCircle, Eye, RefreshCw, TrendingUp, TrendingDown } from "lucide-react";
+import { Smartphone, MessageSquare, Play, ShieldCheck, Info, CheckCircle2, XCircle, Eye, RefreshCw, TrendingUp, TrendingDown, KeyRound, Copy, Check } from "lucide-react";
 import { analyzeSms } from "@/services/sms-parser/index";
 import type { SupabaseClient } from "@supabase/supabase-js";
 import type { Database } from "@/lib/types";
@@ -50,6 +50,8 @@ export function ImportCenter({ colors, supabase }: {
   const [saving, setSaving] = useState(false);
   const [saveMsg, setSaveMsg] = useState("");
   const [dbAvailable, setDbAvailable] = useState(true);
+  const [importToken, setImportToken] = useState("");
+  const [copied, setCopied] = useState(false);
 
   // Paste-preview tool
   const [smsInput, setSmsInput] = useState("");
@@ -80,6 +82,7 @@ export function ImportCenter({ colors, supabase }: {
         setMode(data.import_mode === "auto" ? "auto" : "review");
         setThreshold(Number(data.auto_add_confidence) ?? 0.9);
         setExcluded(Array.isArray(data.excluded_senders) ? data.excluded_senders.join(", ") : "");
+        setImportToken(data.import_token || "");
       }
       setDbAvailable(true);
     } catch (e) {
@@ -119,12 +122,19 @@ export function ImportCenter({ colors, supabase }: {
     return () => clearTimeout(t);
   }, [loadSettings, loadPending]);
 
-  const saveSettings = async () => {
-    setSaving(true);
+  const origin = typeof window !== "undefined" ? window.location.origin : "";
+
+  const genToken = async () => {
+    const t =
+      typeof crypto !== "undefined" && "randomUUID" in crypto
+        ? `${crypto.randomUUID()}${crypto.randomUUID()}`.replace(/-/g, "")
+        : `${Math.random().toString(36).slice(2)}${Math.random().toString(36).slice(2)}${Math.random().toString(36).slice(2)}`;
+    setImportToken(t);
     setSaveMsg("");
     try {
       const existing = await supabase.from("sms_import_settings").select("user_id").single();
       const record = {
+        import_token: t,
         enabled,
         import_mode: mode,
         auto_add_confidence: threshold,
@@ -136,6 +146,42 @@ export function ImportCenter({ colors, supabase }: {
         const { data: { user } } = await supabase.auth.getUser();
         if (!user) throw new Error("Not authenticated");
         await supabase.from("sms_import_settings").upsert({ user_id: user.id, ...record });
+      }
+      setSaveMsg("✓ Token ready — settings saved");
+      setTimeout(() => setSaveMsg(""), 2500);
+    } catch {
+      setSaveMsg("Token save fail — database migration apply karo");
+    }
+  };
+
+  const doCopy = async () => {
+    try {
+      await navigator.clipboard.writeText(importToken);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch {
+      /* ignore */
+    }
+  };
+
+  const saveSettings = async () => {
+    setSaving(true);
+    setSaveMsg("");
+    try {
+      const existing = await supabase.from("sms_import_settings").select("user_id").single();
+      const record = {
+        enabled,
+        import_mode: mode,
+        auto_add_confidence: threshold,
+        excluded_senders: excluded.split(",").map((s) => s.trim()).filter(Boolean),
+      };
+      const withToken = importToken ? { ...record, import_token: importToken } : record;
+      if (existing.data) {
+        await supabase.from("sms_import_settings").update(withToken).eq("user_id", existing.data.user_id);
+      } else {
+        const { data: { user } } = await supabase.auth.getUser();
+        if (!user) throw new Error("Not authenticated");
+        await supabase.from("sms_import_settings").upsert({ user_id: user.id, ...withToken });
       }
       setSaveMsg("✓ Settings saved");
       setTimeout(() => setSaveMsg(""), 2000);
@@ -263,6 +309,45 @@ export function ImportCenter({ colors, supabase }: {
           {saving ? "Saving…" : "Save settings"}
         </button>
         {saveMsg && <span style={{ fontSize: 12, fontWeight: 600, color: saveMsg.includes("✓") ? "#10b981" : "#ef4444" }}>{saveMsg}</span>}
+      </div>
+
+      {/* Auto-connect via SMS Forwarder */}
+      <div style={{ marginTop: 18, padding: 14, borderRadius: 12, background: colors.accentLight, border: `1px solid rgba(99,102,241,0.25)` }}>
+        <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 4, display: "flex", alignItems: "center", gap: 6, color: colors.text }}>
+          <KeyRound size={14} color="#6366f1" /> Auto-connect: SMS Forwarder app (no app build, no copy-paste)
+        </div>
+        <div style={{ fontSize: 12, color: colors.textSub, lineHeight: 1.6 }}>
+          Ek free Play Store app (&quot;SMS Forwarder&quot;) install karo, is token ko usme daalo — phir har bank SMS khud Finlo API par
+          aayegi aur parse ho kar add ho jayegi. Bas ek baar setup.
+        </div>
+
+        <div style={{ display: "flex", gap: 8, marginTop: 12, flexWrap: "wrap" }}>
+          <button onClick={genToken} style={{ display: "flex", alignItems: "center", gap: 6, padding: "9px 16px", borderRadius: 9, border: "none", background: "#6366f1", color: "#fff", fontSize: 12.5, fontWeight: 600, cursor: "pointer" }}>
+            <KeyRound size={14} /> {importToken ? "Generate new token" : "Generate token"}
+          </button>
+          {importToken && (
+            <button onClick={doCopy} style={{ display: "flex", alignItems: "center", gap: 6, padding: "9px 16px", borderRadius: 9, border: `1px solid ${colors.cardBorder}`, background: "transparent", color: colors.text, fontSize: 12.5, fontWeight: 600, cursor: "pointer" }}>
+              {copied ? <Check size={14} color="#10b981" /> : <Copy size={14} />} {copied ? "Copied!" : "Copy token"}
+            </button>
+          )}
+        </div>
+
+        {importToken && (
+          <>
+            <div style={{ marginTop: 12, fontSize: 11.5, color: colors.textSub }}>Aap ka personal token (doosron ko mat dikhao):</div>
+            <div style={{ marginTop: 4, padding: "10px 12px", borderRadius: 8, background: colors.inputBg, border: `1px solid ${colors.cardBorder}`, fontFamily: "monospace", fontSize: 12, color: colors.text, wordBreak: "break-all" }}>{importToken}</div>
+
+            <div style={{ marginTop: 14, fontSize: 12.5, color: colors.text, fontWeight: 600 }}>SMS Forwarder app config:</div>
+            <div style={{ marginTop: 6, fontSize: 12, color: colors.textSub, lineHeight: 1.7 }}>
+              1. Play Store se <b>{"SMS Forwarder"}</b> install karo<br />
+              2. <b>URL:</b> <code style={{ color: colors.text }}>{origin}/api/import/sms</code><br />
+              3. <b>Method:</b> POST · <b>Header:</b> <code style={{ color: colors.text }}>x-finlo-import-token: {"<token>"}</code><br />
+              4. <b>Body (JSON):</b> <code style={{ color: colors.text }}>{`{"messages":[{"sender":"SMS_SENDER","body":"%SMS"}]}`}</code><br />
+              5. Regex (optional) sirf bank se aane wali classifiy karo aur auto-mode on karo to seedhi add ho jayegi
+              <div style={{ marginTop: 6, opacity: 0.8 }}>Confidence kam hon to &quot;Review&quot; mode mein pending queue mein aati hai — wahi sab upar review karke add kar sakte ho.</div>
+            </div>
+          </>
+        )}
       </div>
 
       {/* Supported banks */}
