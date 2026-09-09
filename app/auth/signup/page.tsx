@@ -172,7 +172,7 @@ export default function SignupPage() {
             inset: 0,
             backgroundImage: isDark ? "url('/mountain.png')" : "url('/mountains11.png')",
             backgroundSize: "cover",
-            backgroundPosition: "30% center",
+            backgroundPosition: "70% center",
             backgroundRepeat: "no-repeat",
             zIndex: 0,
           }} />
