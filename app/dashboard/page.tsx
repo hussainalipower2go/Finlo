@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase";
 import type { RealtimeChannel } from "@supabase/supabase-js";
 import { jsPDF } from "jspdf";
+import { FinloLogoImg } from "@/components/branding/FinloLogoImg";
 import { getUserTransactionsClient, getUserIncomeClient, getUserExpensesClient, getUserRecurringExpensesClient, getBudgetsForMonthClient, addIncomeClient, addExpenseClient, upsertBudgetClient, getUserInstallmentsClient, addInstallmentClient, updateInstallmentClient, deleteInstallmentClient } from "@/lib/database-client";
 import { ImportCenter } from "@/components/imports/ImportCenter";
 import { IncomeSource, ExpenseCategory, PaymentMethod, type Installment } from "@/lib/types";
@@ -611,11 +612,8 @@ const insts = await getUserInstallmentsClient();
       }}>
         {/* Logo */}
         <div style={{ padding: "22px 18px 14px", display: "flex", alignItems: "center", gap: 10 }}>
-          {sidebarOpen ? (
-            <img src="/finlo-logo-horizontal.png" alt="Finlo" style={{ width: 121, height: "auto", display: "block" }} />
-          ) : (
-            <img src="/finlo-brand-mark.png" alt="Finlo" style={{ width: 36, height: 36, objectFit: "contain", display: "block" }} />
-          )}
+          <FinloLogoImg size={36} radius={10} />
+          {sidebarOpen && <span style={{ fontWeight: 700, fontSize: 17, letterSpacing: "-0.4px" }}>Fin<span style={{ color: colors.accent }}>lo</span></span>}
         </div>
 
         {/* Nav */}

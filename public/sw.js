@@ -21,8 +21,8 @@ self.addEventListener("push", (event) => {
   event.waitUntil(
     self.registration.showNotification(payload.title || "Finlo", {
       body: payload.body,
-      icon: "/finlo-brand-mark.png",
-      badge: "/finlo-brand-mark.png",
+      icon: "/logo.png",
+      badge: "/logo.png",
       requireInteraction: true,
       data: { url: payload.url || "/dashboard#upcoming" },
     })
