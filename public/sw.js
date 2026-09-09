@@ -23,7 +23,7 @@ self.addEventListener("push", (event) => {
       body: payload.body,
       icon: "/logo.png",
       badge: "/logo.png",
-      tag: "finlo-due",
+      requireInteraction: true,
       data: { url: payload.url || "/dashboard/upcoming" },
     })
   );
