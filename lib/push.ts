@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase";
 
 const ATTEMPTED_KEY = "finlo_push_attempted";
 const MASTER_KEY = "finlo_push_enabled";
+const SAVED_ENDPOINT_KEY = "finlo_push_endpoint";
 
 export const NOTIF_PREF_BILLS = "finlo_notif_bills";
 export const NOTIF_PREF_BUDGET = "finlo_notif_budget";
@@ -117,17 +118,32 @@ export async function setupPushSubscription(force = false): Promise<boolean> {
       data: { user },
     } = await supabase.auth.getUser();
     if (!user) return false;
-    const { error } = await supabase.from("push_subscriptions").upsert(
-      {
-        user_id: user.id,
-        endpoint: subscription.endpoint,
-        keys_p256dh: base64FromKey(subscription.getKey("p256dh")),
-        keys_auth: base64FromKey(subscription.getKey("auth")),
-        user_agent: navigator.userAgent || "",
-      },
-      { onConflict: "endpoint" }
-    );
-    return !error;
+
+    let savedEndpoint = "";
+    try {
+      savedEndpoint = localStorage.getItem(SAVED_ENDPOINT_KEY) || "";
+    } catch {
+      /* ignore */
+    }
+    if (savedEndpoint !== subscription.endpoint) {
+      const { error } = await supabase.from("push_subscriptions").upsert(
+        {
+          user_id: user.id,
+          endpoint: subscription.endpoint,
+          keys_p256dh: base64FromKey(subscription.getKey("p256dh")),
+          keys_auth: base64FromKey(subscription.getKey("auth")),
+          user_agent: navigator.userAgent || "",
+        },
+        { onConflict: "endpoint" }
+      );
+      if (error) return false;
+      try {
+        localStorage.setItem(SAVED_ENDPOINT_KEY, subscription.endpoint);
+      } catch {
+        /* ignore */
+      }
+    }
+    return true;
   } catch {
     return false;
   }
@@ -163,6 +179,7 @@ export async function enablePush(): Promise<PushStatus> {
 export async function disablePush(): Promise<void> {
   try {
     localStorage.setItem(MASTER_KEY, "0");
+    localStorage.removeItem(SAVED_ENDPOINT_KEY);
   } catch {
     /* ignore */
   }
