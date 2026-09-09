@@ -612,8 +612,11 @@ const insts = await getUserInstallmentsClient();
       }}>
         {/* Logo */}
         <div style={{ padding: "22px 18px 14px", display: "flex", alignItems: "center", gap: 10 }}>
-          <FinloLogoImg size={36} radius={10} />
-          {sidebarOpen && <span style={{ fontWeight: 700, fontSize: 17, letterSpacing: "-0.4px" }}>Fin<span style={{ color: colors.accent }}>lo</span></span>}
+          {sidebarOpen ? (
+            <img src="/finlo-logo-horizontal.png" alt="Finlo" style={{ width: 128, height: "auto", display: "block" }} />
+          ) : (
+            <FinloLogoImg size={36} radius={10} />
+          )}
         </div>
 
         {/* Nav */}
