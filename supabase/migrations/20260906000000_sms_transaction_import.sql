@@ -125,16 +125,19 @@ ALTER TABLE import_history ENABLE ROW LEVEL SECURITY;
 
 -- SMS Import Settings Policies
 
+DROP POLICY IF EXISTS "Own sms settings select" ON sms_import_settings;
 CREATE POLICY "Own sms settings select"
 ON sms_import_settings
 FOR SELECT
 USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Own sms settings insert" ON sms_import_settings;
 CREATE POLICY "Own sms settings insert"
 ON sms_import_settings
 FOR INSERT
 WITH CHECK (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Own sms settings update" ON sms_import_settings;
 CREATE POLICY "Own sms settings update"
 ON sms_import_settings
 FOR UPDATE
@@ -143,21 +146,25 @@ USING (auth.uid() = user_id);
 
 -- Pending Transactions Policies
 
+DROP POLICY IF EXISTS "Own pending select" ON pending_transactions;
 CREATE POLICY "Own pending select"
 ON pending_transactions
 FOR SELECT
 USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Own pending insert" ON pending_transactions;
 CREATE POLICY "Own pending insert"
 ON pending_transactions
 FOR INSERT
 WITH CHECK (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Own pending update" ON pending_transactions;
 CREATE POLICY "Own pending update"
 ON pending_transactions
 FOR UPDATE
 USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Own pending delete" ON pending_transactions;
 CREATE POLICY "Own pending delete"
 ON pending_transactions
 FOR DELETE
@@ -166,11 +173,13 @@ USING (auth.uid() = user_id);
 
 -- Import History Policies
 
+DROP POLICY IF EXISTS "Own import history select" ON import_history;
 CREATE POLICY "Own import history select"
 ON import_history
 FOR SELECT
 USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Own import history insert" ON import_history;
 CREATE POLICY "Own import history insert"
 ON import_history
 FOR INSERT
