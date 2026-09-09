@@ -613,7 +613,7 @@ const insts = await getUserInstallmentsClient();
         {/* Logo */}
         <div style={{ padding: "22px 18px 14px", display: "flex", alignItems: "center", gap: 10 }}>
           {sidebarOpen ? (
-            <img src="/finlo-logo-horizontal.png" alt="Finlo" style={{ width: 93, height: "auto", display: "block" }} />
+            <img src="/finlo-logo-horizontal.png" alt="Finlo" style={{ width: 66, height: "auto", display: "block" }} />
           ) : (
             <FinloLogoImg size={36} radius={10} />
           )}
