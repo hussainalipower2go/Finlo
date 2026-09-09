@@ -128,6 +128,8 @@ export default function FinloApp() {
   const [openingBalance, setOpeningBalance] = useState(0);
   const [showBalanceModal, setShowBalanceModal] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [dueAlert, setDueAlert] = useState<{ kind: "recurring" | "installment"; id: string; name: string; amount: number; date: string; overdue: number }[] | null>(null);
+  const dueAlertShownRef = useRef(false);
   const [autoClearMessages, setAutoClearMessages] = useState<{ title: string; body: string }[]>([]);
   const [smsPending, setSmsPending] = useState(0);
 
@@ -312,7 +314,23 @@ export default function FinloApp() {
           };
         })
       );
-      setRealInstallments(await getUserInstallmentsClient());
+const insts = await getUserInstallmentsClient();
+      setRealInstallments(insts);
+      if (!dueAlertShownRef.current) {
+        const urgent = [
+          ...recs.map((r) => ({ kind: "recurring" as const, id: r.id, name: r.name, amount: Number(r.amount), date: String(r.next_due_date || "") })),
+          ...insts.filter((i) => i.status === "active" && i.next_due_date)
+            .map((i) => ({ kind: "installment" as const, id: i.id, name: `Installment: ${i.item_name}`, amount: Number(i.monthly_installment), date: String(i.next_due_date || "") })),
+        ]
+          .filter((x) => !!x.date)
+          .map((x) => ({ ...x, overdue: Math.round((new Date(x.date).getTime() - Date.now()) / 86400000) }))
+          .filter((x) => x.overdue <= 0)
+          .sort((a, b) => a.date.localeCompare(b.date));
+        if (urgent.length > 0) {
+          dueAlertShownRef.current = true;
+          setDueAlert(urgent);
+        }
+      }
       try {
         const pendingRes = await fetch("/api/import/pending");
         if (pendingRes.ok) {
@@ -728,6 +746,47 @@ export default function FinloApp() {
 
       {/* Balance Modal */}
       {showBalanceModal && <BalanceModal colors={colors} initialBalance={openingBalance} currentBalance={currentBalance} onClose={() => setShowBalanceModal(false)} onSave={saveOpeningBalance} onAdjust={adjustOpeningBalance} currency={currency} />}
+
+      {/* Due payments alert */}
+      {dueAlert && dueAlert.length > 0 && (
+        <div onClick={() => setDueAlert(null)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.45)", backdropFilter: "blur(4px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 220, padding: 20 }}>
+          <div onClick={(e) => e.stopPropagation()} style={{ width: "min(440px, 100%)", borderRadius: 20, background: colors.card, border: `1px solid ${colors.cardBorder}`, boxShadow: "0 20px 60px rgba(0,0,0,0.25)", padding: 24 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 4 }}>
+              <span style={{ fontWeight: 700, fontSize: 16, color: colors.text }}>Payments due 🔔</span>
+              <button onClick={() => setDueAlert(null)} style={{ width: 30, height: 30, borderRadius: 8, border: "none", background: colors.inputBg, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: colors.textSub }}><X size={15} /></button>
+            </div>
+            <div style={{ fontSize: 12.5, color: colors.textSub, marginBottom: 14 }}>
+              {dueAlert.length === 1 ? "1 payment needs attention today." : `${dueAlert.length} payments need attention today.`} Tap one to view it.
+            </div>
+            <div style={{ display: "flex", flexDirection: "column", gap: 8, maxHeight: 320, overflowY: "auto" }}>
+              {dueAlert.map((it) => {
+                const isOverdue = it.overdue < 0;
+                const accent = isOverdue ? "#ef4444" : "#f59e0b";
+                const badge = isOverdue ? `${Math.abs(it.overdue)}d overdue` : "Due today";
+                return (
+                  <button key={`${it.kind}-${it.id}`} onClick={() => { setDueAlert(null); navigateTo(it.kind === "installment" ? "installments" : "upcoming"); }} style={{ display: "flex", alignItems: "center", gap: 12, width: "100%", textAlign: "left", padding: "12px 14px", borderRadius: 12, border: "none", background: `${accent}0d`, borderLeft: `3px solid ${accent}`, cursor: "pointer" }}>
+                    <div style={{ width: 34, height: 34, borderRadius: 9, background: `${accent}1a`, display: "flex", alignItems: "center", justifyContent: "center", color: accent, flexShrink: 0 }}>
+                      {it.kind === "installment" ? <DollarSign size={15} /> : <Calendar size={15} />}
+                    </div>
+                    <div style={{ flex: 1, minWidth: 0 }}>
+                      <div style={{ fontWeight: 600, fontSize: 13, color: colors.text, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{it.name}</div>
+                      <div style={{ fontSize: 11, color: colors.textSub }}>{it.date}</div>
+                    </div>
+                    <div style={{ textAlign: "right" }}>
+                      <div style={{ fontWeight: 700, fontSize: 13, color: colors.text }}>{formatCurrency(it.amount, currency)}</div>
+                      <span style={{ fontSize: 10.5, fontWeight: 700, color: accent }}>{badge}</span>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+            <div style={{ display: "flex", gap: 10, marginTop: 18 }}>
+              <button onClick={() => { setDueAlert(null); navigateTo("upcoming"); }} style={{ flex: 1, padding: "11px", borderRadius: 10, border: "none", background: "#6366f1", color: "#fff", fontWeight: 700, fontSize: 13.5, cursor: "pointer" }}>View Upcoming</button>
+              <button onClick={() => setDueAlert(null)} style={{ padding: "11px 18px", borderRadius: 10, border: `1px solid ${colors.cardBorder}`, background: "transparent", color: colors.textSub, fontSize: 13.5, cursor: "pointer" }}>Dismiss</button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
