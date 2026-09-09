@@ -27,7 +27,7 @@ import {
   Cell, Legend, ComposedChart
 } from "recharts";
 import { formatCurrency, currencySymbol } from "@/lib/format";
-import { autoEnablePush, requestPushForDue, getPushStatus, enablePush, disablePush, notifPref, setNotifPref, NOTIF_PREF_BILLS, NOTIF_PREF_BUDGET, NOTIF_PREF_INCOME, type PushStatus } from "@/lib/push";
+import { autoEnablePush, requestPushForDue, getPushStatus, notifPref, setNotifPref, NOTIF_PREF_BILLS, NOTIF_PREF_BUDGET, NOTIF_PREF_INCOME, type PushStatus } from "@/lib/push";
 
 // ── Types ──────────────────────────────────────────────────────────────────
 type Page = "dashboard" | "transactions" | "upcoming" | "budgets" | "analytics" | "ai" | "installments" | "settings";
@@ -2335,14 +2335,12 @@ function SettingsPage({ colors, isDark, toggleTheme, displayName, userEmail, onS
                     ? "Is browser mein push supported nahi"
 : pushStatus === "error"
                   ? "Status check fail hua. Dobara try karein."
-                  : "Enable karo taake app band hone par bhi alert aaye. Mobile par nahi ho raha to pehle \"Add to Home Screen\" karein (iPhone ke liye zaroori)"}
+                  : "Automatic hain — app kholte hi apne aap enable ho jayengi. Mobile par nahi ho raha to pehle \"Add to Home Screen\" karein (iPhone ke liye zaroori)"}
             </div>
           </div>
-          {pushStatus === "enabled"
-            ? <button onClick={async () => { await disablePush(); await getPushStatus().then(setPushStatus); }} style={{ padding: "8px 14px", borderRadius: 9, background: "transparent", border: "1px solid rgba(239,68,68,0.4)", color: "#ef4444", fontSize: 12, fontWeight: 600, cursor: "pointer", flexShrink: 0 }}>Disable</button>
-            : pushStatus !== "unsupported" && (
-              <button onClick={async () => { await enablePush(); await getPushStatus().then(setPushStatus); }} style={{ padding: "8px 14px", borderRadius: 9, background: "#6366f1", border: "none", color: "#fff", fontSize: 12, fontWeight: 600, cursor: "pointer", flexShrink: 0 }}>Enable</button>
-            )}
+          <span style={{ padding: "5px 12px", borderRadius: 999, fontSize: 11, fontWeight: 700, flexShrink: 0, background: pushStatus === "enabled" ? "rgba(16,185,129,0.14)" : "rgba(148,163,184,0.14)", color: pushStatus === "enabled" ? "#10b981" : colors.textSub }}>
+            {pushStatus === "enabled" ? "ON" : pushStatus === "denied" ? "BLOCKED" : "AUTO"}
+          </span>
         </div>
         {[
           { label: "Upcoming bill reminders", sub: "Get notified 2 days before bills are due", on: notifBills, toggle: toggleNotifBills },
