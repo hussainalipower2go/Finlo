@@ -13,7 +13,7 @@ import {
   TrendingUp, TrendingDown, AlertCircle, ChevronRight,
   Wallet, ShieldCheck, Timer, Home, Zap, Wifi, Dumbbell,
   ShoppingCart, Car, UtensilsCrossed, Heart,
-  MoreHorizontal, Search, Trash2,
+  Search, Trash2,
   Info, Send, ChevronDown, LogOut,
   Download, User, ArrowUp, ArrowDown,
   Target, DollarSign, Sparkles, FileText, Pencil, Check,
@@ -429,7 +429,6 @@ const insts = await getUserInstallmentsClient();
 
   const displayName = userName || "User";
   const userFirstName = displayName.split(" ")[0] || "User";
-  const userInitial = userName ? userName.charAt(0).toUpperCase() : "U";
 
   const handleCurrencyChange = (c: string) => {
     setCurrency(c);
@@ -648,18 +647,7 @@ const insts = await getUserInstallmentsClient();
           </div>
         )}
 
-        {/* User */}
-        <div style={{ padding: "12px 14px", borderTop: `1px solid ${colors.cardBorder}`, display: "flex", alignItems: "center", gap: 10 }}>
-          <div style={{ width: 34, height: 34, borderRadius: "50%", background: "linear-gradient(135deg,#142453,#0A193D)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 700, fontSize: 13, flexShrink: 0 }}>{userInitial}</div>
-          {sidebarOpen && (
-            <div style={{ flex: 1, minWidth: 0 }}>
-              <div style={{ fontWeight: 600, fontSize: 13, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{displayName}</div>
-              <div style={{ fontSize: 11, color: colors.textSub, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{userEmail}</div>
-            </div>
-          )}
-          {sidebarOpen && <button style={{ background: "none", border: "none", cursor: "pointer", color: colors.textSub, padding: 2 }}><MoreHorizontal size={16} /></button>}
-        </div>
-      </aside>
+        </aside>
 
       {sidebarOpen && <div className="finlo-dash-backdrop" onClick={() => setSidebarOpen(false)} />}
 
