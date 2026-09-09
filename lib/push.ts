@@ -1,6 +1,39 @@
 import { createClient } from "@/lib/supabase";
 
 const ATTEMPTED_KEY = "finlo_push_attempted";
+const MASTER_KEY = "finlo_push_enabled";
+
+export const NOTIF_PREF_BILLS = "finlo_notif_bills";
+export const NOTIF_PREF_BUDGET = "finlo_notif_budget";
+export const NOTIF_PREF_INCOME = "finlo_notif_income";
+
+export type PushStatus = "unsupported" | "denied" | "enabled" | "idle" | "error";
+
+export function notifPref(key: string, def: boolean): boolean {
+  try {
+    const v = localStorage.getItem(key);
+    if (v === null) return def;
+    return v === "1";
+  } catch {
+    return def;
+  }
+}
+
+export function setNotifPref(key: string, enabled: boolean): void {
+  try {
+    localStorage.setItem(key, enabled ? "1" : "0");
+  } catch {
+    /* ignore */
+  }
+}
+
+function masterPushEnabled(): boolean {
+  try {
+    return localStorage.getItem(MASTER_KEY) !== "0";
+  } catch {
+    return true;
+  }
+}
 
 export function isPushSupported(): boolean {
   return (
@@ -42,6 +75,7 @@ function base64FromKey(key: ArrayBuffer | null): string {
 export async function setupPushSubscription(): Promise<boolean> {
   if (!isPushSupported()) return false;
   try {
+    if (!masterPushEnabled()) return false;
     if (Notification.permission === "denied") return false;
 
     let lastAttempted = "";
@@ -92,8 +126,58 @@ export async function setupPushSubscription(): Promise<boolean> {
   }
 }
 
+export async function getPushStatus(): Promise<PushStatus> {
+  if (!isPushSupported()) return "unsupported";
+  try {
+    if (Notification.permission === "denied") return "denied";
+    const registration = await navigator.serviceWorker.getRegistration("/sw.js");
+    const subscription = registration
+      ? await registration.pushManager.getSubscription()
+      : null;
+    if (Notification.permission === "granted" && subscription) return "enabled";
+    return "idle";
+  } catch {
+    return "error";
+  }
+}
+
+export async function enablePush(): Promise<PushStatus> {
+  if (!isPushSupported()) return "unsupported";
+  try {
+    localStorage.setItem(MASTER_KEY, "1");
+  } catch {
+    /* ignore */
+  }
+  const ok = await setupPushSubscription();
+  if (ok) return "enabled";
+  return Notification.permission === "denied" ? "denied" : "idle";
+}
+
+export async function disablePush(): Promise<void> {
+  try {
+    localStorage.setItem(MASTER_KEY, "0");
+  } catch {
+    /* ignore */
+  }
+  try {
+    const registration = await navigator.serviceWorker.getRegistration("/sw.js");
+    const subscription = registration
+      ? await registration.pushManager.getSubscription()
+      : null;
+    if (subscription) {
+      const endpoint = subscription.endpoint;
+      await subscription.unsubscribe();
+      const supabase = createClient();
+      await supabase.from("push_subscriptions").delete().eq("endpoint", endpoint);
+    }
+  } catch {
+    /* ignore */
+  }
+}
+
 export async function requestPushForDue(items: { name: string; amount: number; date: string }[]): Promise<void> {
   if (!isPushSupported() || Notification.permission !== "granted") return;
+  if (!notifPref(NOTIF_PREF_BILLS, true)) return;
   if (items.length === 0) return;
   try {
     await fetch("/api/notify", {

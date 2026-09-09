@@ -27,7 +27,7 @@ import {
   Cell, Legend, ComposedChart
 } from "recharts";
 import { formatCurrency, currencySymbol } from "@/lib/format";
-import { setupPushSubscription, requestPushForDue } from "@/lib/push";
+import { setupPushSubscription, requestPushForDue, getPushStatus, enablePush, disablePush, notifPref, setNotifPref, NOTIF_PREF_BILLS, NOTIF_PREF_BUDGET, NOTIF_PREF_INCOME, type PushStatus } from "@/lib/push";
 
 // ── Types ──────────────────────────────────────────────────────────────────
 type Page = "dashboard" | "transactions" | "upcoming" | "budgets" | "analytics" | "ai" | "installments" | "settings";
@@ -151,7 +151,10 @@ export default function FinloApp() {
   autoClearMessages.forEach((m) => {
     notifications.push({ title: m.title, body: m.body, color: "#10b981", icon: <Check size={15} /> });
   });
+  const billsNotif = notifPref(NOTIF_PREF_BILLS, true);
+  const budgetNotif = notifPref(NOTIF_PREF_BUDGET, true);
   realRecurring.forEach((r) => {
+    if (!billsNotif) return;
     const ts = new Date(r.date).getTime();
     if (isNaN(ts)) return;
     const days = Math.round((ts - nowMs) / (24 * 60 * 60 * 1000));
@@ -162,6 +165,7 @@ export default function FinloApp() {
     }
   });
   realInstallments.forEach((inst) => {
+    if (!billsNotif) return;
     if (!inst.next_due_date || inst.status !== "active") return;
     const ts = new Date(inst.next_due_date).getTime();
     if (isNaN(ts)) return;
@@ -173,6 +177,7 @@ export default function FinloApp() {
     }
   });
   realBudgets.forEach((b) => {
+    if (!budgetNotif) return;
     if (b.limit > 0 && b.spent / b.limit >= 0.8) {
       notifications.push({ title: `Budget alert: ${b.category}`, body: `${Math.round((b.spent / b.limit) * 100)}% used — ${formatCurrency(b.spent, currency)} of ${formatCurrency(b.limit, currency)}`, color: "#ef4444", icon: <Target size={15} /> });
     }
@@ -2030,6 +2035,18 @@ function SettingsPage({ colors, isDark, toggleTheme, displayName, userEmail, onS
   const [confirmDelete, setConfirmDelete] = useState(false);
   const [deleting, setDeleting] = useState(false);
   const [deleteErr, setDeleteErr] = useState("");
+  const [pushStatus, setPushStatus] = useState<PushStatus>("idle");
+  const [notifBills, setNotifBills] = useState(() => notifPref(NOTIF_PREF_BILLS, true));
+  const [notifBudget, setNotifBudget] = useState(() => notifPref(NOTIF_PREF_BUDGET, true));
+  const [notifIncome, setNotifIncome] = useState(() => notifPref(NOTIF_PREF_INCOME, true));
+
+  useEffect(() => {
+    void getPushStatus().then(setPushStatus);
+  }, []);
+
+  const toggleNotifBills = () => { const next = !notifBills; setNotifBills(next); setNotifPref(NOTIF_PREF_BILLS, next); };
+  const toggleNotifBudget = () => { const next = !notifBudget; setNotifBudget(next); setNotifPref(NOTIF_PREF_BUDGET, next); };
+  const toggleNotifIncome = () => { const next = !notifIncome; setNotifIncome(next); setNotifPref(NOTIF_PREF_INCOME, next); };
   const router = useRouter();
 
   const handleSave = () => {
@@ -2277,19 +2294,40 @@ function SettingsPage({ colors, isDark, toggleTheme, displayName, userEmail, onS
       {/* Notifications */}
       <div style={{ padding: "22px 24px", borderRadius: 16, background: colors.card, border: `1px solid ${colors.cardBorder}` }}>
         <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 14, display: "flex", alignItems: "center", gap: 8 }}><Bell size={16} color="#6366f1" /> Notifications</div>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, padding: "4px 0 12px", borderBottom: `1px solid ${colors.cardBorder}` }}>
+          <div>
+            <div style={{ fontSize: 13, fontWeight: 600, color: colors.text }}>Mobile / Desktop notifications</div>
+            <div style={{ fontSize: 11, color: colors.textSub, marginTop: 2 }}>
+              {pushStatus === "enabled"
+                ? "Chalu hain — due payments par home screen push aayegi"
+                : pushStatus === "denied"
+                  ? "Browser settings se allow karein (padlock → Site settings → Notifications)"
+                  : pushStatus === "unsupported"
+                    ? "Is browser mein push supported nahi"
+                    : pushStatus === "error"
+                      ? "Status check fail hua. Dobara try karein."
+                      : "Enable karo taake app band hone par bhi alert aaye"}
+            </div>
+          </div>
+          {pushStatus === "enabled"
+            ? <button onClick={async () => { await disablePush(); await getPushStatus().then(setPushStatus); }} style={{ padding: "8px 14px", borderRadius: 9, background: "transparent", border: "1px solid rgba(239,68,68,0.4)", color: "#ef4444", fontSize: 12, fontWeight: 600, cursor: "pointer", flexShrink: 0 }}>Disable</button>
+            : pushStatus !== "unsupported" && (
+              <button onClick={async () => { await enablePush(); await getPushStatus().then(setPushStatus); }} style={{ padding: "8px 14px", borderRadius: 9, background: "#6366f1", border: "none", color: "#fff", fontSize: 12, fontWeight: 600, cursor: "pointer", flexShrink: 0 }}>Enable</button>
+            )}
+        </div>
         {[
-          { label: "Upcoming bill reminders", sub: "Get notified 2 days before bills are due" },
-          { label: "Budget alerts", sub: "Alert when spending reaches 80% of budget" },
-          { label: "Income confirmations", sub: "Notify when expected income arrives" },
+          { label: "Upcoming bill reminders", sub: "Get notified 2 days before bills are due", on: notifBills, toggle: toggleNotifBills },
+          { label: "Budget alerts", sub: "Alert when spending reaches 80% of budget", on: notifBudget, toggle: toggleNotifBudget },
+          { label: "Income confirmations", sub: "Notify when expected income arrives", on: notifIncome, toggle: toggleNotifIncome },
         ].map((n, i) => (
-          <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "10px 0", borderBottom: i < 2 ? `1px solid ${colors.cardBorder}` : "none" }}>
+          <div key={i} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "12px 0", borderBottom: i < 2 ? `1px solid ${colors.cardBorder}` : "none" }}>
             <div>
               <div style={{ fontSize: 13, fontWeight: 500, color: colors.text }}>{n.label}</div>
               <div style={{ fontSize: 11, color: colors.textSub }}>{n.sub}</div>
             </div>
-            <div style={{ width: 40, height: 22, borderRadius: 11, background: "#6366f1", position: "relative", cursor: "pointer" }}>
-              <span style={{ position: "absolute", top: 2, right: 2, width: 18, height: 18, borderRadius: "50%", background: "#fff" }} />
-            </div>
+            <button onClick={n.toggle} aria-pressed={n.on} style={{ width: 40, height: 22, borderRadius: 11, border: "none", background: n.on ? "#6366f1" : colors.cardBorder, position: "relative", cursor: "pointer", padding: 0, flexShrink: 0 }}>
+              <span style={{ position: "absolute", top: 2, left: n.on ? 20 : 2, width: 18, height: 18, borderRadius: "50%", background: "#fff", transition: "left 0.12s ease" }} />
+            </button>
           </div>
         ))}
       </div>

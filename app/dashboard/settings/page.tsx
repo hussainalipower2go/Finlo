@@ -4,6 +4,10 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
 import {
+  getPushStatus, enablePush, disablePush, notifPref, setNotifPref,
+  NOTIF_PREF_BILLS, NOTIF_PREF_BUDGET, NOTIF_PREF_INCOME, type PushStatus,
+} from '@/lib/push'
+import {
   LayoutDashboard, ArrowLeftRight, Calendar, PieChart,
   BarChart2, Bot, Settings, Bell, Moon, Sun,
   User, MoreHorizontal, Download, Trash2,
@@ -89,9 +93,10 @@ export default function SettingsPage() {
   const [user, setUser] = useState<SupabaseUser | null>(null)
 
   const [currency, setCurrency] = useState('PKR')
-  const [notifBills, setNotifBills] = useState(true)
-  const [notifBudget, setNotifBudget] = useState(true)
-  const [notifIncome, setNotifIncome] = useState(true)
+  const [notifBills, setNotifBills] = useState(() => notifPref(NOTIF_PREF_BILLS, true))
+  const [notifBudget, setNotifBudget] = useState(() => notifPref(NOTIF_PREF_BUDGET, true))
+  const [notifIncome, setNotifIncome] = useState(() => notifPref(NOTIF_PREF_INCOME, true))
+  const [pushStatus, setPushStatus] = useState<PushStatus>('idle')
 
   const [confirmDelete, setConfirmDelete] = useState(false)
   const [deleting, setDeleting] = useState(false)
@@ -122,6 +127,28 @@ export default function SettingsPage() {
 
     checkAuth()
   }, [supabase.auth, router])
+
+  useEffect(() => {
+    void getPushStatus().then(setPushStatus)
+  }, [])
+
+  const toggleBills = () => {
+    const next = !notifBills
+    setNotifBills(next)
+    setNotifPref(NOTIF_PREF_BILLS, next)
+  }
+
+  const toggleBudget = () => {
+    const next = !notifBudget
+    setNotifBudget(next)
+    setNotifPref(NOTIF_PREF_BUDGET, next)
+  }
+
+  const toggleIncome = () => {
+    const next = !notifIncome
+    setNotifIncome(next)
+    setNotifPref(NOTIF_PREF_INCOME, next)
+  }
 
   const displayName =
     (user?.user_metadata?.full_name as string) ||
@@ -342,10 +369,31 @@ export default function SettingsPage() {
             {/* Notifications */}
             <SectionCard colors={colors} icon="🔔" title="Notifications">
               <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, padding: '4px 0 14px', borderBottom: `1px solid ${colors.cardBorder}` }}>
+                  <div>
+                    <div style={{ fontWeight: 600, fontSize: 14 }}>Mobile notifications</div>
+                    <div style={{ fontSize: 12.5, color: colors.textSub, marginTop: 2 }}>
+                      {pushStatus === 'enabled'
+                        ? 'Chalu hain — due payments par phone ke home screen par push aayegi'
+                        : pushStatus === 'denied'
+                          ? 'Browser settings se notifications allow karein (padlock → Site settings → Notifications)'
+                          : pushStatus === 'unsupported'
+                            ? 'Is browser mein push notifications supported nahi'
+                            : pushStatus === 'error'
+                              ? 'Status check nahi ho saka. Dobara try karein.'
+                              : 'Enable karo taake app band hone par bhi due payments ka alert mobile par aaye'}
+                    </div>
+                  </div>
+                  {pushStatus === 'enabled'
+                    ? <button onClick={async () => { await disablePush(); await getPushStatus().then(setPushStatus) }} style={{ padding: '8px 14px', borderRadius: 9, background: 'transparent', border: '1px solid rgba(239,68,68,0.4)', color: colors.danger, fontSize: 12.5, fontWeight: 600, cursor: 'pointer', flexShrink: 0 }}>Disable</button>
+                    : pushStatus !== 'unsupported' && (
+                      <button onClick={async () => { await enablePush(); await getPushStatus().then(setPushStatus) }} style={{ padding: '8px 14px', borderRadius: 9, background: colors.accent, border: 'none', color: '#fff', fontSize: 12.5, fontWeight: 600, cursor: 'pointer', flexShrink: 0 }}>Enable</button>
+                    )}
+                </div>
                 {[
-                  { title: 'Upcoming bill reminders', desc: 'Get notified 2 days before bills are due', on: notifBills, toggle: () => setNotifBills((v) => !v) },
-                  { title: 'Budget alerts', desc: 'Alert when spending reaches 80% of budget', on: notifBudget, toggle: () => setNotifBudget((v) => !v) },
-                  { title: 'Income confirmations', desc: 'Notify when expected income arrives', on: notifIncome, toggle: () => setNotifIncome((v) => !v) },
+                  { title: 'Upcoming bill reminders', desc: 'Get notified 2 days before bills are due', on: notifBills, toggle: toggleBills },
+                  { title: 'Budget alerts', desc: 'Alert when spending reaches 80% of budget', on: notifBudget, toggle: toggleBudget },
+                  { title: 'Income confirmations', desc: 'Notify when expected income arrives', on: notifIncome, toggle: toggleIncome },
                 ].map((row, i, arr) => (
                   <div key={row.title} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, padding: '14px 0', borderBottom: i < arr.length - 1 ? `1px solid ${colors.cardBorder}` : 'none' }}>
                     <div>
