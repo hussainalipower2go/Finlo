@@ -2664,6 +2664,16 @@ function AddModal({ colors, onClose, addType, setAddType, recurringNames, curren
   const methods = ["Cash", "Bank", "Debit Card", "Credit Card", "Easypaisa", "JazzCash", "Other"];
 
   function parseNL() {
+    const bank = parseBankSms(nlInput);
+    if (bank) {
+      setAddType(bank.kind);
+      setAmount(String(bank.amount));
+      setCategory(bank.kind === "income" ? bank.source : bank.category);
+      setDate(bank.date);
+      if (bank.description) setDesc(bank.description);
+      setParsed({ amount: String(bank.amount), category: bank.kind === "income" ? bank.source : bank.category, date: bank.date });
+      return;
+    }
     const amtMatch = nlInput.match(/\d[\d,]*/);
     const amt = amtMatch ? amtMatch[0] : "?";
     let cat = "Other";
@@ -2793,9 +2803,9 @@ function AddModal({ colors, onClose, addType, setAddType, recurringNames, curren
 
           {/* NL Input */}
           <div style={{ position: "relative" }}>
-            <div style={{ fontSize: 12, color: colors.textSub, marginBottom: 6 }}>Quick entry (natural language)</div>
+            <div style={{ fontSize: 12, color: colors.textSub, marginBottom: 6 }}>Quick entry — SMS paste karo ya likho (e.g. &quot;Paid 3500 internet bill&quot;)</div>
             <div style={{ display: "flex", gap: 8 }}>
-              <input value={nlInput} onChange={e => { setNlInput(e.target.value); setShowSuggestNL(true); }} onFocus={() => setShowSuggestNL(true)} onBlur={() => setTimeout(() => setShowSuggestNL(false), 150)} placeholder={`e.g. "Paid 3500 internet bill"`} style={{ ...inputStyle, flex: 1 }} autoComplete="off" />
+              <input value={nlInput} onChange={e => { setNlInput(e.target.value); setShowSuggestNL(true); }} onFocus={() => setShowSuggestNL(true)} onBlur={() => setTimeout(() => setShowSuggestNL(false), 150)} placeholder={'Bank SMS ya "Paid 3500 internet bill"'} style={{ ...inputStyle, flex: 1 }} autoComplete="off" />
               <button onClick={parseNL} style={{ padding: "10px 14px", borderRadius: 9, border: "none", background: "#6366f1", color: "#fff", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>Parse</button>
             </div>
             {showSuggestNL && addType === "expense" && (
