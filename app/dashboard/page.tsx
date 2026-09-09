@@ -602,7 +602,7 @@ export default function FinloApp() {
       <div className="finlo-dash-maincol" style={{ flex: 1, display: "flex", flexDirection: "column", minWidth: 0, paddingLeft: sidebarOpen ? 244 : 76, transition: "padding-left 0.16s" }}>
         {/* Topbar */}
         <header className="finlo-dash-topbar" style={{
-          margin: "14px 20px", borderRadius: 22, overflow: "hidden",
+          margin: "14px 20px", borderRadius: 22,
           padding: "0 28px", height: 62, display: "flex", alignItems: "center", justifyContent: "space-between",
           border: `1px solid ${isDark ? "rgba(255,255,255,0.14)" : "rgba(255,255,255,0.75)"}`,
           background: isDark ? "rgba(28,29,40,0.5)" : "rgba(255,255,255,0.5)",
@@ -645,7 +645,7 @@ export default function FinloApp() {
             {showNotifications && (
               <>
                 <div onClick={() => setShowNotifications(false)} style={{ position: "fixed", inset: 0, zIndex: 200 }} />
-                <div style={{ position: "absolute", top: 56, right: 16, width: 340, maxWidth: "calc(100vw - 32px)", maxHeight: 420, overflowY: "auto", background: colors.card, border: `1px solid ${colors.cardBorder}`, borderRadius: 14, boxShadow: "0 20px 50px rgba(0,0,0,0.25)", padding: "16px", zIndex: 201 }}>
+                <div style={{ position: "fixed", top: 80, right: 16, width: 340, maxWidth: "calc(100vw - 32px)", maxHeight: 420, overflowY: "auto", background: colors.card, border: `1px solid ${colors.cardBorder}`, borderRadius: 14, boxShadow: "0 20px 50px rgba(0,0,0,0.25)", padding: "16px", zIndex: 201 }}>
                   <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 12, color: colors.text }}>Notifications</div>
                   {notifications.length === 0 ? (
                     <div style={{ fontSize: 13, color: colors.textSub, padding: "12px 4px" }}>No notifications right now. You are all caught up. ✓</div>
