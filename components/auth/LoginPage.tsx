@@ -171,7 +171,7 @@ export function LoginPage() {
             inset: 0,
             backgroundImage: isDark ? "url('/mountain.png')" : "url('/mountains11.png')",
             backgroundSize: "cover",
-            backgroundPosition: "center center",
+            backgroundPosition: "30% center",
             backgroundRepeat: "no-repeat",
             zIndex: 0,
           }} />

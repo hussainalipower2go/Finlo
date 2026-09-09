@@ -76,7 +76,7 @@ export function AuthBrandPanel() {
         style={{
           backgroundImage: "url('/mountain.png')",
           backgroundSize: 'cover',
-          backgroundPosition: '60% center',
+          backgroundPosition: '40% center',
           backgroundRepeat: 'no-repeat',
         }}
       />
