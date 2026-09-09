@@ -25,8 +25,8 @@ const colors = {
   border: 'var(--ace-sidebar-border)',
   text: 'var(--ace-sidebar-text)',
   sub: 'var(--ace-sidebar-sub)',
-  accent: '#818cf8',
-  hover: 'rgba(129,140,248,0.1)',
+  accent: '#0A193D',
+  hover: 'rgba(10,25,61,0.1)',
 }
 
 export default function AdminShell({ children }: { children: React.ReactNode }) {
@@ -73,7 +73,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   const SidebarContent = (
     <>
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '18px 18px 14px 18px' }}>
-        <div style={{ width: 34, height: 34, borderRadius: 10, background: 'linear-gradient(135deg,#7c3aed,#4f46e5)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', flexShrink: 0 }}>
+        <div style={{ width: 34, height: 34, borderRadius: 10, background: 'linear-gradient(135deg,#142453,#0A193D)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', flexShrink: 0 }}>
           <ShieldCheck size={18} />
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
@@ -137,7 +137,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   const MobileNav = (
     <div style={{ display: 'flex', alignItems: 'center', gap: 10, width: '100%' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexShrink: 0, paddingRight: 10 }}>
-        <div style={{ width: 30, height: 30, borderRadius: 9, background: 'linear-gradient(135deg,#7c3aed,#4f46e5)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
+        <div style={{ width: 30, height: 30, borderRadius: 9, background: 'linear-gradient(135deg,#142453,#0A193D)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff' }}>
           <ShieldCheck size={16} />
         </div>
         <span style={{ fontSize: 13.5, fontWeight: 700, color: colors.text, whiteSpace: 'nowrap' }}>Finlo Admin</span>

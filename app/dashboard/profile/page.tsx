@@ -21,14 +21,14 @@ interface Colors {
 
 function buildColors(isDark: boolean): Colors {
   return {
-    bg: isDark ? 'linear-gradient(160deg,#0b1220 0%,#111a35 55%,#0b1024 100%)' : 'linear-gradient(160deg,#f4f6ff 0%,#e9edfb 55%,#f7f8ff 100%)',
+    bg: isDark ? 'linear-gradient(160deg,#0b1220 0%,#111a35 55%,#0b1024 100%)' : 'linear-gradient(160deg,#142453 0%,#e9edfb 55%,#0A193D 100%)',
     sidebar: isDark ? '#1e293b' : '#ffffff',
     card: isDark ? "linear-gradient(145deg,rgba(43,55,84,0.7),rgba(26,34,60,0.42))" : 'linear-gradient(145deg,rgba(255,255,255,0.85),rgba(255,255,255,0.45))',
     cardBorder: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.7)',
     text: isDark ? '#f1f5f9' : '#0f172a',
     textSub: isDark ? '#94a3b8' : '#64748b',
-    accent: '#6366f1',
-    accentLight: isDark ? 'rgba(99,102,241,0.18)' : 'rgba(99,102,241,0.08)',
+    accent: '#0A193D',
+    accentLight: isDark ? 'rgba(10,25,61,0.18)' : 'rgba(10,25,61,0.08)',
     positive: '#10b981',
     danger: '#ef4444',
     warning: '#f59e0b',
@@ -149,7 +149,7 @@ export default function ProfilePage() {
       }}>
         {/* Logo */}
         <div style={{ padding: '22px 18px 14px', display: 'flex', alignItems: 'center', gap: 10 }}>
-          <div style={{ width: 36, height: 36, borderRadius: 10, background: 'linear-gradient(135deg,#6366f1,#818cf8)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 800, fontSize: 15, flexShrink: 0 }}>F</div>
+          <div style={{ width: 36, height: 36, borderRadius: 10, background: 'linear-gradient(135deg,#142453,#0A193D)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 800, fontSize: 15, flexShrink: 0 }}>F</div>
           <span style={{ fontWeight: 700, fontSize: 17, letterSpacing: '-0.4px' }}>Fin<span style={{ color: colors.accent }}>lo</span></span>
         </div>
 
@@ -189,7 +189,7 @@ export default function ProfilePage() {
         </nav>
 
         {/* Upgrade Banner */}
-        <div style={{ margin: '0 12px 14px', padding: '14px', borderRadius: 12, background: 'linear-gradient(135deg,rgba(99,102,241,0.12),rgba(129,140,248,0.08))', border: '1px solid rgba(99,102,241,0.2)' }}>
+        <div style={{ margin: '0 12px 14px', padding: '14px', borderRadius: 12, background: 'linear-gradient(135deg,rgba(20,36,83,0.12),rgba(10,25,61,0.08))', border: '1px solid rgba(10,25,61,0.2)' }}>
           <div style={{ fontSize: 18, marginBottom: 4 }}>👑</div>
           <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 4, color: colors.text }}>Upgrade to Premium</div>
           <div style={{ fontSize: 11.5, color: colors.textSub, marginBottom: 10, lineHeight: 1.4 }}>Unlock advanced analytics, custom categories and more.</div>
@@ -200,7 +200,7 @@ export default function ProfilePage() {
 
         {/* User */}
         <div style={{ padding: '12px 14px', borderTop: `1px solid ${colors.cardBorder}`, display: 'flex', alignItems: 'center', gap: 10 }}>
-          <div style={{ width: 34, height: 34, borderRadius: '50%', background: 'linear-gradient(135deg,#6366f1,#818cf8)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700, fontSize: 13, flexShrink: 0 }}>{initial}</div>
+          <div style={{ width: 34, height: 34, borderRadius: '50%', background: 'linear-gradient(135deg,#142453,#0A193D)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700, fontSize: 13, flexShrink: 0 }}>{initial}</div>
           <div style={{ flex: 1, minWidth: 0 }}>
             <div style={{ fontWeight: 600, fontSize: 13, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{name || 'User'}</div>
             <div style={{ fontSize: 11, color: colors.textSub, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{user?.email || 'No email'}</div>
@@ -236,9 +236,9 @@ export default function ProfilePage() {
           <div style={{ maxWidth: 680, margin: '0 auto', display: 'flex', flexDirection: 'column', gap: 18 }}>
             {/* Profile Header */}
             <div style={{ padding: '22px 24px', borderRadius: 16, background: colors.card, border: `1px solid ${colors.cardBorder}` }}>
-              <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 18, display: 'flex', alignItems: 'center', gap: 8 }}><User size={16} color="#6366f1" /> Profile</div>
+              <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 18, display: 'flex', alignItems: 'center', gap: 8 }}><User size={16} color="#0A193D" /> Profile</div>
               <div style={{ display: 'flex', alignItems: 'center', gap: 16 }}>
-                <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'linear-gradient(135deg,#6366f1,#818cf8)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700, fontSize: 24, flexShrink: 0 }}>{initial}</div>
+                <div style={{ width: 64, height: 64, borderRadius: '50%', background: 'linear-gradient(135deg,#142453,#0A193D)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700, fontSize: 24, flexShrink: 0 }}>{initial}</div>
                 <div>
                   <div style={{ fontWeight: 700, fontSize: 17, color: colors.text }}>{name || 'User'}</div>
                   <div style={{ fontSize: 13, color: colors.textSub }}>{user?.email || 'No email'}</div>
@@ -248,7 +248,7 @@ export default function ProfilePage() {
 
             {/* Display Name */}
             <div style={{ padding: '22px 24px', borderRadius: 16, background: colors.card, border: `1px solid ${colors.cardBorder}` }}>
-              <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 14, display: 'flex', alignItems: 'center', gap: 8 }}><ShieldCheck size={16} color="#6366f1" /> Display Name</div>
+              <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 14, display: 'flex', alignItems: 'center', gap: 8 }}><ShieldCheck size={16} color="#0A193D" /> Display Name</div>
               <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: colors.textSub, marginBottom: 6 }}>Full name</label>
               <input
                 type="text"
@@ -267,7 +267,7 @@ export default function ProfilePage() {
 
             {/* Email */}
             <div style={{ padding: '22px 24px', borderRadius: 16, background: colors.card, border: `1px solid ${colors.cardBorder}` }}>
-              <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 14, display: 'flex', alignItems: 'center', gap: 8 }}><Mail size={16} color="#6366f1" /> Email</div>
+              <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 14, display: 'flex', alignItems: 'center', gap: 8 }}><Mail size={16} color="#0A193D" /> Email</div>
               <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: colors.textSub, marginBottom: 6 }}>Email address</label>
               <input
                 type="email"
@@ -285,7 +285,7 @@ export default function ProfilePage() {
 
             {/* Account Info */}
             <div style={{ padding: '22px 24px', borderRadius: 16, background: colors.card, border: `1px solid ${colors.cardBorder}` }}>
-              <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 14, display: 'flex', alignItems: 'center', gap: 8 }}><MoreHorizontal size={16} color="#6366f1" /> Account</div>
+              <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 14, display: 'flex', alignItems: 'center', gap: 8 }}><MoreHorizontal size={16} color="#0A193D" /> Account</div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                 <div>
                   <label style={{ display: 'block', fontSize: 12, fontWeight: 500, color: colors.textSub, marginBottom: 6 }}>User ID</label>

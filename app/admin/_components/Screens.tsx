@@ -7,14 +7,14 @@ const colors = {
   border: 'var(--ace-card-border)',
   text: 'var(--ace-text)',
   sub: 'var(--ace-sub)',
-  accent: '#818cf8',
+  accent: '#0A193D',
 }
 
 function Shell({ icon, title, desc, children }: { icon: React.ReactNode; title: string; desc: string; children: React.ReactNode }) {
   return (
     <div style={{ minHeight: '100vh', width: '100%', background: colors.bg, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24, fontFamily: "'Montserrat', -apple-system, 'Segoe UI', sans-serif" }}>
       <div style={{ maxWidth: 520, width: '100%', background: colors.card, border: `1px solid ${colors.border}`, borderRadius: 20, padding: '36px 32px', textAlign: 'center' }}>
-        <div style={{ width: 56, height: 56, margin: '0 auto 18px auto', borderRadius: 16, background: 'rgba(129,140,248,0.12)', border: '1px solid rgba(129,140,248,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: colors.accent }}>
+        <div style={{ width: 56, height: 56, margin: '0 auto 18px auto', borderRadius: 16, background: 'rgba(10,25,61,0.12)', border: '1px solid rgba(10,25,61,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: colors.accent }}>
           {icon}
         </div>
         <h1 style={{ fontSize: 20, fontWeight: 700, color: colors.text, margin: '0 0 8px 0' }}>{title}</h1>

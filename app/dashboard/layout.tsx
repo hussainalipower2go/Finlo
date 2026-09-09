@@ -101,14 +101,14 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   if (gate.kind === 'maintenance') {
     return (
       <div style={overlayStyle}>
-        <div style={{ width: 62, height: 62, borderRadius: 18, background: 'rgba(109,40,217,0.15)', border: '1px solid rgba(109,40,217,0.35)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#a78bfa', marginBottom: 22 }}>
+        <div style={{ width: 62, height: 62, borderRadius: 18, background: 'rgba(10,25,61,0.15)', border: '1px solid rgba(10,25,61,0.35)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#0A193D', marginBottom: 22 }}>
           <Construction size={28} />
         </div>
         <h1 style={{ fontSize: 26, fontWeight: 800, color: '#fff', margin: '0 0 10px 0' }}>Finlo is under maintenance</h1>
-        <p style={{ fontSize: 14, color: '#b4a5e6', lineHeight: 1.7, margin: '0 0 4px 0' }}>
+        <p style={{ fontSize: 14, color: '#0A193D', lineHeight: 1.7, margin: '0 0 4px 0' }}>
           We&apos;re making things faster and smoother. Hang tight — we&apos;ll be back shortly.
         </p>
-        <p style={{ fontSize: 13, color: '#9482c8' }}>Sign in again in a few minutes.</p>
+        <p style={{ fontSize: 13, color: '#0A193D' }}>Sign in again in a few minutes.</p>
       </div>
     )
   }
@@ -120,13 +120,13 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
           <Lock size={28} />
         </div>
         <h1 style={{ fontSize: 26, fontWeight: 800, color: '#fff', margin: '0 0 10px 0' }}>Account suspended</h1>
-        <p style={{ fontSize: 14, color: '#b4a5e6', lineHeight: 1.7, margin: '0 0 4px 0' }}>
+        <p style={{ fontSize: 14, color: '#0A193D', lineHeight: 1.7, margin: '0 0 4px 0' }}>
           Your account is currently suspended. If you believe this is a mistake,
           contact support.
         </p>
         <button
           onClick={() => router.push('/auth/login')}
-          style={{ marginTop: 18, padding: '11px 22px', borderRadius: 12, border: 'none', background: 'linear-gradient(90deg,#7c3aed,#4f46e5)', color: '#fff', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}
+          style={{ marginTop: 18, padding: '11px 22px', borderRadius: 12, border: 'none', background: 'linear-gradient(90deg,#142453,#0A193D)', color: '#fff', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}
         >
           Back to login
         </button>

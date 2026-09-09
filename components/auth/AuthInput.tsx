@@ -26,12 +26,12 @@ export function AuthInput({ id, label, type = 'email', placeholder, value, error
   return (
     <div className="mb-5">
       {label && (
-        <label htmlFor={id} className="mb-2 block text-[13px] font-medium text-[#c4b5fd]/85">
+        <label htmlFor={id} className="mb-2 block text-[13px] font-medium text-[#0A193D]/85">
           {label}
         </label>
       )}
       <div className="relative">
-        <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[#7864c8]/50">
+        <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 text-[#0A193D]/50">
           {renderIcon()}
         </span>
         <input
@@ -42,7 +42,7 @@ export function AuthInput({ id, label, type = 'email', placeholder, value, error
           onChange={(e) => onChange(e.target.value)}
           aria-invalid={Boolean(error)}
           aria-describedby={error ? `${id}-error` : undefined}
-          className="w-full rounded-xl border border-[rgba(109,40,217,0.22)] bg-[rgba(10,8,30,0.85)] py-3.5 pl-11 pr-14 text-sm text-[#dcd2ff]/90 placeholder:text-[#7864c8]/50 outline-none transition-colors duration-200 focus:border-[rgba(139,92,246,0.55)]"
+          className="w-full rounded-xl border border-[rgba(10,25,61,0.22)] bg-[rgba(10,8,30,0.85)] py-3.5 pl-11 pr-14 text-sm text-[#E9EDFB]/90 placeholder:text-[#0A193D]/50 outline-none transition-colors duration-200 focus:border-[rgba(10,25,61,0.55)]"
           style={{ boxSizing: 'border-box' }}
         />
         {isPassword && (
@@ -50,7 +50,7 @@ export function AuthInput({ id, label, type = 'email', placeholder, value, error
             type="button"
             onClick={() => setShowPassword((v) => !v)}
             aria-label={showPassword ? 'Hide password' : 'Show password'}
-            className="absolute right-3 top-1/2 flex -translate-y-1/2 cursor-pointer items-center border-none bg-transparent p-1 text-[#7864c8]/50 transition-colors hover:text-[#c4b5fd]/80"
+            className="absolute right-3 top-1/2 flex -translate-y-1/2 cursor-pointer items-center border-none bg-transparent p-1 text-[#0A193D]/50 transition-colors hover:text-[#0A193D]/80"
           >
             {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
           </button>

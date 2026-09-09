@@ -25,10 +25,10 @@ export function SocialLoginButtons() {
       <button
         type="button"
         onClick={handleGoogle}
-        className="flex flex-1 cursor-pointer items-center justify-center gap-2.5 rounded-xl border px-4 py-3 text-sm text-[#c4b5fd]/85 transition-colors duration-200"
-        style={{ background: 'rgba(10,8,30,0.85)', border: '1px solid rgba(109,40,217,0.2)', fontFamily: 'inherit' }}
-        onMouseOver={(e) => { e.currentTarget.style.borderColor = 'rgba(139,92,246,0.38)' }}
-        onMouseOut={(e) => { e.currentTarget.style.borderColor = 'rgba(109,40,217,0.2)' }}
+        className="flex flex-1 cursor-pointer items-center justify-center gap-2.5 rounded-xl border px-4 py-3 text-sm text-[#0A193D]/85 transition-colors duration-200"
+        style={{ background: 'rgba(10,8,30,0.85)', border: '1px solid rgba(10,25,61,0.2)', fontFamily: 'inherit' }}
+        onMouseOver={(e) => { e.currentTarget.style.borderColor = 'rgba(10,25,61,0.38)' }}
+        onMouseOut={(e) => { e.currentTarget.style.borderColor = 'rgba(10,25,61,0.2)' }}
       >
         <svg className="h-[18px] w-[18px]" viewBox="0 0 24 24">
           <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4" />
@@ -42,12 +42,12 @@ export function SocialLoginButtons() {
       <button
         type="button"
         onClick={handleApple}
-        className="flex flex-1 cursor-pointer items-center justify-center gap-2.5 rounded-xl border px-4 py-3 text-sm text-[#c4b5fd]/85 transition-colors duration-200"
-        style={{ background: 'rgba(10,8,30,0.85)', border: '1px solid rgba(109,40,217,0.2)', fontFamily: 'inherit' }}
-        onMouseOver={(e) => { e.currentTarget.style.borderColor = 'rgba(139,92,246,0.38)' }}
-        onMouseOut={(e) => { e.currentTarget.style.borderColor = 'rgba(109,40,217,0.2)' }}
+        className="flex flex-1 cursor-pointer items-center justify-center gap-2.5 rounded-xl border px-4 py-3 text-sm text-[#0A193D]/85 transition-colors duration-200"
+        style={{ background: 'rgba(10,8,30,0.85)', border: '1px solid rgba(10,25,61,0.2)', fontFamily: 'inherit' }}
+        onMouseOver={(e) => { e.currentTarget.style.borderColor = 'rgba(10,25,61,0.38)' }}
+        onMouseOut={(e) => { e.currentTarget.style.borderColor = 'rgba(10,25,61,0.2)' }}
       >
-        <Apple className="h-[18px] w-[18px] text-[#dcd2ff]/90" />
+        <Apple className="h-[18px] w-[18px] text-[#E9EDFB]/90" />
         Continue with Apple
       </button>
     </div>

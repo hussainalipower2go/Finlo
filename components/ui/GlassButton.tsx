@@ -19,14 +19,14 @@ const baseClasses = `
 
 const variantClasses = {
   primary: `
-    bg-[#536bea] border-[#536bea] text-white shadow-sm
-    hover:bg-[#4059d8] hover:border-[#4059d8]
-    focus-visible:outline-[#536bea]
+    bg-[#0A193D] border-[#0A193D] text-white shadow-sm
+    hover:bg-[#0A193D] hover:border-[#0A193D]
+    focus-visible:outline-[#0A193D]
   `,
   secondary: `
     bg-white border-[#e2e7f0] text-[#536079] shadow-sm
     hover:bg-[#f5f7fb] hover:border-[#cbd3e2]
-    focus-visible:outline-[#536bea]
+    focus-visible:outline-[#0A193D]
   `,
   ghost: `
     bg-transparent

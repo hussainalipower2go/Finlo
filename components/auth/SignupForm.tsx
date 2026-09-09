@@ -70,12 +70,12 @@ export function SignupForm({ className = '' }: { className?: string }) {
       className={`relative z-[1] w-full max-w-[580px] mt-10 lg:mt-16 rounded-[24px] px-6 py-8 sm:px-12 sm:py-11 ${className}`}
       style={{
         background: 'rgba(16,12,42,0.75)',
-        border: '1px solid rgba(109,40,217,0.25)',
+        border: '1px solid rgba(10,25,61,0.25)',
         boxShadow: '0 4px 60px rgba(50,20,160,0.18), inset 0 1px 0 rgba(255,255,255,0.035)',
       }}
     >
       <h2 className="mb-1.5 text-[26px] font-bold text-white">Create account 🚀</h2>
-      <p className="mb-8 text-sm text-[#9482c8]/60">Sign up to get started with Finlo</p>
+      <p className="mb-8 text-sm text-[#0A193D]/60">Sign up to get started with Finlo</p>
 
       <form onSubmit={handleSubmit} noValidate>
         <AuthInput
@@ -88,7 +88,7 @@ export function SignupForm({ className = '' }: { className?: string }) {
         />
 
         <div className="mb-5">
-          <label htmlFor="password" className="mb-2 block text-[13px] font-medium text-[#c4b5fd]/85">
+          <label htmlFor="password" className="mb-2 block text-[13px] font-medium text-[#0A193D]/85">
             Password
           </label>
           <AuthInput
@@ -102,7 +102,7 @@ export function SignupForm({ className = '' }: { className?: string }) {
         </div>
 
         <div className="mb-5">
-          <label htmlFor="confirmPassword" className="mb-2 block text-[13px] font-medium text-[#c4b5fd]/85">
+          <label htmlFor="confirmPassword" className="mb-2 block text-[13px] font-medium text-[#0A193D]/85">
             Confirm password
           </label>
           <AuthInput
@@ -123,8 +123,8 @@ export function SignupForm({ className = '' }: { className?: string }) {
               onClick={() => setAgreeTerms((v) => !v)}
               className="flex h-[18px] w-[18px] shrink-0 cursor-pointer items-center justify-center rounded-[5px]"
               style={{
-                background: agreeTerms ? '#7c3aed' : 'rgba(109,40,217,0.12)',
-                border: agreeTerms ? 'none' : '1px solid rgba(109,40,217,0.3)',
+                background: agreeTerms ? '#0A193D' : 'rgba(10,25,61,0.12)',
+                border: agreeTerms ? 'none' : '1px solid rgba(10,25,61,0.3)',
               }}
             >
               {agreeTerms && (
@@ -133,9 +133,9 @@ export function SignupForm({ className = '' }: { className?: string }) {
                 </svg>
               )}
             </span>
-            <span className="text-[13px] text-[#c4b5fd]/75">
-              I agree to the <Link href="/terms" className="text-[#8b5cf6] no-underline">Terms</Link>{' '}
-              & <Link href="/privacy" className="text-[#8b5cf6] no-underline">Privacy Policy</Link>
+            <span className="text-[13px] text-[#0A193D]/75">
+              I agree to the <Link href="/terms" className="text-[#0A193D] no-underline">Terms</Link>{' '}
+              & <Link href="/privacy" className="text-[#0A193D] no-underline">Privacy Policy</Link>
             </span>
           </label>
         </div>
@@ -146,17 +146,17 @@ export function SignupForm({ className = '' }: { className?: string }) {
           className="mb-6 flex h-[52px] w-full cursor-pointer items-center justify-center gap-2.5 rounded-[14px] border-none text-[16px] font-semibold text-white transition-all duration-200 disabled:cursor-not-allowed disabled:opacity-60"
           style={{
             fontFamily: 'inherit',
-            background: 'linear-gradient(90deg, #7c3aed 0%, #4f46e5 100%)',
-            boxShadow: '0 4px 24px rgba(109,40,217,0.35)',
+            background: 'linear-gradient(90deg, #142453 0%, #0A193D 100%)',
+            boxShadow: '0 4px 24px rgba(10,25,61,0.35)',
           }}
           onMouseOver={(e) => {
             if (!loading) {
-              e.currentTarget.style.background = 'linear-gradient(90deg, #8b5cf6 0%, #6366f1 100%)'
+              e.currentTarget.style.background = 'linear-gradient(90deg, #142453 0%, #0A193D 100%)'
               e.currentTarget.style.transform = 'translateY(-1px)'
             }
           }}
           onMouseOut={(e) => {
-            e.currentTarget.style.background = 'linear-gradient(90deg, #7c3aed 0%, #4f46e5 100%)'
+            e.currentTarget.style.background = 'linear-gradient(90deg, #142453 0%, #0A193D 100%)'
             e.currentTarget.style.transform = 'translateY(0)'
           }}
         >
@@ -174,18 +174,18 @@ export function SignupForm({ className = '' }: { className?: string }) {
         </button>
 
         <div className="mb-5 flex items-center gap-3">
-          <div className="h-px flex-1" style={{ background: 'rgba(109,40,217,0.18)' }} />
-          <span className="whitespace-nowrap text-[13px] text-[#826ebe]/50">or continue with</span>
-          <div className="h-px flex-1" style={{ background: 'rgba(109,40,217,0.18)' }} />
+          <div className="h-px flex-1" style={{ background: 'rgba(10,25,61,0.18)' }} />
+          <span className="whitespace-nowrap text-[13px] text-[#0A193D]/50">or continue with</span>
+          <div className="h-px flex-1" style={{ background: 'rgba(10,25,61,0.18)' }} />
         </div>
 
         <div className="mb-7">
           <SocialLoginButtons />
         </div>
 
-        <p className="text-center text-sm text-[#826eb4]/60">
+        <p className="text-center text-sm text-[#0A193D]/60">
           Already have an account?{' '}
-          <Link href="/auth/login" className="font-medium text-[#8b5cf6] no-underline transition-colors hover:text-[#7c3aed]">
+          <Link href="/auth/login" className="font-medium text-[#0A193D] no-underline transition-colors hover:text-[#0A193D]">
             Log in
           </Link>
         </p>

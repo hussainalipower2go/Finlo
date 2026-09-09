@@ -7,7 +7,7 @@
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#ffffff",
-  "theme_color": "#6366f1",
+  "theme_color": "#0A193D",
   "icons": [
     {
       "src": "/finlo-brand-mark.svg",

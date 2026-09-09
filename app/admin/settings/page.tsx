@@ -177,7 +177,7 @@ export default function AdminSettingsPage() {
               <Field label="App name" value={appName} onChange={setAppName} />
               <Field label="Support email" value={supportEmail} onChange={setSupportEmail} />
               <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-                <button onClick={saveSettings} disabled={settingsSaving} style={{ padding: '9px 16px', borderRadius: 9, border: 'none', background: '#6366f1', color: '#fff', fontSize: 12.5, fontWeight: 600, cursor: settingsSaving ? 'not-allowed' : 'pointer' }}>
+                <button onClick={saveSettings} disabled={settingsSaving} style={{ padding: '9px 16px', borderRadius: 9, border: 'none', background: '#0A193D', color: '#fff', fontSize: 12.5, fontWeight: 600, cursor: settingsSaving ? 'not-allowed' : 'pointer' }}>
                   {settingsSaving ? 'Saving…' : 'Save settings'}
                 </button>
                 {settingsMsg && <span style={{ fontSize: 12.5, fontWeight: 600, color: settingsMsg.ok ? '#34d399' : '#f87171' }}>{settingsMsg.text}</span>}

@@ -81,7 +81,7 @@ export default function AdminErrorsPage() {
 
       <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 16 }}>
         {FILTERS.map((f) => (
-          <button key={f} onClick={() => { setFilter(f); setPage(1) }} style={{ padding: '7px 14px', borderRadius: 9, border: `1px solid ${filter === f ? '#818cf8' : ace.cardBorder}`, background: filter === f ? ace.softBg : 'transparent', color: filter === f ? ace.accentText : ace.sub, fontSize: 12.5, fontWeight: 600, cursor: 'pointer' }}>
+          <button key={f} onClick={() => { setFilter(f); setPage(1) }} style={{ padding: '7px 14px', borderRadius: 9, border: `1px solid ${filter === f ? '#0A193D' : ace.cardBorder}`, background: filter === f ? ace.softBg : 'transparent', color: filter === f ? ace.accentText : ace.sub, fontSize: 12.5, fontWeight: 600, cursor: 'pointer' }}>
             {f}
           </button>
         ))}

@@ -7,10 +7,10 @@ import { TrustItem } from '@/components/marketing/TrustItem'
 const features = [
   {
     icon: CalendarDays,
-    iconColor: 'text-[#a78bfa]',
-    bg: 'rgba(109,40,217,0.18)',
-    border: 'rgba(109,40,217,0.35)',
-    glow: 'rgba(109,40,217,0.2)',
+    iconColor: 'text-[#0A193D]',
+    bg: 'rgba(10,25,61,0.18)',
+    border: 'rgba(10,25,61,0.35)',
+    glow: 'rgba(10,25,61,0.2)',
     title: 'Know your runway',
     description: 'See how many days your money will last.',
   },
@@ -70,7 +70,7 @@ const trustItems = [
 
 export function AuthBrandPanel() {
   return (
-    <aside className="relative hidden overflow-hidden border-r border-[rgba(109,40,217,0.15)] lg:flex lg:flex-col">
+    <aside className="relative hidden overflow-hidden border-r border-[rgba(10,25,61,0.15)] lg:flex lg:flex-col">
       <div
         className="absolute inset-0 z-0"
         style={{
@@ -96,7 +96,7 @@ export function AuthBrandPanel() {
           left: '30px',
           width: '400px',
           height: '130px',
-          background: 'radial-gradient(ellipse, rgba(109,40,217,0.45) 0%, transparent 70%)',
+          background: 'radial-gradient(ellipse, rgba(20,36,83,0.45) 0%, transparent 70%)',
           filter: 'blur(28px)',
         }}
       />
@@ -108,9 +108,9 @@ export function AuthBrandPanel() {
 
         <h1 className="mb-[18px] text-[clamp(40px,4vw,62px)] font-extrabold leading-[1.05] tracking-[-1.5px] text-white" style={{ textShadow: '0 2px 20px rgba(0,0,0,0.5)' }}>
           Plan today.<br />
-          Live <span className="bg-gradient-to-r from-[#7c3aed] to-[#818cf8] bg-clip-text text-transparent">tomorrow.</span>
+          Live <span className="bg-gradient-to-r from-[#142453] to-[#0A193D] bg-clip-text text-transparent">tomorrow.</span>
         </h1>
-        <p className="mb-9 max-w-[390px] text-[15px] leading-[1.65] text-[#d2c8ff]/75" style={{ textShadow: '0 1px 8px rgba(0,0,0,0.6)' }}>
+        <p className="mb-9 max-w-[390px] text-[15px] leading-[1.65] text-[#E9EDFB]/75" style={{ textShadow: '0 1px 8px rgba(0,0,0,0.6)' }}>
           Finlo helps you understand your cash flow,<br />
           plan ahead, and spend with confidence.
         </p>
@@ -125,7 +125,7 @@ export function AuthBrandPanel() {
           <FinancialPreview />
         </div>
 
-        <div className="flex flex-wrap gap-7 border-t border-[rgba(109,40,217,0.15)] pt-[26px]">
+        <div className="flex flex-wrap gap-7 border-t border-[rgba(10,25,61,0.15)] pt-[26px]">
           {trustItems.map((t) => (
             <TrustItem key={t.title} {...t} />
           ))}

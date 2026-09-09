@@ -67,13 +67,13 @@ export default function AdminOverviewPage() {
   const s = data.stats
   const totalStatus = (data.statusBreakdown ?? []).reduce((a: number, b: { status: string; count: number }) => a + b.count, 0)
   const statsCards = [
-    { label: 'Total users', value: s.totalUsers, icon: <Users size={17} />, tone: '#818cf8' },
+    { label: 'Total users', value: s.totalUsers, icon: <Users size={17} />, tone: '#0A193D' },
     { label: 'Active (7d)', value: s.activeUsers, icon: <UserCheck size={17} />, tone: '#34d399' },
     { label: 'New this week', value: s.newThisWeek, icon: <UserPlus size={17} />, tone: '#60a5fa' },
     { label: 'Errors (24h)', value: s.errors24h, icon: <AlertTriangle size={17} />, tone: s.errors24h > 0 ? '#f87171' : '#34d399' },
     { label: 'Open errors', value: s.openErrors, icon: <AlertTriangle size={17} />, tone: s.openErrors > 0 ? '#f87171' : '#64748b' },
     { label: 'Pending review', value: s.pendingReviews, icon: <Inbox size={17} />, tone: s.pendingReviews > 0 ? '#fbbf24' : '#64748b' },
-    { label: 'Open feedback', value: s.feedbackOpen, icon: <MessageSquare size={17} />, tone: s.feedbackOpen > 0 ? '#a78bfa' : '#64748b' },
+    { label: 'Open feedback', value: s.feedbackOpen, icon: <MessageSquare size={17} />, tone: s.feedbackOpen > 0 ? '#0A193D' : '#64748b' },
   ]
 
   return (
@@ -101,15 +101,15 @@ export default function AdminOverviewPage() {
                 <AreaChart data={data.signups} margin={{ top: 6, right: 6, left: -22, bottom: 0 }}>
                   <defs>
                     <linearGradient id="gSignups" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="#818cf8" stopOpacity={0.5} />
-                      <stop offset="100%" stopColor="#818cf8" stopOpacity={0} />
+                      <stop offset="0%" stopColor="#0A193D" stopOpacity={0.5} />
+                      <stop offset="100%" stopColor="#0A193D" stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="var(--ace-card-border)" />
                   <XAxis dataKey="date" tick={{ fill: 'var(--ace-sub)', fontSize: 10 }} tickLine={false} axisLine={false} />
                   <YAxis tick={{ fill: 'var(--ace-sub)', fontSize: 10 }} tickLine={false} axisLine={false} allowDecimals={false} />
                   <Tooltip contentStyle={{ background: 'var(--ace-card)', border: '1px solid var(--ace-card-border)', borderRadius: 10, fontSize: 12, color: 'var(--ace-text)' }} labelStyle={{ color: 'var(--ace-text)' }} itemStyle={{ color: 'var(--ace-sub)' }} />
-                  <Area type="monotone" dataKey="count" name="Signups" stroke="#818cf8" strokeWidth={2} fill="url(#gSignups)" />
+                  <Area type="monotone" dataKey="count" name="Signups" stroke="#0A193D" strokeWidth={2} fill="url(#gSignups)" />
                 </AreaChart>
               </ResponsiveContainer>
             </div>

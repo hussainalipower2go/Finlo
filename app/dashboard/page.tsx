@@ -47,7 +47,7 @@ interface Transaction {
 }
 
 const IMPORT_SOURCE_LABEL: Record<string, string> = { SMS: "SMS", RECEIPT: "Scan", AI_TEXT: "AI", CSV: "CSV", BANK_API: "Bank" };
-const IMPORT_SOURCE_COLOR: Record<string, string> = { SMS: "#10b981", RECEIPT: "#06b6d4", AI_TEXT: "#8b5cf6", CSV: "#f59e0b", BANK_API: "#6366f1" };
+const IMPORT_SOURCE_COLOR: Record<string, string> = { SMS: "#10b981", RECEIPT: "#06b6d4", AI_TEXT: "#0A193D", CSV: "#f59e0b", BANK_API: "#0A193D" };
 const hasImportSource = (t: Transaction) => t.importSource && t.importSource !== "MANUAL";
 interface UpcomingItem {
   id: string; name: string; amount: number; date: string;
@@ -67,8 +67,8 @@ const iconMap: Record<string, React.ReactNode> = {
   heart: <Heart size={16} />, tv: <BarChart2 size={16} />,
 };
 const budgetIcon: Record<string, string> = { food: "utensils", transport: "car", rent: "home", utilities: "zap", shopping: "shopping", entertainment: "tv", health: "heart", subscriptions: "wifi", education: "wallet", family: "heart", travel: "plane" };
-const budgetColor: Record<string, string> = { Food: "#6366f1", Transport: "#8b5cf6", Rent: "#06b6d4", Utilities: "#10b981", Shopping: "#f59e0b", Entertainment: "#ef4444", Health: "#f43f5e", Subscriptions: "#3b82f6" };
-const budgetFallbackColors = ["#6366f1", "#8b5cf6", "#06b6d4", "#10b981", "#f59e0b", "#ef4444", "#f43f5e", "#3b82f6", "#94a3b8"];
+const budgetColor: Record<string, string> = { Food: "#0A193D", Transport: "#0A193D", Rent: "#06b6d4", Utilities: "#10b981", Shopping: "#f59e0b", Entertainment: "#ef4444", Health: "#f43f5e", Subscriptions: "#3b82f6" };
+const budgetFallbackColors = ["#0A193D", "#0A193D", "#06b6d4", "#10b981", "#f59e0b", "#ef4444", "#f43f5e", "#3b82f6", "#94a3b8"];
 
 // ── Custom Tooltip ──────────────────────────────────────────────────────────
 interface TooltipPayloadItem { name?: string; value?: number | string; color?: string }
@@ -533,14 +533,14 @@ const insts = await getUserInstallmentsClient();
   };
 
   const colors: Colors = {
-    bg: isDark ? "linear-gradient(160deg,#0b1220 0%,#111a35 55%,#0b1024 100%)" : "linear-gradient(160deg,#f4f6ff 0%,#e9edfb 55%,#f7f8ff 100%)",
+    bg: isDark ? "linear-gradient(160deg,#0b1220 0%,#111a35 55%,#0b1024 100%)" : "linear-gradient(160deg,#142453 0%,#e9edfb 55%,#0A193D 100%)",
     sidebar: isDark ? "#1e293b" : "#ffffff",
     card: isDark ? "linear-gradient(145deg,rgba(43,55,84,0.7),rgba(26,34,60,0.42))" : "linear-gradient(145deg,rgba(255,255,255,0.85),rgba(255,255,255,0.45))",
     cardBorder: isDark ? "rgba(255,255,255,0.08)" : "rgba(255,255,255,0.7)",
     text: isDark ? "#f1f5f9" : "#0f172a",
     textSub: isDark ? "#94a3b8" : "#64748b",
-    accent: "#6366f1",
-    accentLight: isDark ? "rgba(99,102,241,0.18)" : "rgba(99,102,241,0.08)",
+    accent: "#0A193D",
+    accentLight: isDark ? "rgba(10,25,61,0.18)" : "rgba(10,25,61,0.08)",
     positive: "#10b981",
     danger: "#ef4444",
     warning: "#f59e0b",
@@ -627,7 +627,7 @@ const insts = await getUserInstallmentsClient();
                 style={{
                   width: "100%", display: "flex", alignItems: "center", gap: 11,
                   padding: "10px 10px", borderRadius: 9, border: "none", cursor: "pointer",
-                  background: active ? (isDark ? "rgba(99,102,241,0.24)" : "rgba(99,102,241,0.13)") : "transparent",
+                  background: active ? (isDark ? "rgba(10,25,61,0.24)" : "rgba(10,25,61,0.13)") : "transparent",
                   color: active ? colors.accent : colors.textSub,
                   fontWeight: active ? 600 : 400, fontSize: 13.5,
                   boxShadow: active ? (isDark ? "inset 0 1px 0 rgba(255,255,255,0.1)" : "inset 0 1px 0 rgba(255,255,255,0.9)") : "none",
@@ -645,7 +645,7 @@ const insts = await getUserInstallmentsClient();
 
         {/* Upgrade Banner */}
         {sidebarOpen && (
-          <div style={{ margin: "0 12px 14px", padding: "14px", borderRadius: 12, background: "linear-gradient(135deg,rgba(99,102,241,0.12),rgba(129,140,248,0.08))", border: `1px solid rgba(99,102,241,0.2)` }}>
+          <div style={{ margin: "0 12px 14px", padding: "14px", borderRadius: 12, background: "linear-gradient(135deg,rgba(20,36,83,0.12),rgba(10,25,61,0.08))", border: `1px solid rgba(10,25,61,0.2)` }}>
             <div style={{ fontSize: 18, marginBottom: 4 }}>👑</div>
             <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 4, color: colors.text }}>Upgrade to Premium</div>
             <div style={{ fontSize: 11.5, color: colors.textSub, marginBottom: 10, lineHeight: 1.4 }}>Unlock advanced analytics, custom categories and more.</div>
@@ -657,7 +657,7 @@ const insts = await getUserInstallmentsClient();
 
         {/* User */}
         <div style={{ padding: "12px 14px", borderTop: `1px solid ${colors.cardBorder}`, display: "flex", alignItems: "center", gap: 10 }}>
-          <div style={{ width: 34, height: 34, borderRadius: "50%", background: "linear-gradient(135deg,#6366f1,#818cf8)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 700, fontSize: 13, flexShrink: 0 }}>{userInitial}</div>
+          <div style={{ width: 34, height: 34, borderRadius: "50%", background: "linear-gradient(135deg,#142453,#0A193D)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 700, fontSize: 13, flexShrink: 0 }}>{userInitial}</div>
           {sidebarOpen && (
             <div style={{ flex: 1, minWidth: 0 }}>
               <div style={{ fontWeight: 600, fontSize: 13, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{displayName}</div>
@@ -755,7 +755,7 @@ const insts = await getUserInstallmentsClient();
       <div className="finlo-dash-fab" style={{ position: "fixed", bottom: 28, right: 28, zIndex: 100, display: "flex", flexDirection: "column", alignItems: "center", gap: 10 }}>
         <button
           onClick={() => navigateTo("ai")}
-          style={{ width: 46, height: 46, borderRadius: "50%", background: isDark ? "linear-gradient(135deg,#334155,#4f46e5)" : "linear-gradient(135deg,#8b5cf6,#6366f1)", border: `2px solid ${colors.card}`, color: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 16px rgba(139,92,246,0.4)", transition: "transform 0.12s" }}
+          style={{ width: 46, height: 46, borderRadius: "50%", background: isDark ? "linear-gradient(135deg,#334155,#142453)" : "linear-gradient(135deg,#142453,#0A193D)", border: `2px solid ${colors.card}`, color: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 16px rgba(10,25,61,0.4)", transition: "transform 0.12s" }}
           onMouseEnter={e => (e.currentTarget.style.transform = "scale(1.08)")}
           onMouseLeave={e => (e.currentTarget.style.transform = "scale(1)")}
           title="AI Assistant"
@@ -764,7 +764,7 @@ const insts = await getUserInstallmentsClient();
         </button>
         <button
           onClick={() => setShowAddModal(true)}
-          style={{ width: 52, height: 52, borderRadius: "50%", background: "linear-gradient(135deg,#6366f1,#818cf8)", border: "none", color: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 20px rgba(99,102,241,0.4)", transition: "transform 0.12s" }}
+          style={{ width: 52, height: 52, borderRadius: "50%", background: "linear-gradient(135deg,#142453,#0A193D)", border: "none", color: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 20px rgba(10,25,61,0.4)", transition: "transform 0.12s" }}
           onMouseEnter={e => (e.currentTarget.style.transform = "scale(1.08)")}
           onMouseLeave={e => (e.currentTarget.style.transform = "scale(1)")}
           title="Add"
@@ -793,11 +793,11 @@ const insts = await getUserInstallmentsClient();
               style={{
                 flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 3,
                 padding: "7px 4px", border: "none", cursor: "pointer", transition: "all 0.2s ease",
-                background: active ? (isDark ? "rgba(99,102,241,0.26)" : "rgba(99,102,241,0.14)") : "transparent",
+                background: active ? (isDark ? "rgba(10,25,61,0.26)" : "rgba(10,25,61,0.14)") : "transparent",
                 borderRadius: 18, transform: active ? "translateY(-2px)" : "none",
                 color: active ? colors.accent : colors.textSub, fontSize: 10, fontWeight: active ? 700 : 500,
                 fontFamily: "inherit",
-                boxShadow: active ? (isDark ? "inset 0 1px 0 rgba(255,255,255,0.12), 0 6px 16px rgba(99,102,241,0.38)" : "inset 0 1px 0 rgba(255,255,255,0.95), 0 6px 16px rgba(99,102,241,0.3)") : "none",
+                boxShadow: active ? (isDark ? "inset 0 1px 0 rgba(255,255,255,0.12), 0 6px 16px rgba(10,25,61,0.38)" : "inset 0 1px 0 rgba(255,255,255,0.95), 0 6px 16px rgba(10,25,61,0.3)") : "none",
               }}>
               <span style={{ transition: "transform 0.2s ease", transform: active ? "scale(1.12)" : "scale(1)" }}>{tab.icon}</span>
               <span>{tab.label}</span>
@@ -859,7 +859,7 @@ const insts = await getUserInstallmentsClient();
               })}
             </div>
             <div style={{ display: "flex", gap: 10, marginTop: 18 }}>
-              <button onClick={() => { setDueAlert(null); navigateTo("upcoming"); }} style={{ flex: 1, padding: "11px", borderRadius: 10, border: "none", background: "#6366f1", color: "#fff", fontWeight: 700, fontSize: 13.5, cursor: "pointer" }}>View Upcoming</button>
+              <button onClick={() => { setDueAlert(null); navigateTo("upcoming"); }} style={{ flex: 1, padding: "11px", borderRadius: 10, border: "none", background: "#0A193D", color: "#fff", fontWeight: 700, fontSize: 13.5, cursor: "pointer" }}>View Upcoming</button>
               <button onClick={() => setDueAlert(null)} style={{ padding: "11px 18px", borderRadius: 10, border: `1px solid ${colors.cardBorder}`, background: "transparent", color: colors.textSub, fontSize: 13.5, cursor: "pointer" }}>Dismiss</button>
             </div>
           </div>
@@ -939,7 +939,7 @@ function DashboardPage({ colors, transactions, recurring, installments, budgets,
       const cat = (t.category || "Other").charAt(0).toUpperCase() + (t.category || "Other").slice(1);
       byCatMap[cat] = (byCatMap[cat] || 0) + t.amount;
     });
-  const catColors = ["#6366f1", "#10b981", "#ef4444", "#06b6d4", "#f59e0b", "#8b5cf6", "#94a3b8"];
+  const catColors = ["#0A193D", "#10b981", "#ef4444", "#06b6d4", "#f59e0b", "#0A193D", "#94a3b8"];
   const realSpendingByCategory = Object.entries(byCatMap)
     .sort((a, b) => b[1] - a[1])
     .map(([name, value], i) => ({ name, value, color: catColors[i % catColors.length] }));
@@ -1011,7 +1011,7 @@ function DashboardPage({ colors, transactions, recurring, installments, budgets,
         </div>
 
         {/* Safe to Spend */}
-        <div style={{ padding: "22px 24px", borderRadius: 16, background: "linear-gradient(135deg,#6366f1,#818cf8)", color: "#fff", position: "relative", overflow: "hidden" }}>
+        <div style={{ padding: "22px 24px", borderRadius: 16, background: "linear-gradient(135deg,#142453,#0A193D)", color: "#fff", position: "relative", overflow: "hidden" }}>
           <div style={{ position: "absolute", top: -20, right: -20, width: 100, height: 100, borderRadius: "50%", background: "rgba(255,255,255,0.06)" }} />
           <div style={{ position: "absolute", bottom: -30, left: -10, width: 120, height: 120, borderRadius: "50%", background: "rgba(255,255,255,0.04)" }} />
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8, position: "relative" }}>
@@ -1042,7 +1042,7 @@ function DashboardPage({ colors, transactions, recurring, installments, budgets,
             Your balance covers about {Math.min(runwayDays, 30)} of the next 30 days
           </div>
           <div style={{ position: "relative", height: 6, borderRadius: 4, background: colors.inputBg, overflow: "hidden", marginBottom: 8 }}>
-            <div style={{ position: "absolute", left: 0, top: 0, height: "100%", width: `${Math.min(100, (runwayDays / 30) * 100)}%`, borderRadius: 4, background: "linear-gradient(90deg,#6366f1,#818cf8)" }} />
+            <div style={{ position: "absolute", left: 0, top: 0, height: "100%", width: `${Math.min(100, (runwayDays / 30) * 100)}%`, borderRadius: 4, background: "linear-gradient(90deg,#142453,#0A193D)" }} />
           </div>
           <div style={{ display: "flex", justifyContent: "space-between", fontSize: 11, color: colors.textSub }}>
             <span>0 days</span><span>30+ days</span>
@@ -1054,8 +1054,8 @@ function DashboardPage({ colors, transactions, recurring, installments, budgets,
         <div className="finlo-grid-30" style={{ flex: "0 0 30%", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
           {[
             next7Days.length > 0
-              ? { icon: <Calendar size={16} color="#6366f1" />, label: "Upcoming", value: fmt(totalUpcoming7), sub: `${next7Days.length} due`, bg: "rgba(99,102,241,0.08)" }
-              : { icon: <Calendar size={16} color="#6366f1" />, label: "Upcoming", value: fmt(0), sub: "None due", bg: "rgba(99,102,241,0.08)" },
+              ? { icon: <Calendar size={16} color="#0A193D" />, label: "Upcoming", value: fmt(totalUpcoming7), sub: `${next7Days.length} due`, bg: "rgba(10,25,61,0.08)" }
+              : { icon: <Calendar size={16} color="#0A193D" />, label: "Upcoming", value: fmt(0), sub: "None due", bg: "rgba(10,25,61,0.08)" },
             overdueRecurring.length > 0
               ? { icon: <AlertCircle size={16} color="#ef4444" />, label: "Overdue", value: fmt(totalOverdue), sub: `${overdueRecurring.length} late`, bg: "rgba(239,68,68,0.08)" }
               : { icon: <AlertCircle size={16} color="#ef4444" />, label: "Overdue", value: "None", sub: "All clear", bg: "rgba(239,68,68,0.08)" },
@@ -1085,7 +1085,7 @@ function DashboardPage({ colors, transactions, recurring, installments, budgets,
             </button>
           </div>
           <div style={{ display: "flex", gap: 16, marginBottom: 14 }}>
-            {[{ color: "#10b981", label: "Income" }, { color: "#ef4444", label: "Expenses" }, { color: "#6366f1", label: "Net" }].map(l => (
+            {[{ color: "#10b981", label: "Income" }, { color: "#ef4444", label: "Expenses" }, { color: "#0A193D", label: "Net" }].map(l => (
               <div key={l.label} style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 12, color: colors.textSub }}>
                 <span style={{ width: 10, height: 10, borderRadius: 2, background: l.color, display: "inline-block" }} />{l.label}
               </div>
@@ -1099,7 +1099,7 @@ function DashboardPage({ colors, transactions, recurring, installments, budgets,
               <Tooltip content={<CustomTooltip colors={colors} currency={currency} />} />
               <Bar dataKey="income" fill="#10b981" fillOpacity={0.7} radius={[4, 4, 0, 0]} />
               <Bar dataKey="expenses" fill="#ef4444" fillOpacity={0.6} radius={[4, 4, 0, 0]} />
-              <Line type="monotone" dataKey="net" stroke="#6366f1" strokeWidth={2} dot={{ fill: "#6366f1", r: 3 }} />
+              <Line type="monotone" dataKey="net" stroke="#0A193D" strokeWidth={2} dot={{ fill: "#0A193D", r: 3 }} />
             </ComposedChart>
           </ResponsiveContainer>
         </div>
@@ -1108,7 +1108,7 @@ function DashboardPage({ colors, transactions, recurring, installments, budgets,
         <div style={{ padding: "22px 24px", borderRadius: 16, background: colors.card, border: `1px solid ${colors.cardBorder}`, containerType: "inline-size" }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16, gap: 8 }}>
             <span style={{ fontWeight: 700, whiteSpace: "nowrap", lineHeight: 1.25, fontSize: "clamp(11px, 2.9cqw, 15px)" }}>Upcoming Payments / Installments</span>
-            <button onClick={onViewAllUpcoming} style={{ fontSize: "clamp(10px, 2.4cqw, 12px)", color: "#6366f1", background: "none", border: "none", cursor: "pointer", fontWeight: 600, whiteSpace: "nowrap", flexShrink: 0 }}>View all</button>
+            <button onClick={onViewAllUpcoming} style={{ fontSize: "clamp(10px, 2.4cqw, 12px)", color: "#0A193D", background: "none", border: "none", cursor: "pointer", fontWeight: 600, whiteSpace: "nowrap", flexShrink: 0 }}>View all</button>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             {upcomingList.length === 0 ? (
@@ -1161,7 +1161,7 @@ function DashboardPage({ colors, transactions, recurring, installments, budgets,
         <div style={{ padding: "22px 24px", borderRadius: 16, background: colors.card, border: `1px solid ${colors.cardBorder}` }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
             <span style={{ fontWeight: 700, fontSize: 15 }}>Recent Transactions</span>
-            <button style={{ fontSize: 12, color: "#6366f1", background: "none", border: "none", cursor: "pointer", fontWeight: 600 }}>View all</button>
+            <button style={{ fontSize: 12, color: "#0A193D", background: "none", border: "none", cursor: "pointer", fontWeight: 600 }}>View all</button>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
             {recent.map(t => (
@@ -1256,7 +1256,7 @@ function TransactionsPage({ colors, transactions, onDeleteTransaction, currency 
           <input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search transactions..." style={{ width: "100%", padding: "9px 12px 9px 36px", borderRadius: 9, border: `1px solid ${colors.cardBorder}`, background: colors.card, color: colors.text, fontSize: 13, outline: "none", boxSizing: "border-box" }} />
         </div>
         {(["all", "income", "expense"] as const).map(f => (
-          <button key={f} onClick={() => setTypeFilter(f)} style={{ padding: "9px 16px", borderRadius: 9, border: `1px solid ${typeFilter === f ? "#6366f1" : colors.cardBorder}`, background: typeFilter === f ? "rgba(99,102,241,0.1)" : colors.card, color: typeFilter === f ? "#6366f1" : colors.textSub, fontSize: 13, fontWeight: typeFilter === f ? 600 : 400, cursor: "pointer", textTransform: "capitalize" }}>
+          <button key={f} onClick={() => setTypeFilter(f)} style={{ padding: "9px 16px", borderRadius: 9, border: `1px solid ${typeFilter === f ? "#0A193D" : colors.cardBorder}`, background: typeFilter === f ? "rgba(10,25,61,0.1)" : colors.card, color: typeFilter === f ? "#0A193D" : colors.textSub, fontSize: 13, fontWeight: typeFilter === f ? 600 : 400, cursor: "pointer", textTransform: "capitalize" }}>
             {f === "all" ? "All" : f.charAt(0).toUpperCase() + f.slice(1)}
           </button>
         ))}
@@ -1264,7 +1264,7 @@ function TransactionsPage({ colors, transactions, onDeleteTransaction, currency 
       {/* Category pills */}
       <div style={{ display: "flex", gap: 8, overflowX: "auto", paddingBottom: 4 }}>
         {cats.map(c => (
-          <button key={c} onClick={() => setCatFilter(c)} style={{ padding: "6px 14px", borderRadius: 20, border: `1px solid ${catFilter === c ? "#6366f1" : colors.cardBorder}`, background: catFilter === c ? "rgba(99,102,241,0.1)" : colors.card, color: catFilter === c ? "#6366f1" : colors.textSub, fontSize: 12, fontWeight: catFilter === c ? 600 : 400, cursor: "pointer", whiteSpace: "nowrap" }}>
+          <button key={c} onClick={() => setCatFilter(c)} style={{ padding: "6px 14px", borderRadius: 20, border: `1px solid ${catFilter === c ? "#0A193D" : colors.cardBorder}`, background: catFilter === c ? "rgba(10,25,61,0.1)" : colors.card, color: catFilter === c ? "#0A193D" : colors.textSub, fontSize: 12, fontWeight: catFilter === c ? 600 : 400, cursor: "pointer", whiteSpace: "nowrap" }}>
             {c}
           </button>
         ))}
@@ -1430,7 +1430,7 @@ function UpcomingPage({ colors, transactions, recurring, installments, supabase,
             { label: "Total Income", value: fmtN(expectedIncome), color: "#10b981" },
             { label: "Recurring Bills", value: fmtN(expectedExpenses), color: "#ef4444" },
             { label: "Recurring Count", value: String(expenseItems.length), color: "#f59e0b" },
-            { label: "Net (Income - Bills)", value: fmtN(expectedIncome - expectedExpenses), color: "#6366f1" },
+            { label: "Net (Income - Bills)", value: fmtN(expectedIncome - expectedExpenses), color: "#0A193D" },
           ].map((s, i) => (
             <div key={i} style={{ padding: "14px 16px", borderRadius: 12, background: colors.inputBg, textAlign: "center" }}>
               <div style={{ fontSize: 11, color: colors.textSub, marginBottom: 6 }}>{s.label}</div>
@@ -1468,7 +1468,7 @@ function UpcomingPage({ colors, transactions, recurring, installments, supabase,
         <div style={{ padding: "22px 24px", borderRadius: 16, background: colors.card, border: `1px solid ${colors.cardBorder}` }}>
           <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 14, display: "flex", alignItems: "center", gap: 8 }}>
             <TrendingDown size={16} color="#ef4444" /> Recurring Bills
-            <button onClick={() => setShowAddRecurring(true)} style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 5, padding: "6px 12px", borderRadius: 8, border: "none", background: "#6366f1", color: "#fff", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
+            <button onClick={() => setShowAddRecurring(true)} style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: 5, padding: "6px 12px", borderRadius: 8, border: "none", background: "#0A193D", color: "#fff", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>
               <Plus size={13} /> Add
             </button>
           </div>
@@ -1513,7 +1513,7 @@ function UpcomingPage({ colors, transactions, recurring, installments, supabase,
       {/* Upcoming Installments */}
       <div style={{ padding: "22px 24px", borderRadius: 16, background: colors.card, border: `1px solid ${colors.cardBorder}` }}>
         <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 14, display: "flex", alignItems: "center", gap: 8 }}>
-          <DollarSign size={16} color="#6366f1" /> Upcoming Installments
+          <DollarSign size={16} color="#0A193D" /> Upcoming Installments
         </div>
         <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
           {upcomingInstallments.length === 0 && <div style={{ fontSize: 12, color: colors.textSub, padding: 12 }}>No active installment plans.</div>}
@@ -1521,15 +1521,15 @@ function UpcomingPage({ colors, transactions, recurring, installments, supabase,
             const isPaid = checkPaidInst(inst);
             const instName = `Installment: ${inst.item_name}`;
             return (
-              <div key={inst.id} style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 14px", borderRadius: 12, background: isPaid ? "rgba(16,185,129,0.06)" : "rgba(99,102,241,0.05)", borderLeft: `3px solid ${isPaid ? "#10b981" : "#6366f1"}` }}>
-                <div style={{ width: 38, height: 38, borderRadius: 10, background: isPaid ? "rgba(16,185,129,0.12)" : "rgba(99,102,241,0.12)", display: "flex", alignItems: "center", justifyContent: "center", color: isPaid ? "#10b981" : "#6366f1" }}><DollarSign size={16} /></div>
+              <div key={inst.id} style={{ display: "flex", alignItems: "center", gap: 12, padding: "12px 14px", borderRadius: 12, background: isPaid ? "rgba(16,185,129,0.06)" : "rgba(10,25,61,0.05)", borderLeft: `3px solid ${isPaid ? "#10b981" : "#0A193D"}` }}>
+                <div style={{ width: 38, height: 38, borderRadius: 10, background: isPaid ? "rgba(16,185,129,0.12)" : "rgba(10,25,61,0.12)", display: "flex", alignItems: "center", justifyContent: "center", color: isPaid ? "#10b981" : "#0A193D" }}><DollarSign size={16} /></div>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontWeight: 600, fontSize: 13, color: isPaid ? "#10b981" : colors.text }}>{instName}</div>
                   <div style={{ fontSize: 11, color: colors.textSub }}>Due: {inst.next_due_date} · {inst.paid_count}/{inst.total_months} paid</div>
                 </div>
                 <div style={{ textAlign: "right" }}>
                   <div style={{ fontWeight: 700, color: isPaid ? "#10b981" : colors.text }}>{fmtN(Number(inst.monthly_installment))}</div>
-                  <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 7px", borderRadius: 5, background: isPaid ? "rgba(16,185,129,0.15)" : "rgba(99,102,241,0.12)", color: isPaid ? "#10b981" : "#6366f1" }}>{isPaid ? "Paid ✓" : "Unpaid"}</span>
+                  <span style={{ fontSize: 11, fontWeight: 600, padding: "2px 7px", borderRadius: 5, background: isPaid ? "rgba(16,185,129,0.15)" : "rgba(10,25,61,0.12)", color: isPaid ? "#10b981" : "#0A193D" }}>{isPaid ? "Paid ✓" : "Unpaid"}</span>
                 </div>
                 {!isPaid && (
                   <button onClick={() => onPayInstallment(inst.id)} title="Pay installment" style={{ width: 32, height: 32, borderRadius: 8, border: "none", background: "rgba(16,185,129,0.1)", color: "#10b981", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
@@ -1626,7 +1626,7 @@ function AddRecurringModal({ colors, onClose, onSubmit, currency }: { colors: Co
           </div>
           {error && <div style={{ fontSize: 12, color: "#ef4444", background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 8, padding: "8px 12px" }}>{error}</div>}
           <div style={{ display: "flex", gap: 10, paddingTop: 4 }}>
-            <button onClick={handleSubmit} disabled={loading} style={{ flex: 1, padding: "11px", borderRadius: 10, border: "none", background: loading ? "#9ca3af" : "#6366f1", color: "#fff", fontWeight: 700, fontSize: 14, cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1 }}>
+            <button onClick={handleSubmit} disabled={loading} style={{ flex: 1, padding: "11px", borderRadius: 10, border: "none", background: loading ? "#9ca3af" : "#0A193D", color: "#fff", fontWeight: 700, fontSize: 14, cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1 }}>
               {loading ? "Saving..." : "Add Recurring"}
             </button>
             <button onClick={onClose} style={{ padding: "11px 18px", borderRadius: 10, border: `1px solid ${colors.cardBorder}`, background: "transparent", color: colors.textSub, fontSize: 14, cursor: "pointer" }}>Cancel</button>
@@ -1669,7 +1669,7 @@ function BudgetsPage({ colors, budgets, currency, onAddBudget }: { colors: Color
         <div style={{ minWidth: 0 }}>
           <div style={{ fontSize: 13, color: colors.textSub, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>Monthly Budget Overview — {currentMonthLabel}</div>
         </div>
-        <button onClick={() => { setNewCat("Food"); setNewAmount(""); setErr(""); setShowAdd(true); }} style={{ display: "flex", alignItems: "center", gap: 6, padding: "9px 16px", borderRadius: 9, border: "none", background: "#6366f1", color: "#fff", fontWeight: 600, fontSize: 13, cursor: "pointer", flexShrink: 0 }}>
+        <button onClick={() => { setNewCat("Food"); setNewAmount(""); setErr(""); setShowAdd(true); }} style={{ display: "flex", alignItems: "center", gap: 6, padding: "9px 16px", borderRadius: 9, border: "none", background: "#0A193D", color: "#fff", fontWeight: 600, fontSize: 13, cursor: "pointer", flexShrink: 0 }}>
           <Plus size={15} /> Add Budget
         </button>
       </div>
@@ -1677,7 +1677,7 @@ function BudgetsPage({ colors, budgets, currency, onAddBudget }: { colors: Color
       {/* Summary */}
       <div className="finlo-grid-3" style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 14 }}>
         {[
-          { label: "Total Budgeted", value: fmtN(totalBudgeted), color: "#6366f1" },
+          { label: "Total Budgeted", value: fmtN(totalBudgeted), color: "#0A193D" },
           { label: "Total Spent", value: fmtN(totalSpent), color: "#f59e0b" },
           { label: "Remaining", value: fmtN(remaining), color: "#10b981" },
         ].map((s, i) => (
@@ -1694,7 +1694,7 @@ function BudgetsPage({ colors, budgets, currency, onAddBudget }: { colors: Color
           const pct = Math.min(Math.round(b.spent / b.limit * 100), 100);
           const isOver = b.spent > b.limit;
           const isWarn = pct >= 80 && !isOver;
-          const barColor = isOver ? "#ef4444" : isWarn ? "#f59e0b" : "#6366f1";
+          const barColor = isOver ? "#ef4444" : isWarn ? "#f59e0b" : "#0A193D";
           return (
             <div key={b.id} style={{ padding: "20px 22px", borderRadius: 14, background: colors.card, border: `1px solid ${isOver ? "rgba(239,68,68,0.3)" : colors.cardBorder}` }}>
               <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 12 }}>
@@ -1746,7 +1746,7 @@ function BudgetsPage({ colors, budgets, currency, onAddBudget }: { colors: Color
             {err && <div style={{ fontSize: 12, color: "#ef4444", background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 8, padding: "8px 12px", marginTop: 12 }}>{err}</div>}
 
             <div style={{ display: "flex", gap: 10, paddingTop: 16 }}>
-              <button onClick={handleSaveBudget} disabled={busy} style={{ flex: 1, padding: "11px", borderRadius: 10, border: "none", background: busy ? "#9ca3af" : "#6366f1", color: "#fff", fontWeight: 700, fontSize: 14, cursor: busy ? "not-allowed" : "pointer", opacity: busy ? 0.7 : 1 }}>
+              <button onClick={handleSaveBudget} disabled={busy} style={{ flex: 1, padding: "11px", borderRadius: 10, border: "none", background: busy ? "#9ca3af" : "#0A193D", color: "#fff", fontWeight: 700, fontSize: 14, cursor: busy ? "not-allowed" : "pointer", opacity: busy ? 0.7 : 1 }}>
                 {busy ? "Saving..." : "Save Budget"}
               </button>
               <button onClick={() => setShowAdd(false)} style={{ padding: "11px 18px", borderRadius: 10, border: `1px solid ${colors.cardBorder}`, background: "transparent", color: colors.textSub, fontSize: 14, cursor: "pointer" }}>Cancel</button>
@@ -1770,7 +1770,7 @@ function AnalyticsPage({ colors, transactions, currency }: { colors: Colors; tra
     const cat = (t.category || "Other").charAt(0).toUpperCase() + (t.category || "Other").slice(1);
     catMap[cat] = (catMap[cat] || 0) + t.amount;
   });
-  const catColors = ["#6366f1", "#10b981", "#ef4444", "#06b6d4", "#f59e0b", "#8b5cf6", "#94a3b8"];
+  const catColors = ["#0A193D", "#10b981", "#ef4444", "#06b6d4", "#f59e0b", "#0A193D", "#94a3b8"];
   const breakdown = Object.entries(catMap).sort((a, b) => b[1] - a[1]).map(([name, value], i) => ({ name, value, color: catColors[i % catColors.length] }));
   const topCat = breakdown[0] || null;
   const avgMonthly = totalExpenses > 0 ? Math.round(totalExpenses) : 0;
@@ -1802,7 +1802,7 @@ function AnalyticsPage({ colors, transactions, currency }: { colors: Colors; tra
       {/* Stats */}
       <div className="finlo-grid-3" style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 14 }}>
         {[
-          { label: "Top Spending Category", value: topCat ? topCat.name : "—", sub: topCat ? fmtN(topCat.value) + " total" : "No expenses yet", icon: <Home size={18} color="#6366f1" />, bg: "rgba(99,102,241,0.1)" },
+          { label: "Top Spending Category", value: topCat ? topCat.name : "—", sub: topCat ? fmtN(topCat.value) + " total" : "No expenses yet", icon: <Home size={18} color="#0A193D" />, bg: "rgba(10,25,61,0.1)" },
           { label: "Avg Monthly Expenses", value: fmtN(Math.round(avgMonthly / monthCount)), sub: `Across ${monthCount} month(s)`, icon: <BarChart2 size={18} color="#f59e0b" />, bg: "rgba(245,158,11,0.1)" },
           { label: "Total Savings", value: fmtN(savings), sub: "Income − Expenses", icon: <TrendingUp size={18} color="#10b981" />, bg: "rgba(16,185,129,0.1)" },
         ].map((s, i) => (
@@ -1829,7 +1829,7 @@ function AnalyticsPage({ colors, transactions, currency }: { colors: Colors; tra
             <Tooltip content={<CustomTooltip colors={colors} currency={currency} />} />
             <Legend wrapperStyle={{ fontSize: 12, paddingTop: 12 }} />
             <Bar dataKey="income" name="Income" fill="#10b981" radius={[5, 5, 0, 0]} fillOpacity={0.85} />
-            <Bar dataKey="expenses" name="Expenses" fill="#6366f1" radius={[5, 5, 0, 0]} fillOpacity={0.75} />
+            <Bar dataKey="expenses" name="Expenses" fill="#0A193D" radius={[5, 5, 0, 0]} fillOpacity={0.75} />
           </BarChart>
         </ResponsiveContainer>
       </div>
@@ -1863,7 +1863,7 @@ function AnalyticsPage({ colors, transactions, currency }: { colors: Colors; tra
               <XAxis dataKey="month" tick={{ fontSize: 11, fill: colors.textSub }} axisLine={false} tickLine={false} />
               <YAxis tick={{ fontSize: 11, fill: colors.textSub }} axisLine={false} tickLine={false} tickFormatter={v => `${v / 1000}K`} />
               <Tooltip content={<CustomTooltip colors={colors} currency={currency} />} />
-              <Line type="monotone" dataKey="expenses" name="Expenses" stroke="#6366f1" strokeWidth={2.5} dot={{ fill: "#6366f1", r: 4 }} />
+              <Line type="monotone" dataKey="expenses" name="Expenses" stroke="#0A193D" strokeWidth={2.5} dot={{ fill: "#0A193D", r: 4 }} />
             </LineChart>
           </ResponsiveContainer>
         </div>
@@ -1981,7 +1981,7 @@ function AIPage({ colors, transactions, currency }: { colors: Colors; transactio
       {/* Chat */}
       <div className="finlo-ai-chat" style={{ flex: 1, display: "flex", flexDirection: "column", borderRadius: 16, background: colors.card, border: `1px solid ${colors.cardBorder}`, overflow: "hidden" }}>
         <div style={{ padding: "16px 20px", borderBottom: `1px solid ${colors.cardBorder}`, display: "flex", alignItems: "center", gap: 10 }}>
-          <div style={{ width: 36, height: 36, borderRadius: 10, background: "linear-gradient(135deg,#6366f1,#818cf8)", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div style={{ width: 36, height: 36, borderRadius: 10, background: "linear-gradient(135deg,#142453,#0A193D)", display: "flex", alignItems: "center", justifyContent: "center" }}>
             <Bot size={18} color="#fff" />
           </div>
           <div>
@@ -1997,7 +1997,7 @@ function AIPage({ colors, transactions, currency }: { colors: Colors; transactio
             <div key={i} style={{ display: "flex", justifyContent: m.role === "user" ? "flex-end" : "flex-start" }}>
               <div style={{
                 maxWidth: "78%", padding: "11px 14px", borderRadius: m.role === "user" ? "14px 14px 4px 14px" : "14px 14px 14px 4px",
-                background: m.role === "user" ? "linear-gradient(135deg,#6366f1,#818cf8)" : colors.inputBg,
+                background: m.role === "user" ? "linear-gradient(135deg,#142453,#0A193D)" : colors.inputBg,
                 color: m.role === "user" ? "#fff" : colors.text, fontSize: 13, lineHeight: 1.6,
               }}>
                 {m.content}
@@ -2024,7 +2024,7 @@ function AIPage({ colors, transactions, currency }: { colors: Colors; transactio
         <div style={{ padding: "12px 16px", borderTop: `1px solid ${colors.cardBorder}`, display: "flex", gap: 10 }}>
           <input value={input} onChange={e => setInput(e.target.value)} onKeyDown={e => e.key === "Enter" && sendMessage()}
             placeholder="Ask about your finances..." style={{ flex: 1, padding: "10px 14px", borderRadius: 10, border: `1px solid ${colors.cardBorder}`, background: colors.inputBg, color: colors.text, fontSize: 13, outline: "none" }} />
-          <button onClick={() => sendMessage()} disabled={loading} style={{ width: 42, height: 42, borderRadius: 10, border: "none", background: loading ? colors.inputBg : "#6366f1", color: "#fff", cursor: loading ? "default" : "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <button onClick={() => sendMessage()} disabled={loading} style={{ width: 42, height: 42, borderRadius: 10, border: "none", background: loading ? colors.inputBg : "#0A193D", color: "#fff", cursor: loading ? "default" : "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}>
             <Send size={16} />
           </button>
         </div>
@@ -2034,7 +2034,7 @@ function AIPage({ colors, transactions, currency }: { colors: Colors; transactio
       <div className="finlo-ai-side" style={{ width: 280, display: "flex", flexDirection: "column", gap: 16 }}>
         <div style={{ padding: "22px 20px", borderRadius: 16, background: colors.card, border: `1px solid ${colors.cardBorder}` }}>
           <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 4, display: "flex", alignItems: "center", gap: 7 }}>
-            <Sparkles size={16} color="#6366f1" /> Can I Afford It?
+            <Sparkles size={16} color="#0A193D" /> Can I Afford It?
           </div>
           <div style={{ fontSize: 12, color: colors.textSub, marginBottom: 16 }}>Enter an amount to see the impact</div>
           <div style={{ position: "relative", marginBottom: 12 }}>
@@ -2042,7 +2042,7 @@ function AIPage({ colors, transactions, currency }: { colors: Colors; transactio
             <input value={affordAmount} onChange={e => { setAffordAmount(e.target.value); setAffordResult(null); }}
               placeholder="40,000" style={{ width: "100%", padding: "10px 12px 10px 40px", borderRadius: 9, border: `1px solid ${colors.cardBorder}`, background: colors.inputBg, color: colors.text, fontSize: 14, fontWeight: 600, outline: "none", boxSizing: "border-box" }} />
           </div>
-          <button onClick={checkAffordability} style={{ width: "100%", padding: "10px", borderRadius: 9, border: "none", background: "#6366f1", color: "#fff", fontWeight: 600, fontSize: 13, cursor: "pointer" }}>Check Affordability</button>
+          <button onClick={checkAffordability} style={{ width: "100%", padding: "10px", borderRadius: 9, border: "none", background: "#0A193D", color: "#fff", fontWeight: 600, fontSize: 13, cursor: "pointer" }}>Check Affordability</button>
 
           {affordResult && (
             <div style={{ marginTop: 14, padding: "14px", borderRadius: 12, background: affordResult === "safe" ? "rgba(16,185,129,0.1)" : "rgba(245,158,11,0.1)", border: `1px solid ${affordResult === "safe" ? "rgba(16,185,129,0.3)" : "rgba(245,158,11,0.3)"}` }}>
@@ -2066,7 +2066,7 @@ function AIPage({ colors, transactions, currency }: { colors: Colors; transactio
         <div style={{ padding: "18px 20px", borderRadius: 16, background: colors.card, border: `1px solid ${colors.cardBorder}` }}>
           <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 12, color: colors.text }}>Your Financial Snapshot</div>
           {[
-            { label: "Balance", value: formatCurrency(aiBalance, currency), color: "#6366f1" },
+            { label: "Balance", value: formatCurrency(aiBalance, currency), color: "#0A193D" },
             { label: "Safe to Spend", value: formatCurrency(financialContext.safeToSpend, currency), color: "#10b981" },
             { label: "Money Runway", value: aiRunway + " days", color: "#f59e0b" },
             { label: "Income", value: formatCurrency(aiIncome, currency), color: colors.textSub },
@@ -2312,9 +2312,9 @@ function SettingsPage({ colors, isDark, toggleTheme, displayName, userEmail, onS
     <div style={{ maxWidth: 680, display: "flex", flexDirection: "column", gap: 18 }}>
       {/* Profile */}
       <div style={{ padding: "22px 24px", borderRadius: 16, background: colors.card, border: `1px solid ${colors.cardBorder}` }}>
-        <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 18, display: "flex", alignItems: "center", gap: 8 }}><User size={16} color="#6366f1" /> Profile</div>
+        <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 18, display: "flex", alignItems: "center", gap: 8 }}><User size={16} color="#0A193D" /> Profile</div>
         <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 20 }}>
-          <div style={{ width: 56, height: 56, borderRadius: "50%", background: "linear-gradient(135deg,#6366f1,#818cf8)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 700, fontSize: 22 }}>{profileInitial}</div>
+          <div style={{ width: 56, height: 56, borderRadius: "50%", background: "linear-gradient(135deg,#142453,#0A193D)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 700, fontSize: 22 }}>{profileInitial}</div>
           <div style={{ minWidth: 0 }}>
             <div style={{ fontWeight: 700, fontSize: 16, color: colors.text, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{displayName}</div>
             <div style={{ fontSize: 13, color: colors.textSub, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{userEmail}</div>
@@ -2325,10 +2325,10 @@ function SettingsPage({ colors, isDark, toggleTheme, displayName, userEmail, onS
 
       {/* Currency */}
       <div style={{ padding: "22px 24px", borderRadius: 16, background: colors.card, border: `1px solid ${colors.cardBorder}` }}>
-        <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 14, display: "flex", alignItems: "center", gap: 8 }}><DollarSign size={16} color="#6366f1" /> Currency</div>
+        <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 14, display: "flex", alignItems: "center", gap: 8 }}><DollarSign size={16} color="#0A193D" /> Currency</div>
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
           {currencies.map(c => (
-            <button key={c} onClick={() => { setDraftCurrency(c); setSaved(false); }} style={{ padding: "8px 18px", borderRadius: 9, border: `1px solid ${draftCurrency === c ? "#6366f1" : colors.cardBorder}`, background: draftCurrency === c ? "rgba(99,102,241,0.1)" : "transparent", color: draftCurrency === c ? "#6366f1" : colors.textSub, fontWeight: draftCurrency === c ? 700 : 400, fontSize: 13, cursor: "pointer" }}>
+            <button key={c} onClick={() => { setDraftCurrency(c); setSaved(false); }} style={{ padding: "8px 18px", borderRadius: 9, border: `1px solid ${draftCurrency === c ? "#0A193D" : colors.cardBorder}`, background: draftCurrency === c ? "rgba(10,25,61,0.1)" : "transparent", color: draftCurrency === c ? "#0A193D" : colors.textSub, fontWeight: draftCurrency === c ? 700 : 400, fontSize: 13, cursor: "pointer" }}>
               {c}
             </button>
           ))}
@@ -2337,13 +2337,13 @@ function SettingsPage({ colors, isDark, toggleTheme, displayName, userEmail, onS
 
       {/* Theme */}
       <div style={{ padding: "22px 24px", borderRadius: 16, background: colors.card, border: `1px solid ${colors.cardBorder}` }}>
-        <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 14, display: "flex", alignItems: "center", gap: 8 }}>{isDark ? <Moon size={16} color="#6366f1" /> : <Sun size={16} color="#6366f1" />} Appearance</div>
+        <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 14, display: "flex", alignItems: "center", gap: 8 }}>{isDark ? <Moon size={16} color="#0A193D" /> : <Sun size={16} color="#0A193D" />} Appearance</div>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
           <div>
             <div style={{ fontWeight: 500, fontSize: 13, color: colors.text }}>{isDark ? "Dark Mode" : "Light Mode"}</div>
             <div style={{ fontSize: 12, color: colors.textSub }}>Switch between light and dark theme</div>
           </div>
-          <button onClick={toggleTheme} style={{ width: 52, height: 28, borderRadius: 20, border: "none", background: isDark ? "#6366f1" : colors.cardBorder, cursor: "pointer", position: "relative", transition: "background 0.16s" }}>
+          <button onClick={toggleTheme} style={{ width: 52, height: 28, borderRadius: 20, border: "none", background: isDark ? "#0A193D" : colors.cardBorder, cursor: "pointer", position: "relative", transition: "background 0.16s" }}>
             <span style={{ position: "absolute", top: 3, width: 22, height: 22, borderRadius: "50%", background: "#fff", transition: "left 0.16s", left: isDark ? 27 : 3 }} />
           </button>
         </div>
@@ -2351,7 +2351,7 @@ function SettingsPage({ colors, isDark, toggleTheme, displayName, userEmail, onS
 
       {/* Notifications */}
       <div style={{ padding: "22px 24px", borderRadius: 16, background: colors.card, border: `1px solid ${colors.cardBorder}` }}>
-        <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 14, display: "flex", alignItems: "center", gap: 8 }}><Bell size={16} color="#6366f1" /> Notifications</div>
+        <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 14, display: "flex", alignItems: "center", gap: 8 }}><Bell size={16} color="#0A193D" /> Notifications</div>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, padding: "4px 0 12px", borderBottom: `1px solid ${colors.cardBorder}` }}>
           <div>
             <div style={{ fontSize: 13, fontWeight: 600, color: colors.text }}>Mobile / Desktop notifications</div>
@@ -2381,7 +2381,7 @@ function SettingsPage({ colors, isDark, toggleTheme, displayName, userEmail, onS
               <div style={{ fontSize: 13, fontWeight: 500, color: colors.text }}>{n.label}</div>
               <div style={{ fontSize: 11, color: colors.textSub }}>{n.sub}</div>
             </div>
-            <button onClick={n.toggle} aria-pressed={n.on} style={{ width: 40, height: 22, borderRadius: 11, border: "none", background: n.on ? "#6366f1" : colors.cardBorder, position: "relative", cursor: "pointer", padding: 0, flexShrink: 0 }}>
+            <button onClick={n.toggle} aria-pressed={n.on} style={{ width: 40, height: 22, borderRadius: 11, border: "none", background: n.on ? "#0A193D" : colors.cardBorder, position: "relative", cursor: "pointer", padding: 0, flexShrink: 0 }}>
               <span style={{ position: "absolute", top: 2, left: n.on ? 20 : 2, width: 18, height: 18, borderRadius: "50%", background: "#fff", transition: "left 0.12s ease" }} />
             </button>
           </div>
@@ -2390,7 +2390,7 @@ function SettingsPage({ colors, isDark, toggleTheme, displayName, userEmail, onS
 
       {/* Data */}
       <div style={{ padding: "22px 24px", borderRadius: 16, background: colors.card, border: `1px solid ${colors.cardBorder}` }}>
-        <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 14, display: "flex", alignItems: "center", gap: 8 }}><Download size={16} color="#6366f1" /> Data & Privacy</div>
+        <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 14, display: "flex", alignItems: "center", gap: 8 }}><Download size={16} color="#0A193D" /> Data & Privacy</div>
         <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
           <button onClick={handleExport} disabled={exporting} style={{ display: "flex", alignItems: "center", gap: 6, padding: "9px 16px", borderRadius: 9, border: `1px solid ${colors.cardBorder}`, background: "transparent", color: colors.text, fontSize: 13, cursor: exporting ? "not-allowed" : "pointer", opacity: exporting ? 0.7 : 1 }}>
             <Download size={14} /> {exporting ? "Exporting..." : "Export JSON"}
@@ -2428,7 +2428,7 @@ function SettingsPage({ colors, isDark, toggleTheme, displayName, userEmail, onS
 
       {/* Save */}
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-        <button onClick={handleSave} style={{ display: "flex", alignItems: "center", gap: 8, padding: "12px 26px", borderRadius: 12, border: "none", background: "#6366f1", color: "#fff", fontSize: 14, fontWeight: 600, cursor: "pointer", boxShadow: "0 4px 16px rgba(99,102,241,0.35)" }}>
+        <button onClick={handleSave} style={{ display: "flex", alignItems: "center", gap: 8, padding: "12px 26px", borderRadius: 12, border: "none", background: "#0A193D", color: "#fff", fontSize: 14, fontWeight: 600, cursor: "pointer", boxShadow: "0 4px 16px rgba(10,25,61,0.35)" }}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
           Save Changes
         </button>
@@ -2521,7 +2521,7 @@ function InstallmentsPage({ colors, installments, onAdd, onMarkPaid, onDelete, c
             {active.length} active · Monthly outgoing: {formatCurrency(monthlyOutgoing, currency)}
           </div>
         </div>
-        <button onClick={() => setShowAdd(v => !v)} style={{ display: "flex", alignItems: "center", gap: 7, padding: "10px 16px", borderRadius: 10, border: "none", background: "linear-gradient(135deg,#6366f1,#818cf8)", color: "#fff", fontSize: 13.5, fontWeight: 700, cursor: "pointer", boxShadow: "0 4px 14px rgba(99,102,241,0.3)" }}>
+        <button onClick={() => setShowAdd(v => !v)} style={{ display: "flex", alignItems: "center", gap: 7, padding: "10px 16px", borderRadius: 10, border: "none", background: "linear-gradient(135deg,#142453,#0A193D)", color: "#fff", fontSize: 13.5, fontWeight: 700, cursor: "pointer", boxShadow: "0 4px 14px rgba(10,25,61,0.3)" }}>
           <Plus size={15} /> {showAdd ? "Cancel" : "Add Installment"}
         </button>
       </div>
@@ -2556,13 +2556,13 @@ function InstallmentsPage({ colors, installments, onAdd, onMarkPaid, onDelete, c
             <input type="date" value={nextDue} onChange={(e) => setNextDue(e.target.value)} style={inp(colors)} />
           </div>
           {price > 0 && months > 0 && (
-            <div style={{ padding: 12, borderRadius: 12, background: "rgba(99,102,241,0.08)", border: `1px solid rgba(99,102,241,0.25)` }}>
+            <div style={{ padding: 12, borderRadius: 12, background: "rgba(10,25,61,0.08)", border: `1px solid rgba(10,25,61,0.25)` }}>
               <div style={{ fontSize: 12.5, color: colors.textSub }}>Estimated monthly installment</div>
               <div style={{ fontSize: 24, fontWeight: 800, color: colors.text, marginTop: 2 }}>{formatCurrency(Math.round(emi), currency)}</div>
               <div style={{ fontSize: 11.5, color: colors.textSub }}>Total payable: {formatCurrency(Math.round(totalPayable), currency)} · Interest: {formatCurrency(Math.round(totalInterest), currency)}</div>
             </div>
           )}
-          <button onClick={doAdd} disabled={saving} style={{ padding: "12px", borderRadius: 11, border: "none", background: "#6366f1", color: "#fff", fontSize: 14, fontWeight: 700, cursor: "pointer", opacity: saving ? 0.6 : 1 }}>
+          <button onClick={doAdd} disabled={saving} style={{ padding: "12px", borderRadius: 11, border: "none", background: "#0A193D", color: "#fff", fontSize: 14, fontWeight: 700, cursor: "pointer", opacity: saving ? 0.6 : 1 }}>
             {saving ? "Saving..." : "Save Installment"}
           </button>
         </div>
@@ -2583,8 +2583,8 @@ function InstallmentsPage({ colors, installments, onAdd, onMarkPaid, onDelete, c
           return (
             <div key={inst.id} style={{ padding: 16, borderRadius: 16, background: colors.card, border: `1px solid ${colors.cardBorder}`, display: "flex", flexDirection: "column", gap: 12, opacity: done ? 0.7 : 1 }}>
               <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-                <div style={{ width: 40, height: 40, borderRadius: 11, background: "rgba(99,102,241,0.12)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                  <DollarSign size={18} color="#818cf8" />
+                <div style={{ width: 40, height: 40, borderRadius: 11, background: "rgba(10,25,61,0.12)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                  <DollarSign size={18} color="#0A193D" />
                 </div>
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <div style={{ fontWeight: 700, fontSize: 14, color: colors.text, textDecoration: done ? "line-through" : "none" }}>{inst.item_name}</div>
@@ -2592,14 +2592,14 @@ function InstallmentsPage({ colors, installments, onAdd, onMarkPaid, onDelete, c
                     {inst.paid_count}/{inst.total_months} paid · {formatCurrency(Number(inst.monthly_installment), currency)}/mo
                   </div>
                 </div>
-                <span style={{ fontSize: 11.5, fontWeight: 700, padding: "4px 10px", borderRadius: 999, background: done ? "rgba(16,185,129,0.15)" : days !== null && days <= 2 ? "rgba(239,68,68,0.15)" : "rgba(99,102,241,0.12)", color: done ? "#10b981" : days !== null && days <= 2 ? "#ef4444" : "#818cf8", whiteSpace: "nowrap" }}>
+                <span style={{ fontSize: 11.5, fontWeight: 700, padding: "4px 10px", borderRadius: 999, background: done ? "rgba(16,185,129,0.15)" : days !== null && days <= 2 ? "rgba(239,68,68,0.15)" : "rgba(10,25,61,0.12)", color: done ? "#10b981" : days !== null && days <= 2 ? "#ef4444" : "#0A193D", whiteSpace: "nowrap" }}>
                   {done ? "Done" : days === null ? "No due date" : days < 0 ? `${Math.abs(days)}d overdue` : days === 0 ? "Due today" : days === 1 ? "Due tomorrow" : `Due in ${days}d`}
                 </span>
               </div>
 
               {/* progress bar */}
               <div style={{ height: 7, borderRadius: 999, background: colors.inputBg, overflow: "hidden" }}>
-                <div style={{ height: "100%", width: `${progress}%`, borderRadius: 999, background: "linear-gradient(90deg,#6366f1,#818cf8)", transition: "width 0.3s" }} />
+                <div style={{ height: "100%", width: `${progress}%`, borderRadius: 999, background: "linear-gradient(90deg,#142453,#0A193D)", transition: "width 0.3s" }} />
               </div>
 
               <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
@@ -2743,7 +2743,7 @@ function AddModal({ colors, onClose, addType, setAddType, recurringNames, curren
               onClick={(e) => { e.stopPropagation(); setShowScanOptions(v => !v); }}
               disabled={scanning}
               aria-label="Scan receipt"
-              style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 12px", borderRadius: 9, border: "none", background: scanning ? "#9ca3af" : "rgba(99,102,241,0.14)", color: scanning ? "#fff" : "#6366f1", fontSize: 12, fontWeight: 600, cursor: scanning ? "not-allowed" : "pointer", opacity: scanning ? 0.7 : 1 }}
+              style={{ display: "flex", alignItems: "center", gap: 6, padding: "6px 12px", borderRadius: 9, border: "none", background: scanning ? "#9ca3af" : "rgba(10,25,61,0.14)", color: scanning ? "#fff" : "#0A193D", fontSize: 12, fontWeight: 600, cursor: scanning ? "not-allowed" : "pointer", opacity: scanning ? 0.7 : 1 }}
             >
               {scanning ? <ScanLine size={15} className="spin" /> : <Camera size={15} />}
               {scanning ? "Reading…" : "Scan bill"}
@@ -2808,7 +2808,7 @@ function AddModal({ colors, onClose, addType, setAddType, recurringNames, curren
             <div style={{ fontSize: 12, color: colors.textSub, marginBottom: 6 }}>Quick entry — SMS paste karo ya likho (e.g. &quot;Paid 3500 internet bill&quot;)</div>
             <div style={{ display: "flex", gap: 8 }}>
               <input value={nlInput} onChange={e => { setNlInput(e.target.value); setShowSuggestNL(true); }} onFocus={() => setShowSuggestNL(true)} onBlur={() => setTimeout(() => setShowSuggestNL(false), 150)} placeholder={'Bank SMS ya "Paid 3500 internet bill"'} style={{ ...inputStyle, flex: 1 }} autoComplete="off" />
-              <button onClick={parseNL} style={{ padding: "10px 14px", borderRadius: 9, border: "none", background: "#6366f1", color: "#fff", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>Parse</button>
+              <button onClick={parseNL} style={{ padding: "10px 14px", borderRadius: 9, border: "none", background: "#0A193D", color: "#fff", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>Parse</button>
             </div>
             {showSuggestNL && addType === "expense" && (
               (() => {
@@ -2837,7 +2837,7 @@ function AddModal({ colors, onClose, addType, setAddType, recurringNames, curren
           </div>
 
           {parsed && (
-            <div style={{ padding: "12px 14px", borderRadius: 12, background: "rgba(99,102,241,0.08)", border: "1px solid rgba(99,102,241,0.2)" }}>
+            <div style={{ padding: "12px 14px", borderRadius: 12, background: "rgba(10,25,61,0.08)", border: "1px solid rgba(10,25,61,0.2)" }}>
               <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 8, color: colors.text }}>We understood:</div>
               <div style={{ fontSize: 13, color: colors.textSub, display: "flex", gap: 16 }}>
                 <span>{currencySymbol(currency)}<b style={{ color: colors.text }}>{parsed.amount}</b></span>
@@ -2849,7 +2849,7 @@ function AddModal({ colors, onClose, addType, setAddType, recurringNames, curren
                   if (parsed.amount !== "?") setAmount(parsed.amount.replace(/,/g, ""));
                   setCategory(parsed.category);
                   setParsed(null);
-                }} style={{ padding: "7px 16px", borderRadius: 8, border: "none", background: "#6366f1", color: "#fff", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>Confirm</button>
+                }} style={{ padding: "7px 16px", borderRadius: 8, border: "none", background: "#0A193D", color: "#fff", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>Confirm</button>
                 <button onClick={() => setParsed(null)} style={{ padding: "7px 16px", borderRadius: 8, border: `1px solid ${colors.cardBorder}`, background: "transparent", color: colors.textSub, fontSize: 12, cursor: "pointer" }}>Edit</button>
               </div>
             </div>
@@ -2941,7 +2941,7 @@ function AddModal({ colors, onClose, addType, setAddType, recurringNames, curren
           <div style={{ display: "flex", gap: 10, paddingTop: 4 }}>
             <button
               disabled={loading}
-              style={{ flex: 1, padding: "11px", borderRadius: 10, border: "none", background: loading ? "#9ca3af" : "#6366f1", color: "#fff", fontWeight: 700, fontSize: 14, cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1 }}
+              style={{ flex: 1, padding: "11px", borderRadius: 10, border: "none", background: loading ? "#9ca3af" : "#0A193D", color: "#fff", fontWeight: 700, fontSize: 14, cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1 }}
               onClick={async () => {
                 const amt = Number(amount.replace(/,/g, ""));
                 if (!amt || amt <= 0) { setError("Enter a valid amount"); return; }
@@ -3078,7 +3078,7 @@ function SmsAddModal({ colors, currency, initialText, onClose }: { colors: Color
     <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.45)", backdropFilter: "blur(4px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 210, padding: 20 }} onClick={onClose}>
       <div onClick={e => e.stopPropagation()} style={{ width: "min(460px, calc(100vw - 32px))", borderRadius: 20, background: colors.card, border: `1px solid ${colors.cardBorder}`, boxShadow: "0 20px 60px rgba(0,0,0,0.2)", overflow: "hidden", maxHeight: "90vh", overflowY: "auto" }}>
         <div style={{ padding: "18px 22px", borderBottom: `1px solid ${colors.cardBorder}`, display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <span style={{ fontWeight: 700, fontSize: 16, color: colors.text, display: "flex", alignItems: "center", gap: 8 }}><Smartphone size={17} color="#6366f1" /> Bank SMS → Transaction</span>
+          <span style={{ fontWeight: 700, fontSize: 16, color: colors.text, display: "flex", alignItems: "center", gap: 8 }}><Smartphone size={17} color="#0A193D" /> Bank SMS → Transaction</span>
           <button onClick={onClose} style={{ width: 30, height: 30, borderRadius: 8, border: "none", background: colors.inputBg, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: colors.textSub }}><X size={15} /></button>
         </div>
 
@@ -3087,7 +3087,7 @@ function SmsAddModal({ colors, currency, initialText, onClose }: { colors: Color
             <div style={{ fontSize: 12, color: colors.textSub, marginBottom: 6 }}>Bank SMS text {initialText ? "(auto-analyzed)" : "(yahan paste karke Analyze dabao)"}</div>
             <textarea value={text} onChange={e => setText(e.target.value)} rows={3} style={{ ...inputStyle, resize: "vertical", fontFamily: "inherit", lineHeight: 1.45 }} placeholder="e.g. Rs.1,500.00 debited from account 1234 on 12-Aug. Avl Bal 25,000" />
             <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
-              <button onClick={() => analyze(text)} style={{ padding: "8px 14px", borderRadius: 8, border: "none", background: "#6366f1", color: "#fff", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>Analyze</button>
+              <button onClick={() => analyze(text)} style={{ padding: "8px 14px", borderRadius: 8, border: "none", background: "#0A193D", color: "#fff", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>Analyze</button>
               <button onClick={() => setText("")} style={{ padding: "8px 14px", borderRadius: 8, border: `1px solid ${colors.cardBorder}`, background: "transparent", color: colors.textSub, fontSize: 12, cursor: "pointer" }}>Clear</button>
             </div>
           </div>
@@ -3146,7 +3146,7 @@ function SmsAddModal({ colors, currency, initialText, onClose }: { colors: Color
               {error && <div style={{ fontSize: 12, color: "#ef4444", background: "rgba(239,68,68,0.08)", border: "1px solid rgba(239,68,68,0.2)", borderRadius: 8, padding: "8px 12px" }}>{error}</div>}
 
               <div style={{ display: "flex", gap: 10, paddingTop: 4 }}>
-                <button disabled={loading} style={{ flex: 1, padding: "11px", borderRadius: 10, border: "none", background: loading ? "#9ca3af" : "#6366f1", color: "#fff", fontWeight: 700, fontSize: 14, cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1 }} onClick={save}>
+                <button disabled={loading} style={{ flex: 1, padding: "11px", borderRadius: 10, border: "none", background: loading ? "#9ca3af" : "#0A193D", color: "#fff", fontWeight: 700, fontSize: 14, cursor: loading ? "not-allowed" : "pointer", opacity: loading ? 0.7 : 1 }} onClick={save}>
                   {loading ? "Saving..." : `Add ${kind.charAt(0).toUpperCase() + kind.slice(1)}`}
                 </button>
                 <button onClick={onClose} style={{ padding: "11px 18px", borderRadius: 10, border: `1px solid ${colors.cardBorder}`, background: "transparent", color: colors.textSub, fontSize: 14, cursor: "pointer" }}>Cancel</button>
@@ -3236,7 +3236,7 @@ function CameraCapture({ onCapture, onClose }: { onCapture: (file: File) => void
             <div style={{ position: "absolute", inset: 0, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: 12, padding: 24, textAlign: "center", background: "rgba(0,0,0,0.6)" }}>
               <div style={{ color: "#fff", fontSize: 14, lineHeight: 1.5 }}>{error}</div>
               {permissionDenied && (
-                <button onClick={() => { setPermissionDenied(false); setError(""); window.location.reload(); }} style={{ padding: "10px 20px", borderRadius: 10, border: "none", background: "#6366f1", color: "#fff", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>Retry</button>
+                <button onClick={() => { setPermissionDenied(false); setError(""); window.location.reload(); }} style={{ padding: "10px 20px", borderRadius: 10, border: "none", background: "#0A193D", color: "#fff", fontSize: 13, fontWeight: 600, cursor: "pointer" }}>Retry</button>
               )}
             </div>
           )}
@@ -3288,13 +3288,13 @@ function BalanceModal({ colors, initialBalance, currentBalance, onClose, onSave,
         </div>
 
         <div style={{ fontSize: 13, color: colors.text, fontWeight: 600, marginBottom: 14 }}>
-          Current Balance: <span style={{ color: "#6366f1" }}>{formatCurrency(Math.round(currentBalance), currency)}</span>
+          Current Balance: <span style={{ color: "#0A193D" }}>{formatCurrency(Math.round(currentBalance), currency)}</span>
         </div>
 
         {/* Mode tabs */}
         <div style={{ display: "flex", gap: 0, borderRadius: 10, background: colors.inputBg, padding: 4, marginBottom: 16 }}>
           {(["set", "adjust"] as const).map((m) => (
-            <button key={m} onClick={() => { setMode(m); setError(""); }} style={{ flex: 1, padding: "8px", borderRadius: 8, border: "none", background: mode === m ? colors.card : "transparent", color: mode === m ? "#6366f1" : colors.textSub, fontWeight: mode === m ? 700 : 400, fontSize: 13, cursor: "pointer", textTransform: "capitalize" }}>
+            <button key={m} onClick={() => { setMode(m); setError(""); }} style={{ flex: 1, padding: "8px", borderRadius: 8, border: "none", background: mode === m ? colors.card : "transparent", color: mode === m ? "#0A193D" : colors.textSub, fontWeight: mode === m ? 700 : 400, fontSize: 13, cursor: "pointer", textTransform: "capitalize" }}>
               {m === "set" ? "Set Balance" : "Adjust (+/-)"}
             </button>
           ))}
@@ -3343,7 +3343,7 @@ function BalanceModal({ colors, initialBalance, currentBalance, onClose, onSave,
 
         {error && <div style={{ fontSize: 12, color: "#ef4444", marginTop: 8 }}>{error}</div>}
         <div style={{ display: "flex", gap: 10, marginTop: 18 }}>
-          <button onClick={handleSave} style={{ flex: 1, padding: "11px", borderRadius: 10, border: "none", background: "#6366f1", color: "#fff", fontWeight: 700, fontSize: 14, cursor: "pointer" }}>
+          <button onClick={handleSave} style={{ flex: 1, padding: "11px", borderRadius: 10, border: "none", background: "#0A193D", color: "#fff", fontWeight: 700, fontSize: 14, cursor: "pointer" }}>
             {mode === "set" ? "Save Balance" : "Apply Change"}
           </button>
           <button onClick={onClose} style={{ padding: "11px 18px", borderRadius: 10, border: `1px solid ${colors.cardBorder}`, background: "transparent", color: colors.textSub, fontSize: 14, cursor: "pointer" }}>Cancel</button>
@@ -3374,7 +3374,7 @@ function CalcModal({ colors, onClose, balance, dailySpend, safeToSpend, currency
         ))}
         <div style={{ display: "flex", justifyContent: "space-between", padding: "12px 0 0", marginTop: 4 }}>
           <span style={{ fontWeight: 700, fontSize: 14, color: colors.text }}>Safe to Spend (estimate)</span>
-          <span style={{ fontWeight: 800, fontSize: 16, color: "#6366f1" }}>{formatCurrency(safeToSpend || 0, currency)}</span>
+          <span style={{ fontWeight: 800, fontSize: 16, color: "#0A193D" }}>{formatCurrency(safeToSpend || 0, currency)}</span>
         </div>
         <div style={{ marginTop: 14, padding: "10px 12px", borderRadius: 9, background: "rgba(245,158,11,0.08)", border: "1px solid rgba(245,158,11,0.2)", fontSize: 12, color: "#f59e0b", lineHeight: 1.5 }}>
           ⚠️ Safe to Spend = Current Balance − what you typically spend over the next 30 days. This is an estimate, not a guarantee.

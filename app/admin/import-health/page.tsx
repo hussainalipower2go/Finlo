@@ -73,7 +73,7 @@ export default function AdminImportHealthPage() {
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(180px,1fr))', gap: 14, marginBottom: 16 }}>
         <MiniStat label="Pending reviews" value={`${data.pendingReviews}`} tone={data.pendingReviews > 0 ? '#fbbf24' : '#10b981'} icon={<Inbox size={15} />} />
-        <MiniStat label="Import batches" value={`${data.totalBatches}`} tone="#818cf8" icon={<RefreshCw size={15} />} />
+        <MiniStat label="Import batches" value={`${data.totalBatches}`} tone="#0A193D" icon={<RefreshCw size={15} />} />
         <MiniStat label="Providers" value={`${data.providers.length}`} tone="#60a5fa" icon={<Database size={15} />} />
         <MiniStat label="Failed batches" value={`${failureTotal}`} tone={failureTotal > 0 ? '#f87171' : '#34d399'} icon={<AlertTriangle size={15} />} />
       </div>

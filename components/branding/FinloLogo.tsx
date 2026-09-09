@@ -6,7 +6,7 @@ export function FinloLogo({ className = '' }: { className?: string }) {
       <FinloLogoImg size={38} radius={10} />
       <div>
         <div className="text-[17px] font-bold leading-[1.1] text-white">Finlo</div>
-        <div className="mt-1 text-[11px] text-[#a78bfa]/70">Plan. Spend. Stay Ahead.</div>
+        <div className="mt-1 text-[11px] text-[#0A193D]/70">Plan. Spend. Stay Ahead.</div>
       </div>
     </div>
   )

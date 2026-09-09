@@ -110,7 +110,7 @@ export default function AdminFeedbackPage() {
             return (
               <Card key={f.id} style={{ padding: 16 }}>
                 <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, cursor: 'pointer' }} onClick={() => setExpanded(isOpen ? null : f.id)}>
-                  <span style={{ color: '#a78bfa', flexShrink: 0, marginTop: 2 }}><MessageSquare size={17} /></span>
+                  <span style={{ color: '#0A193D', flexShrink: 0, marginTop: 2 }}><MessageSquare size={17} /></span>
                   <div style={{ flex: 1, minWidth: 0 }}>
                     <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap', marginBottom: 4 }}>
                       <Badge tone="violet">{TYPE_LABEL[f.type] ?? f.type}</Badge>
@@ -148,7 +148,7 @@ export default function AdminFeedbackPage() {
                         placeholder="Add a note / reply the user will see…"
                         style={{ flex: 1, padding: '9px 10px', background: ace.inputBg, border: `1px solid ${ace.cardBorder}`, borderRadius: 9, color: ace.text, fontSize: 12.5, outline: 'none' }}
                       />
-                      <button disabled={busy === f.id} onClick={() => saveNote(f.id)} style={{ padding: '9px 15px', borderRadius: 9, border: 'none', background: '#6366f1', color: '#fff', fontSize: 12.5, fontWeight: 600, cursor: 'pointer' }}>
+                      <button disabled={busy === f.id} onClick={() => saveNote(f.id)} style={{ padding: '9px 15px', borderRadius: 9, border: 'none', background: '#0A193D', color: '#fff', fontSize: 12.5, fontWeight: 600, cursor: 'pointer' }}>
                         Save note
                       </button>
                     </div>
@@ -168,7 +168,7 @@ export default function AdminFeedbackPage() {
 function filterBtn(active: boolean): React.CSSProperties {
   return {
     padding: '7px 13px', borderRadius: 9,
-    border: `1px solid ${active ? '#818cf8' : ace.cardBorder}`,
+    border: `1px solid ${active ? '#0A193D' : ace.cardBorder}`,
     background: active ? ace.softBg : 'transparent',
     color: active ? ace.accentText : ace.sub,
     fontSize: 12.5, fontWeight: 600, cursor: 'pointer',

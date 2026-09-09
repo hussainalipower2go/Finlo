@@ -16,7 +16,7 @@ export function SignupPage() {
     >
       <div
         className="relative z-[1] mx-auto flex w-full max-w-[1536px] rounded-[12px] lg:rounded-[20px] border"
-        style={{ border: '1px solid rgba(109,40,217,0.2)' }}
+        style={{ border: '1px solid rgba(10,25,61,0.2)' }}
       >
         <AuthBrandPanel />
 
@@ -32,8 +32,8 @@ export function SignupPage() {
           <button
             type="button"
             onClick={toggle}
-            className="absolute right-9 top-7 cursor-pointer rounded-[100px] border px-[18px] py-2.5 text-[13px] text-[#c4b5fd]/80 transition-colors duration-200 hover:text-[#c4b5fd]"
-            style={{ background: 'rgba(20,16,50,0.85)', border: '1px solid rgba(109,40,217,0.22)', fontFamily: 'inherit' }}
+            className="absolute right-9 top-7 cursor-pointer rounded-[100px] border px-[18px] py-2.5 text-[13px] text-[#0A193D]/80 transition-colors duration-200 hover:text-[#0A193D]"
+            style={{ background: 'rgba(20,16,50,0.85)', border: '1px solid rgba(10,25,61,0.22)', fontFamily: 'inherit' }}
           >
             <span className="flex items-center gap-[7px]">
               {dark ? <Moon className="h-3.5 w-3.5" /> : <Sun className="h-3.5 w-3.5" />}

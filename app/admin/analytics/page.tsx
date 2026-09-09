@@ -70,7 +70,7 @@ export default function AdminAnalyticsPage() {
         right={
           <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
             {RANGES.map((r) => (
-              <button key={r.key} onClick={() => setRange(r.key)} style={{ padding: '7px 13px', borderRadius: 9, border: `1px solid ${range === r.key ? '#818cf8' : ace.cardBorder}`, background: range === r.key ? ace.softBg : 'transparent', color: range === r.key ? ace.accentText : ace.sub, fontSize: 12.5, fontWeight: 600, cursor: 'pointer' }}>
+              <button key={r.key} onClick={() => setRange(r.key)} style={{ padding: '7px 13px', borderRadius: 9, border: `1px solid ${range === r.key ? '#0A193D' : ace.cardBorder}`, background: range === r.key ? ace.softBg : 'transparent', color: range === r.key ? ace.accentText : ace.sub, fontSize: 12.5, fontWeight: 600, cursor: 'pointer' }}>
                 {r.label}
               </button>
             ))}
@@ -90,7 +90,7 @@ export default function AdminAnalyticsPage() {
       ) : (
         <>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(170px,1fr))', gap: 14, marginBottom: 16 }}>
-            <MiniStat label="Signups" value={`${data.totals.signups}`} tone="#818cf8" />
+            <MiniStat label="Signups" value={`${data.totals.signups}`} tone="#0A193D" />
             <MiniStat label="Income" value={`${fmt(data.totals.income)}`} tone="#10b981" />
             <MiniStat label="Expenses" value={`${fmt(data.totals.expense)}`} tone="#f87171" />
             <MiniStat label="Net" value={`${fmt(data.totals.income - data.totals.expense)}`} tone={data.totals.income - data.totals.expense >= 0 ? '#34d399' : '#f87171'} />
@@ -126,14 +126,14 @@ export default function AdminAnalyticsPage() {
                     <AreaChart data={data.series} margin={{ top: 6, right: 6, left: -14, bottom: 0 }}>
                       <defs>
                         <linearGradient id="gAnalyticsSignups" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor="#818cf8" stopOpacity={0.5} />
-                          <stop offset="100%" stopColor="#818cf8" stopOpacity={0} />
+                          <stop offset="0%" stopColor="#0A193D" stopOpacity={0.5} />
+                          <stop offset="100%" stopColor="#0A193D" stopOpacity={0} />
                         </linearGradient>
                       </defs>
                       <XAxis dataKey="date" tick={{ fill: 'var(--ace-sub)', fontSize: 9.5 }} tickLine={false} axisLine={false} />
                       <YAxis tick={{ fill: 'var(--ace-sub)', fontSize: 9.5 }} tickLine={false} axisLine={false} allowDecimals={false} />
                       <Tooltip contentStyle={{ background: 'var(--ace-card)', border: '1px solid var(--ace-card-border)', borderRadius: 10, fontSize: 12, color: 'var(--ace-text)' }} labelStyle={{ color: 'var(--ace-text)' }} />
-                      <Area type="monotone" dataKey="signups" name="Signups" stroke="#818cf8" strokeWidth={2} fill="url(#gAnalyticsSignups)" />
+                      <Area type="monotone" dataKey="signups" name="Signups" stroke="#0A193D" strokeWidth={2} fill="url(#gAnalyticsSignups)" />
                     </AreaChart>
                   </ResponsiveContainer>
                 </div>
@@ -153,7 +153,7 @@ export default function AdminAnalyticsPage() {
                       <XAxis dataKey="date" tick={{ fill: 'var(--ace-sub)', fontSize: 9.5 }} tickLine={false} axisLine={false} />
                       <YAxis tick={{ fill: 'var(--ace-sub)', fontSize: 9.5 }} tickLine={false} axisLine={false} tickFormatter={(v) => fmt(Number(v))} />
                       <Tooltip contentStyle={{ background: 'var(--ace-card)', border: '1px solid var(--ace-card-border)', borderRadius: 10, fontSize: 12, color: 'var(--ace-text)' }} labelStyle={{ color: 'var(--ace-text)' }} cursor={{ fill: 'var(--ace-soft-bg)' }} />
-                      <Bar dataKey="txn_volume" name="Volume" fill="#6366f1" radius={[4, 4, 0, 0]} />
+                      <Bar dataKey="txn_volume" name="Volume" fill="#0A193D" radius={[4, 4, 0, 0]} />
                     </BarChart>
                   </ResponsiveContainer>
                 </div>

@@ -7,7 +7,7 @@ export const ace = {
   cardBorder: 'var(--ace-card-border)',
   text: 'var(--ace-text)',
   sub: 'var(--ace-sub)',
-  accent: '#6366f1',
+  accent: '#0A193D',
   positive: '#10b981',
   danger: '#ef4444',
   warning: '#f59e0b',
@@ -39,7 +39,7 @@ export function Badge({ children, tone = 'default' }: { children: React.ReactNod
     red: { bg: 'rgba(239,68,68,0.15)', fg: '#f87171' },
     amber: { bg: 'rgba(245,158,11,0.15)', fg: '#fbbf24' },
     blue: { bg: 'rgba(96,165,250,0.15)', fg: '#93c5fd' },
-    violet: { bg: 'rgba(139,92,246,0.15)', fg: '#a78bfa' },
+    violet: { bg: 'rgba(10,25,61,0.15)', fg: '#0A193D' },
   }
   const t = map[tone]
   return (

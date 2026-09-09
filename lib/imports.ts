@@ -89,11 +89,11 @@ export const SOURCE_LABELS: Record<ImportSource, string> = {
 
 export const SOURCE_BADGE_COLORS: Record<ImportSource, string> = {
   MANUAL: '#94a3b8',
-  AI_TEXT: '#8b5cf6',
+  AI_TEXT: '#0A193D',
   RECEIPT: '#06b6d4',
   SMS: '#10b981',
   CSV: '#f59e0b',
-  BANK_API: '#6366f1',
+  BANK_API: '#0A193D',
 } as const
 
 /** Map a debit/credit classification onto the app's income/expense model. */

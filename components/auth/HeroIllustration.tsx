@@ -16,10 +16,10 @@ export function HeroIllustration() {
         </div>
         <div className="absolute bottom-4 left-4 right-4 h-24">
           <div className="absolute left-1/2 transform -translate-x-1/2 h-4 w-0.5 bg-[var(--primary)] rounded-t"></div>
-          <div className="absolute left-1/4 transform -translate-x-1/4 h-8 w-0.5 bg-[#6B7DF2] rounded-t mt-4" />
-          <div className="absolute left-3/4 transform -translate-x-1/4 h-12 w-0.5 bg-[#5A6FE8] rounded-t mt-4" />
-          <div className="absolute right-1/4 transform translate-x-1/4 h-6 w-0.5 bg-[#4A5DD6] rounded-t mt-4" />
-          <div className="absolute right-1/2 transform translate-x-1/2 h-2 w-0.5 bg-[#3A4CC6] rounded-t mt-4" />
+          <div className="absolute left-1/4 transform -translate-x-1/4 h-8 w-0.5 bg-[#0A193D] rounded-t mt-4" />
+          <div className="absolute left-3/4 transform -translate-x-1/4 h-12 w-0.5 bg-[#0A193D] rounded-t mt-4" />
+          <div className="absolute right-1/4 transform translate-x-1/4 h-6 w-0.5 bg-[#0A193D] rounded-t mt-4" />
+          <div className="absolute right-1/2 transform translate-x-1/2 h-2 w-0.5 bg-[#0A193D] rounded-t mt-4" />
         </div>
         <div className="absolute top-3 left-3 rounded-xl border bg-[rgba(255,255,255,0.4)]/50 backdrop-blur-sm shadow-sm p-2 bg-[var(--primary)]">
           <div className="h-4 w-4 rounded-bg" />

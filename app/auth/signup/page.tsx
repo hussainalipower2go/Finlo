@@ -38,31 +38,31 @@ export default function SignupPage() {
   const p = {
     bg: isDark ? "#080b1a" : "#eef1f8",
     navBg: isDark ? "#080b1a" : "#f8fafc",
-    line: isDark ? "rgba(109,40,217,0.2)" : "rgba(109,40,217,0.22)",
-    lineSoft: isDark ? "rgba(109,40,217,0.15)" : "rgba(109,40,217,0.14)",
-    lineDivider: isDark ? "rgba(109,40,217,0.18)" : "rgba(109,40,217,0.16)",
+    line: isDark ? "rgba(10,25,61,0.2)" : "rgba(10,25,61,0.22)",
+    lineSoft: isDark ? "rgba(10,25,61,0.15)" : "rgba(10,25,61,0.14)",
+    lineDivider: isDark ? "rgba(10,25,61,0.18)" : "rgba(10,25,61,0.16)",
     overlay: isDark
       ? "linear-gradient(180deg, rgba(8,11,26,0.72) 0%, rgba(8,11,26,0.45) 35%, rgba(8,11,26,0.55) 60%, rgba(8,11,26,0.90) 100%)"
       : "linear-gradient(180deg, rgba(248,250,252,0.42) 0%, rgba(248,250,252,0.06) 35%, rgba(248,250,252,0.1) 60%, rgba(248,250,252,0.42) 100%)",
     radial: isDark ? "rgba(79,70,229,0.07)" : "rgba(79,70,229,0.10)",
     text: isDark ? "#fff" : "#0f172a",
-    title: isDark ? "#e9e4ff" : "#1e293b",
+    title: isDark ? "#E9EDFB" : "#1e293b",
     sub: isDark ? "rgba(210,200,255,0.75)" : "rgba(71,85,105,0.8)",
     desc: isDark ? "rgba(148,130,200,0.55)" : "rgba(100,116,139,0.85)",
     descFaint: isDark ? "rgba(130,110,190,0.5)" : "rgba(100,116,139,0.75)",
     label: isDark ? "rgba(196,181,253,0.85)" : "rgba(51,65,85,0.9)",
     iconMuted: isDark ? "rgba(120,100,200,0.5)" : "rgba(100,116,139,0.6)",
-    tagline: isDark ? "rgba(167,139,250,0.7)" : "rgba(109,40,217,0.72)",
+    tagline: isDark ? "rgba(167,139,250,0.7)" : "rgba(10,25,61,0.72)",
     cardBg: isDark ? "rgba(16,12,42,0.75)" : "rgba(255,255,255,0.85)",
     panel: isDark ? "rgba(14,10,38,0.72)" : "rgba(255,255,255,0.9)",
     subPanel: isDark ? "rgba(8,6,22,0.85)" : "rgba(248,250,252,0.95)",
     inputBg: isDark ? "rgba(10,8,30,0.85)" : "rgba(255,255,255,0.95)",
     inputText: isDark ? "rgba(220,210,255,0.9)" : "rgba(15,23,42,0.92)",
-    track: isDark ? "rgba(255,255,255,0.07)" : "rgba(109,40,217,0.1)",
-    featBg: isDark ? "rgba(109,40,217,0.18)" : "rgba(109,40,217,0.08)",
-    featLine: isDark ? "rgba(109,40,217,0.35)" : "rgba(109,40,217,0.25)",
+    track: isDark ? "rgba(255,255,255,0.07)" : "rgba(10,25,61,0.1)",
+    featBg: isDark ? "rgba(10,25,61,0.18)" : "rgba(10,25,61,0.08)",
+    featLine: isDark ? "rgba(10,25,61,0.35)" : "rgba(10,25,61,0.25)",
     pillBg: isDark ? "rgba(20,16,50,0.85)" : "rgba(255,255,255,0.9)",
-    pillText: isDark ? "rgba(196,181,253,0.8)" : "rgba(109,40,217,0.85)",
+    pillText: isDark ? "rgba(196,181,253,0.8)" : "rgba(10,25,61,0.85)",
   };
 
   function toggleTheme() {
@@ -192,7 +192,7 @@ export default function SignupPage() {
             left: "30px",
             width: "400px",
             height: "130px",
-            background: "radial-gradient(ellipse, rgba(109,40,217,0.18) 0%, transparent 70%)",
+            background: "radial-gradient(ellipse, rgba(20,36,83,0.18) 0%, transparent 70%)",
             filter: "blur(28px)",
             zIndex: 1,
             pointerEvents: "none",
@@ -225,7 +225,7 @@ export default function SignupPage() {
             }}>
               Plan today.<br />
               Live <span style={{
-                background: "linear-gradient(90deg, #7c3aed, #818cf8)",
+                background: "linear-gradient(90deg, #142453, #0A193D)",
                 WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
               }}>tomorrow.</span>
             </h1>
@@ -243,7 +243,7 @@ export default function SignupPage() {
               {[
                 {
                   icon: (
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={isDark ? "#a78bfa" : "#7c3aed"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={isDark ? "#0A193D" : "#0A193D"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/>
                       <line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
                       <circle cx="12" cy="16" r="1.5"/>
@@ -300,14 +300,14 @@ export default function SignupPage() {
                 <div style={{
                   position: "absolute", bottom: "-16px", left: "10px",
                   width: "400px", height: "70px",
-                  background: "radial-gradient(ellipse, rgba(109,40,217,0.15) 0%, transparent 70%)",
+                  background: "radial-gradient(ellipse, rgba(20,36,83,0.15) 0%, transparent 70%)",
                   filter: "blur(20px)", zIndex: 0,
                 }} />
 
                 {/* Main preview card */}
                 <div style={{
                   background: p.panel,
-                  border: isDark ? "1px solid rgba(109,40,217,0.3)" : "1px solid rgba(109,40,217,0.2)",
+                  border: isDark ? "1px solid rgba(10,25,61,0.3)" : "1px solid rgba(10,25,61,0.2)",
                   borderRadius: "22px",
                   padding: "20px",
                   boxShadow: isDark ? "0 6px 20px rgba(0,0,0,0.20)" : "0 6px 20px rgba(0,0,0,0.10)",
@@ -322,7 +322,7 @@ export default function SignupPage() {
                   <div style={{
                     flex: "1.1",
                     background: p.subPanel,
-                    border: isDark ? "1px solid rgba(109,40,217,0.22)" : "1px solid rgba(109,40,217,0.14)",
+                    border: isDark ? "1px solid rgba(10,25,61,0.22)" : "1px solid rgba(10,25,61,0.14)",
                     borderRadius: "16px",
                     padding: "14px 16px",
                   }}>
@@ -344,22 +344,22 @@ export default function SignupPage() {
                   <div style={{
                     flex: 1,
                     background: p.subPanel,
-                    border: isDark ? "1px solid rgba(109,40,217,0.22)" : "1px solid rgba(109,40,217,0.14)",
+                    border: isDark ? "1px solid rgba(10,25,61,0.22)" : "1px solid rgba(10,25,61,0.14)",
                     borderRadius: "16px",
                     padding: "14px 16px",
                   }}>
-                    <div style={{ fontSize: "10.5px", fontWeight: 600, color: isDark ? "#a78bfa" : "#7c3aed", marginBottom: "6px", letterSpacing: "0.3px" }}>Money Runway</div>
+                    <div style={{ fontSize: "10.5px", fontWeight: 600, color: isDark ? "#0A193D" : "#0A193D", marginBottom: "6px", letterSpacing: "0.3px" }}>Money Runway</div>
                     <div style={{ fontSize: "26px", fontWeight: 700, color: p.text, marginBottom: "4px" }}>17 days</div>
                     <div style={{ fontSize: "10px", color: p.desc, lineHeight: 1.4, marginBottom: "8px" }}>Estimated days your money will last</div>
                     <svg width="100%" height="44" viewBox="0 0 120 44" preserveAspectRatio="none">
                       <defs>
                         <linearGradient id="sg" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="0%" stopColor="#7c3aed" stopOpacity="0.4"/>
-                          <stop offset="100%" stopColor="#7c3aed" stopOpacity="0"/>
+                          <stop offset="0%" stopColor="#0A193D" stopOpacity="0.4"/>
+                          <stop offset="100%" stopColor="#0A193D" stopOpacity="0"/>
                         </linearGradient>
                       </defs>
                       <polyline points="0,40 20,34 40,38 60,24 80,28 100,16 120,10"
-                        fill="none" stroke="#8b5cf6" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
+                        fill="none" stroke="#0A193D" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
                       <polygon points="0,40 20,34 40,38 60,24 80,28 100,16 120,10 120,44 0,44"
                         fill="url(#sg)"/>
                     </svg>
@@ -369,7 +369,7 @@ export default function SignupPage() {
                   <div style={{
                     position: "absolute", right: "-28px", bottom: "-18px",
                     width: "76px", height: "76px", borderRadius: "50%",
-                    background: "linear-gradient(135deg, #7c3aed 0%, #4338ca 100%)",
+                    background: "linear-gradient(135deg, #142453 0%, #0A193D 100%)",
                     border: "3px solid rgba(167,139,250,0.4)",
                     boxShadow: "0 4px 14px rgba(0,0,0,0.25)",
                     display: "flex", alignItems: "center", justifyContent: "center",
@@ -464,7 +464,7 @@ export default function SignupPage() {
                 </span>
                 <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com"
                   style={{ width: "100%", padding: "14px 14px 14px 44px", background: p.inputBg, border: `1px solid ${p.line}`, borderRadius: "12px", fontSize: "14px", color: p.inputText, outline: "none", fontFamily: "inherit", boxSizing: "border-box" }}
-                  onFocus={e => e.target.style.borderColor = "rgba(139,92,246,0.55)"}
+                  onFocus={e => e.target.style.borderColor = "rgba(10,25,61,0.55)"}
                   onBlur={e => e.target.style.borderColor = p.line}
                 />
               </div>
@@ -482,7 +482,7 @@ export default function SignupPage() {
                 </span>
                 <input type={showPassword ? "text" : "password"} value={password} onChange={e => setPassword(e.target.value)} placeholder="Enter your password"
                   style={{ width: "100%", padding: "14px 48px 14px 44px", background: p.inputBg, border: `1px solid ${p.line}`, borderRadius: "12px", fontSize: "14px", color: p.inputText, outline: "none", fontFamily: "inherit", boxSizing: "border-box" }}
-                  onFocus={e => e.target.style.borderColor = "rgba(139,92,246,0.55)"}
+                  onFocus={e => e.target.style.borderColor = "rgba(10,25,61,0.55)"}
                   onBlur={e => e.target.style.borderColor = p.line}
                 />
                 <button type="button" onClick={() => setShowPassword(!showPassword)} aria-label="Toggle password"
@@ -507,7 +507,7 @@ export default function SignupPage() {
                 </span>
                 <input type={showConfirmPassword ? "text" : "password"} value={confirmPassword} onChange={e => setConfirmPassword(e.target.value)} placeholder="Re-enter your password"
                   style={{ width: "100%", padding: "14px 48px 14px 44px", background: p.inputBg, border: `1px solid ${p.line}`, borderRadius: "12px", fontSize: "14px", color: p.inputText, outline: "none", fontFamily: "inherit", boxSizing: "border-box" }}
-                  onFocus={e => e.target.style.borderColor = "rgba(139,92,246,0.55)"}
+                  onFocus={e => e.target.style.borderColor = "rgba(10,25,61,0.55)"}
                   onBlur={e => e.target.style.borderColor = p.line}
                 />
                 <button type="button" onClick={() => setShowConfirmPassword(!showConfirmPassword)} aria-label="Toggle confirm password"
@@ -523,11 +523,11 @@ export default function SignupPage() {
             {/* TERMS AGREEMENT */}
             <div style={{ display: "flex", alignItems: "center", marginBottom: "24px" }}>
               <label style={{ display: "flex", alignItems: "center", gap: "9px", cursor: "pointer" }}>
-                <div onClick={() => setAgreeTerms(!agreeTerms)} style={{ width: "18px", height: "18px", borderRadius: "5px", flexShrink: 0, background: agreeTerms ? "#7c3aed" : (isDark ? "rgba(109,40,217,0.12)" : "rgba(109,40,217,0.08)"), border: agreeTerms ? "none" : `1px solid ${p.line}`, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
+                <div onClick={() => setAgreeTerms(!agreeTerms)} style={{ width: "18px", height: "18px", borderRadius: "5px", flexShrink: 0, background: agreeTerms ? "#0A193D" : (isDark ? "rgba(10,25,61,0.12)" : "rgba(10,25,61,0.08)"), border: agreeTerms ? "none" : `1px solid ${p.line}`, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
                   {agreeTerms && <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="2,6 5,9 10,3"/></svg>}
                 </div>
                 <span style={{ fontSize: "13px", color: p.label }}>
-                  I agree to the <Link href="/terms" style={{ color: "#8b5cf6", textDecoration: "none" }}>Terms</Link> & <Link href="/privacy" style={{ color: "#8b5cf6", textDecoration: "none" }}>Privacy Policy</Link>
+                  I agree to the <Link href="/terms" style={{ color: "#0A193D", textDecoration: "none" }}>Terms</Link> & <Link href="/privacy" style={{ color: "#0A193D", textDecoration: "none" }}>Privacy Policy</Link>
                 </span>
               </label>
             </div>
@@ -541,9 +541,9 @@ export default function SignupPage() {
               }}>{error}</div>
             )}
             <button onClick={handleSignup} disabled={loading}
-              style={{ width: "100%", padding: "15px", background: "linear-gradient(90deg, #7c3aed 0%, #4f46e5 100%)", border: "none", borderRadius: "14px", fontSize: "16px", fontWeight: 600, color: "#fff", cursor: loading ? "not-allowed" : "pointer", fontFamily: "inherit", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px", boxShadow: "0 2px 10px rgba(109,40,217,0.22)", marginBottom: "24px", opacity: loading ? 0.6 : 1, transition: "transform 0.12s ease" }}
-              onMouseOver={e => { if (!loading) { e.currentTarget.style.background = "linear-gradient(90deg, #8b5cf6 0%, #6366f1 100%)"; e.currentTarget.style.transform = "translateY(-1px)"; } }}
-              onMouseOut={e => { e.currentTarget.style.background = "linear-gradient(90deg, #7c3aed 0%, #4f46e5 100%)"; e.currentTarget.style.transform = "translateY(0)"; }}
+              style={{ width: "100%", padding: "15px", background: "linear-gradient(90deg, #142453 0%, #0A193D 100%)", border: "none", borderRadius: "14px", fontSize: "16px", fontWeight: 600, color: "#fff", cursor: loading ? "not-allowed" : "pointer", fontFamily: "inherit", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px", boxShadow: "0 2px 10px rgba(10,25,61,0.22)", marginBottom: "24px", opacity: loading ? 0.6 : 1, transition: "transform 0.12s ease" }}
+              onMouseOver={e => { if (!loading) { e.currentTarget.style.background = "linear-gradient(90deg, #142453 0%, #0A193D 100%)"; e.currentTarget.style.transform = "translateY(-1px)"; } }}
+              onMouseOut={e => { e.currentTarget.style.background = "linear-gradient(90deg, #142453 0%, #0A193D 100%)"; e.currentTarget.style.transform = "translateY(0)"; }}
             >
               {loading ? (
                 <LoaderCircle className="h-5 w-5 animate-spin" />
@@ -567,7 +567,7 @@ export default function SignupPage() {
             {/* SOCIAL */}
             <div className="finlo-social" style={{ display: "flex", gap: "12px", marginBottom: "28px" }}>
               <button onClick={handleGoogle} style={{ flex: 1, padding: "12px 16px", background: p.inputBg, border: `1px solid ${p.line}`, borderRadius: "12px", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px", fontSize: "14px", color: p.label, cursor: "pointer", fontFamily: "inherit" }}
-                onMouseOver={e => { e.currentTarget.style.borderColor = "rgba(139,92,246,0.38)"; }}
+                onMouseOver={e => { e.currentTarget.style.borderColor = "rgba(10,25,61,0.38)"; }}
                 onMouseOut={e => { e.currentTarget.style.borderColor = p.line; }}>
                 <svg width="18" height="18" viewBox="0 0 24 24">
                   <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -578,7 +578,7 @@ export default function SignupPage() {
                 Continue with Google
               </button>
               <button onClick={handleApple} style={{ flex: 1, padding: "12px 16px", background: p.inputBg, border: `1px solid ${p.line}`, borderRadius: "12px", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px", fontSize: "14px", color: p.label, cursor: "pointer", fontFamily: "inherit" }}
-                onMouseOver={e => { e.currentTarget.style.borderColor = "rgba(139,92,246,0.38)"; }}
+                onMouseOver={e => { e.currentTarget.style.borderColor = "rgba(10,25,61,0.38)"; }}
                 onMouseOut={e => { e.currentTarget.style.borderColor = p.line; }}>
                 <svg width="18" height="18" viewBox="0 0 24 24" fill={p.inputText}>
                   <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
@@ -589,7 +589,7 @@ export default function SignupPage() {
 
             <div style={{ textAlign: "center", fontSize: "14px", color: p.descFaint }}>
               Already have an account?{" "}
-              <Link href="/login" style={{ color: "#8b5cf6", textDecoration: "none", fontWeight: 500 }}>Log in</Link>
+              <Link href="/login" style={{ color: "#0A193D", textDecoration: "none", fontWeight: 500 }}>Log in</Link>
             </div>
           </div>
         </div>

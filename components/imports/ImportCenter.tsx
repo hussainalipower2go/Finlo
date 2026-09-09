@@ -242,7 +242,7 @@ export function ImportCenter({ colors, supabase }: {
   return (
     <div style={{ padding: 22, borderRadius: 16, background: colors.card, border: `1px solid ${colors.cardBorder}` }}>
       <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 6, display: "flex", alignItems: "center", gap: 8 }}>
-        <Smartphone size={16} color="#6366f1" /> SMS Bank Import <span style={{ fontSize: 10, fontWeight: 600, color: "#fff", background: "#6366f1", borderRadius: 6, padding: "2px 8px" }}>ANDROID</span>
+        <Smartphone size={16} color="#0A193D" /> SMS Bank Import <span style={{ fontSize: 10, fontWeight: 600, color: "#fff", background: "#0A193D", borderRadius: 6, padding: "2px 8px" }}>ANDROID</span>
       </div>
       <div style={{ fontSize: 12.5, color: colors.textSub, lineHeight: 1.6, marginBottom: 16 }}>
         Automatically turns your bank SMS alerts into Finlo transactions. A small companion Android app reads money-related
@@ -278,7 +278,7 @@ export function ImportCenter({ colors, supabase }: {
             <button
               key={m}
               onClick={() => setMode(m)}
-              style={{ padding: "8px 14px", borderRadius: 9, border: `1px solid ${mode === m ? "#6366f1" : colors.cardBorder}`, background: mode === m ? "rgba(99,102,241,0.1)" : "transparent", color: mode === m ? "#6366f1" : colors.textSub, fontWeight: mode === m ? 700 : 400, fontSize: 12.5, cursor: "pointer" }}
+              style={{ padding: "8px 14px", borderRadius: 9, border: `1px solid ${mode === m ? "#0A193D" : colors.cardBorder}`, background: mode === m ? "rgba(10,25,61,0.1)" : "transparent", color: mode === m ? "#0A193D" : colors.textSub, fontWeight: mode === m ? 700 : 400, fontSize: 12.5, cursor: "pointer" }}
             >
               {m === "review" ? "Review each transaction (recommended)" : "Auto-add (needs high confidence)"}
             </button>
@@ -287,7 +287,7 @@ export function ImportCenter({ colors, supabase }: {
         {mode === "auto" && (
           <div style={{ marginTop: 10 }}>
             <div style={{ fontSize: 12, color: colors.textSub, marginBottom: 4 }}>Auto-add confidence threshold: {Math.round(threshold * 100)}%</div>
-            <input type="range" min={0.7} max={0.99} step={0.01} value={threshold} onChange={(e) => setThreshold(Number(e.target.value))} style={{ width: "60%", accentColor: "#6366f1" }} />
+            <input type="range" min={0.7} max={0.99} step={0.01} value={threshold} onChange={(e) => setThreshold(Number(e.target.value))} style={{ width: "60%", accentColor: "#0A193D" }} />
           </div>
         )}
       </div>
@@ -305,16 +305,16 @@ export function ImportCenter({ colors, supabase }: {
 
       {/* Save */}
       <div style={{ marginTop: 14, display: "flex", alignItems: "center", gap: 10 }}>
-        <button onClick={saveSettings} disabled={saving} style={{ display: "flex", alignItems: "center", gap: 6, padding: "9px 18px", borderRadius: 10, border: "none", background: "#6366f1", color: "#fff", fontSize: 13, fontWeight: 600, cursor: saving ? "not-allowed" : "pointer", opacity: saving ? 0.7 : 1 }}>
+        <button onClick={saveSettings} disabled={saving} style={{ display: "flex", alignItems: "center", gap: 6, padding: "9px 18px", borderRadius: 10, border: "none", background: "#0A193D", color: "#fff", fontSize: 13, fontWeight: 600, cursor: saving ? "not-allowed" : "pointer", opacity: saving ? 0.7 : 1 }}>
           {saving ? "Saving…" : "Save settings"}
         </button>
         {saveMsg && <span style={{ fontSize: 12, fontWeight: 600, color: saveMsg.includes("✓") ? "#10b981" : "#ef4444" }}>{saveMsg}</span>}
       </div>
 
       {/* Auto-connect via SMS Forwarder */}
-      <div style={{ marginTop: 18, padding: 14, borderRadius: 12, background: colors.accentLight, border: `1px solid rgba(99,102,241,0.25)` }}>
+      <div style={{ marginTop: 18, padding: 14, borderRadius: 12, background: colors.accentLight, border: `1px solid rgba(10,25,61,0.25)` }}>
         <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 4, display: "flex", alignItems: "center", gap: 6, color: colors.text }}>
-          <KeyRound size={14} color="#6366f1" /> Auto-connect: SMS Forwarder app (no app build, no copy-paste)
+          <KeyRound size={14} color="#0A193D" /> Auto-connect: SMS Forwarder app (no app build, no copy-paste)
         </div>
         <div style={{ fontSize: 12, color: colors.textSub, lineHeight: 1.6 }}>
           Ek free Play Store app (&quot;SMS Forwarder&quot;) install karo, is token ko usme daalo — phir har bank SMS khud Finlo API par
@@ -322,7 +322,7 @@ export function ImportCenter({ colors, supabase }: {
         </div>
 
         <div style={{ display: "flex", gap: 8, marginTop: 12, flexWrap: "wrap" }}>
-          <button onClick={genToken} style={{ display: "flex", alignItems: "center", gap: 6, padding: "9px 16px", borderRadius: 9, border: "none", background: "#6366f1", color: "#fff", fontSize: 12.5, fontWeight: 600, cursor: "pointer" }}>
+          <button onClick={genToken} style={{ display: "flex", alignItems: "center", gap: 6, padding: "9px 16px", borderRadius: 9, border: "none", background: "#0A193D", color: "#fff", fontSize: 12.5, fontWeight: 600, cursor: "pointer" }}>
             <KeyRound size={14} /> {importToken ? "Generate new token" : "Generate token"}
           </button>
           {importToken && (
@@ -363,7 +363,7 @@ export function ImportCenter({ colors, supabase }: {
       {/* Paste-preview */}
       <div style={{ marginTop: 18, padding: 14, borderRadius: 12, background: colors.inputBg, border: `1px solid ${colors.cardBorder}` }}>
         <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 8, display: "flex", alignItems: "center", gap: 6, color: colors.text }}>
-          <Play size={14} color="#6366f1" /> Test the parser — paste a bank SMS
+          <Play size={14} color="#0A193D" /> Test the parser — paste a bank SMS
         </div>
         <textarea
           value={smsInput}
@@ -372,7 +372,7 @@ export function ImportCenter({ colors, supabase }: {
           rows={3}
           style={{ width: "100%", padding: 10, borderRadius: 9, border: `1px solid ${colors.cardBorder}`, background: colors.inputBg, color: colors.text, fontSize: 12.5, resize: "vertical", fontFamily: "inherit" }}
         />
-        <button onClick={runPreview} style={{ marginTop: 8, display: "flex", alignItems: "center", gap: 6, padding: "8px 16px", borderRadius: 9, border: "none", background: "#6366f1", color: "#fff", fontSize: 12.5, fontWeight: 600, cursor: "pointer" }}>
+        <button onClick={runPreview} style={{ marginTop: 8, display: "flex", alignItems: "center", gap: 6, padding: "8px 16px", borderRadius: 9, border: "none", background: "#0A193D", color: "#fff", fontSize: 12.5, fontWeight: 600, cursor: "pointer" }}>
           <MessageSquare size={13} /> Analyze SMS
         </button>
         {preview && (
@@ -390,7 +390,7 @@ export function ImportCenter({ colors, supabase }: {
       <div style={{ marginTop: 18 }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 8 }}>
           <div style={{ fontWeight: 600, fontSize: 13, display: "flex", alignItems: "center", gap: 6 }}>
-            <Eye size={14} color="#6366f1" /> Pending review ({pending.length})
+            <Eye size={14} color="#0A193D" /> Pending review ({pending.length})
           </div>
           <button onClick={loadPending} disabled={refreshing} style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 12, color: colors.textSub, background: "transparent", border: "none", cursor: "pointer" }}>
             <RefreshCw size={13} /> Refresh
@@ -409,7 +409,7 @@ export function ImportCenter({ colors, supabase }: {
                 <div style={{ fontSize: 13, fontWeight: 600, color: colors.text, display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
                   {item.transaction_type === "CREDIT" ? <TrendingUp size={14} color="#10b981" /> : <TrendingDown size={14} color="#ef4444" />}
                   {item.currency} {item.amount}
-                  <span style={{ fontSize: 10.5, fontWeight: 500, padding: "2px 7px", borderRadius: 6, background: colors.accentLight, color: "#6366f1" }}>
+                  <span style={{ fontSize: 10.5, fontWeight: 500, padding: "2px 7px", borderRadius: 6, background: colors.accentLight, color: "#0A193D" }}>
                     {Math.round((item.parsing_confidence ?? 0) * 100)}%
                   </span>
                 </div>
@@ -444,7 +444,7 @@ export function ImportCenter({ colors, supabase }: {
                   <option value="expense">Expense</option>
                   <option value="income">Income</option>
                 </select>
-                <button onClick={() => resolveItem(item, "edit")} style={{ padding: "7px 14px", borderRadius: 8, border: "none", background: "#6366f1", color: "#fff", fontSize: 12.5, fontWeight: 600, cursor: "pointer" }}>
+                <button onClick={() => resolveItem(item, "edit")} style={{ padding: "7px 14px", borderRadius: 8, border: "none", background: "#0A193D", color: "#fff", fontSize: 12.5, fontWeight: 600, cursor: "pointer" }}>
                   Save
                 </button>
                 <button onClick={() => setEditingId(null)} style={{ padding: "7px 14px", borderRadius: 8, border: `1px solid ${colors.cardBorder}`, background: "transparent", color: colors.text, fontSize: 12.5, cursor: "pointer" }}>

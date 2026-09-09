@@ -77,15 +77,15 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-200 ${pathname === item.href ? 'bg-[#536bea]/12 text-[#4d5fdb] font-semibold shadow-[inset_0_1px_0_rgba(255,255,255,0.8)]' : 'text-[#66718a] hover:bg-[#f1f4f9]'}`}
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-all duration-200 ${pathname === item.href ? 'bg-[#0A193D]/12 text-[#0A193D] font-semibold shadow-[inset_0_1px_0_rgba(255,255,255,0.8)]' : 'text-[#66718a] hover:bg-[#f1f4f9]'}`}
               >
                 <item.icon className="h-4 w-4" />
                 <span>{item.label}</span>
               </Link>
             ))}
           </nav>
-          <div className="m-4 rounded-xl bg-[#eef1ff] p-3">
-            <p className="text-xs font-bold text-[#536bea]">Premium insights</p>
+          <div className="m-4 rounded-xl bg-[#EEF1F8] p-3">
+            <p className="text-xs font-bold text-[#0A193D]">Premium insights</p>
             <p className="mt-1 text-[11px] leading-4 text-[#707ba0]">Unlock deeper cash flow analytics.</p>
           </div>
         </aside>
@@ -101,7 +101,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`flex flex-1 flex-col items-center gap-1 rounded-2xl px-1 py-1.5 transition-all duration-200 ${pathname === item.href ? 'bg-[#536bea]/15 text-[#536bea] shadow-[0_6px_16px_rgba(83,107,234,0.25)]' : 'text-[#8b95aa]'}`}
+                  className={`flex flex-1 flex-col items-center gap-1 rounded-2xl px-1 py-1.5 transition-all duration-200 ${pathname === item.href ? 'bg-[#0A193D]/15 text-[#0A193D] shadow-[0_6px_16px_rgba(10,25,61,0.25)]' : 'text-[#8b95aa]'}`}
                 >
                   <item.icon className="h-4 w-4" />
                   <span className="text-[10px] font-medium">{item.label.split(' ')[0]}</span>

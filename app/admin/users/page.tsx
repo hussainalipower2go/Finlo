@@ -9,7 +9,7 @@ import type { AdminUser } from '@/lib/admin/types'
 function Avatar({ name, email }: { name: string; email: string }) {
   const initial = (name || email || '?').charAt(0).toUpperCase()
   return (
-    <span style={{ width: 34, height: 34, borderRadius: '50%', background: 'linear-gradient(135deg,#7c3aed,#4f46e5)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 700, flexShrink: 0 }}>
+    <span style={{ width: 34, height: 34, borderRadius: '50%', background: 'linear-gradient(135deg,#142453,#0A193D)', color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 14, fontWeight: 700, flexShrink: 0 }}>
       {initial}
     </span>
   )
@@ -261,7 +261,7 @@ function UserActions({ u, actingId, onAction }: { u: AdminUser; actingId: string
           <ShieldCheck size={15} />
         </button>
       ) : (
-        <button disabled={actingId === u.id} onClick={() => onAction(u.id, 'promote')} title="Make admin" style={iconBtn('#818cf8')}>
+        <button disabled={actingId === u.id} onClick={() => onAction(u.id, 'promote')} title="Make admin" style={iconBtn('#0A193D')}>
           <ShieldCheck size={15} />
         </button>
       )}

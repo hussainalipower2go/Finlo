@@ -148,7 +148,7 @@ export default function OnboardingPage() {
 
   const cardStyle: React.CSSProperties = {
     background: "rgba(20,15,45,0.55)",
-    border: "1px solid rgba(109,40,217,0.22)",
+    border: "1px solid rgba(10,25,61,0.22)",
     borderRadius: "24px",
     padding: "48px",
     width: "100%",
@@ -188,7 +188,7 @@ export default function OnboardingPage() {
       <div style={{
         position: "absolute", top: "-120px", left: "50%", transform: "translateX(-50%)",
         width: "560px", height: "300px",
-        background: "radial-gradient(ellipse, rgba(109,40,217,0.35) 0%, transparent 70%)",
+        background: "radial-gradient(ellipse, rgba(20,36,83,0.35) 0%, transparent 70%)",
         filter: "blur(40px)", pointerEvents: "none", zIndex: 0,
       }} />
 
@@ -214,7 +214,7 @@ export default function OnboardingPage() {
             {Array.from({ length: TOTAL_STEPS }).map((_, i) => (
               <div key={i} style={{
                 flex: 1, height: "4px", borderRadius: "999px",
-                background: i < step ? "linear-gradient(90deg, #7c3aed, #4f46e5)" : "rgba(109,40,217,0.15)",
+                background: i < step ? "linear-gradient(90deg, #142453, #0A193D)" : "rgba(10,25,61,0.15)",
                 transition: "background 160ms ease",
               }} />
             ))}
@@ -233,12 +233,12 @@ export default function OnboardingPage() {
                   <button key={c.code} type="button" onClick={() => setCurrency(c.code)}
                     style={{
                       ...optionBase,
-                      background: active ? "rgba(124,58,237,0.14)" : "rgba(10,8,30,0.85)",
-                      border: active ? "1px solid rgba(139,92,246,0.6)" : "1px solid rgba(109,40,217,0.22)",
+                      background: active ? "rgba(10,25,61,0.14)" : "rgba(10,8,30,0.85)",
+                      border: active ? "1px solid rgba(10,25,61,0.6)" : "1px solid rgba(10,25,61,0.22)",
                     }}>
                     <span style={{
                       width: "34px", height: "34px", borderRadius: "9px", flexShrink: 0,
-                      background: "rgba(124,58,237,0.15)", color: "#a78bfa",
+                      background: "rgba(10,25,61,0.15)", color: "#0A193D",
                       display: "flex", alignItems: "center", justifyContent: "center",
                       fontSize: "12px", fontWeight: 700,
                     }}>{c.symbol.slice(0, 3)}</span>
@@ -273,12 +273,12 @@ export default function OnboardingPage() {
                 placeholder="0"
                 style={{
                   width: "100%", padding: "16px 16px 16px 64px",
-                  background: "rgba(10,8,30,0.85)", border: "1px solid rgba(109,40,217,0.22)",
+                  background: "rgba(10,8,30,0.85)", border: "1px solid rgba(10,25,61,0.22)",
                   borderRadius: "12px", fontSize: "20px", fontWeight: 600, color: "#fff",
                   outline: "none", fontFamily: "inherit", boxSizing: "border-box",
                 }}
-                onFocus={e => e.target.style.borderColor = "rgba(139,92,246,0.55)"}
-                onBlur={e => e.target.style.borderColor = "rgba(109,40,217,0.22)"}
+                onFocus={e => e.target.style.borderColor = "rgba(10,25,61,0.55)"}
+                onBlur={e => e.target.style.borderColor = "rgba(10,25,61,0.22)"}
               />
             </div>
             <p style={{ fontSize: "12px", color: "rgba(130,110,190,0.5)", margin: "10px 0 0 0" }}>
@@ -299,12 +299,12 @@ export default function OnboardingPage() {
                   <button key={t.value} type="button" onClick={() => setIncomeType(t.value)}
                     style={{
                       ...optionBase,
-                      background: active ? "rgba(124,58,237,0.14)" : "rgba(10,8,30,0.85)",
-                      border: active ? "1px solid rgba(139,92,246,0.6)" : "1px solid rgba(109,40,217,0.22)",
+                      background: active ? "rgba(10,25,61,0.14)" : "rgba(10,8,30,0.85)",
+                      border: active ? "1px solid rgba(10,25,61,0.6)" : "1px solid rgba(10,25,61,0.22)",
                     }}>
                     <span style={{
                       width: "38px", height: "38px", borderRadius: "10px", flexShrink: 0,
-                      background: "rgba(124,58,237,0.15)", color: "#a78bfa",
+                      background: "rgba(10,25,61,0.15)", color: "#0A193D",
                       display: "flex", alignItems: "center", justifyContent: "center",
                     }}>{t.icon}</span>
                     <span>
@@ -330,8 +330,8 @@ export default function OnboardingPage() {
                   <button key={g.value} type="button" onClick={() => setGoal(g.value)}
                     style={{
                       ...optionBase,
-                      background: active ? "rgba(124,58,237,0.14)" : "rgba(10,8,30,0.85)",
-                      border: active ? "1px solid rgba(139,92,246,0.6)" : "1px solid rgba(109,40,217,0.22)",
+                      background: active ? "rgba(10,25,61,0.14)" : "rgba(10,8,30,0.85)",
+                      border: active ? "1px solid rgba(10,25,61,0.6)" : "1px solid rgba(10,25,61,0.22)",
                       justifyContent: "space-between",
                     }}>
                     <span>
@@ -340,8 +340,8 @@ export default function OnboardingPage() {
                     </span>
                     <span style={{
                       width: "20px", height: "20px", borderRadius: "50%", flexShrink: 0,
-                      border: active ? "none" : "1px solid rgba(109,40,217,0.4)",
-                      background: active ? "#7c3aed" : "transparent",
+                      border: active ? "none" : "1px solid rgba(10,25,61,0.4)",
+                      background: active ? "#0A193D" : "transparent",
                       display: "flex", alignItems: "center", justifyContent: "center",
                     }}>
                       {active && <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="2,6 5,9 10,3" /></svg>}
@@ -359,12 +359,12 @@ export default function OnboardingPage() {
             <button type="button" onClick={goBack}
               style={{
                 flex: "0 0 auto", padding: "15px 22px", background: "rgba(10,8,30,0.85)",
-                border: "1px solid rgba(109,40,217,0.25)", borderRadius: "14px",
+                border: "1px solid rgba(10,25,61,0.25)", borderRadius: "14px",
                 fontSize: "15px", fontWeight: 600, color: "rgba(196,181,253,0.85)",
                 cursor: "pointer", fontFamily: "inherit",
               }}
-              onMouseOver={e => { e.currentTarget.style.borderColor = "rgba(139,92,246,0.4)"; }}
-              onMouseOut={e => { e.currentTarget.style.borderColor = "rgba(109,40,217,0.25)"; }}
+              onMouseOver={e => { e.currentTarget.style.borderColor = "rgba(10,25,61,0.4)"; }}
+              onMouseOut={e => { e.currentTarget.style.borderColor = "rgba(10,25,61,0.25)"; }}
             >
               Back
             </button>
@@ -375,13 +375,13 @@ export default function OnboardingPage() {
               fontSize: "16px", fontWeight: 600, color: "#fff", fontFamily: "inherit",
               display: "flex", alignItems: "center", justifyContent: "center", gap: "10px",
               cursor: canContinue ? "pointer" : "not-allowed",
-              background: canContinue ? "linear-gradient(90deg, #7c3aed 0%, #4f46e5 100%)" : "rgba(109,40,217,0.18)",
-              boxShadow: canContinue ? "0 4px 24px rgba(109,40,217,0.35)" : "none",
+              background: canContinue ? "linear-gradient(90deg, #142453 0%, #0A193D 100%)" : "rgba(10,25,61,0.18)",
+              boxShadow: canContinue ? "0 4px 24px rgba(10,25,61,0.35)" : "none",
               opacity: canContinue ? 1 : 0.6,
               transition: "opacity 120ms ease",
             }}
-            onMouseOver={e => { if (canContinue) { e.currentTarget.style.background = "linear-gradient(90deg, #8b5cf6 0%, #6366f1 100%)"; } }}
-            onMouseOut={e => { if (canContinue) { e.currentTarget.style.background = "linear-gradient(90deg, #7c3aed 0%, #4f46e5 100%)"; } }}
+            onMouseOver={e => { if (canContinue) { e.currentTarget.style.background = "linear-gradient(90deg, #142453 0%, #0A193D 100%)"; } }}
+            onMouseOut={e => { if (canContinue) { e.currentTarget.style.background = "linear-gradient(90deg, #142453 0%, #0A193D 100%)"; } }}
           >
             {isLastStep ? "Go to dashboard" : "Continue"}
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">

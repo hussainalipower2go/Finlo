@@ -20,10 +20,10 @@ export function FeatureItem({ icon: Icon, iconColor, bg, border, glow, title, de
         <Icon className={`h-5 w-5 ${iconColor}`} />
       </div>
       <div>
-        <div className="mb-[3px] text-sm font-semibold text-[#e9e4ff]" style={{ textShadow: '0 1px 6px rgba(0,0,0,0.5)' }}>
+        <div className="mb-[3px] text-sm font-semibold text-[#E9EDFB]" style={{ textShadow: '0 1px 6px rgba(0,0,0,0.5)' }}>
           {title}
         </div>
-        <div className="text-[12.5px] leading-[1.5] text-[#b4a5e6]/65">{description}</div>
+        <div className="text-[12.5px] leading-[1.5] text-[#0A193D]/65">{description}</div>
       </div>
     </div>
   )
