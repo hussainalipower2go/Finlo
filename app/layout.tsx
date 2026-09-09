@@ -7,8 +7,8 @@ export const metadata: Metadata = {
   description: "Know how much you can safely spend until your next income arrives",
   manifest: "/manifest.webmanifest",
   icons: {
-    icon: "/logo.png",
-    apple: "/logo.png",
+    icon: "/finlo-brand-mark.png",
+    apple: "/finlo-brand-mark.png",
   },
   appleWebApp: {
     capable: true,
