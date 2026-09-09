@@ -107,6 +107,8 @@ export default function FinloApp() {
   const [addType, setAddType] = useState<"income" | "expense">("expense");
   const [installmentPayTarget, setInstallmentPayTarget] = useState<Installment | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [pushStatus, setPushStatus] = useState<PushStatus>("idle");
+  const [showPushHint, setShowPushHint] = useState(false);
 
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 1023px)");
@@ -2063,7 +2065,6 @@ function SettingsPage({ colors, isDark, toggleTheme, displayName, userEmail, onS
   const [deleting, setDeleting] = useState(false);
   const [deleteErr, setDeleteErr] = useState("");
   const [pushStatus, setPushStatus] = useState<PushStatus>("idle");
-  const [showPushHint, setShowPushHint] = useState(false);
   const [notifBills, setNotifBills] = useState(() => notifPref(NOTIF_PREF_BILLS, true));
   const [notifBudget, setNotifBudget] = useState(() => notifPref(NOTIF_PREF_BUDGET, true));
   const [notifIncome, setNotifIncome] = useState(() => notifPref(NOTIF_PREF_INCOME, true));
