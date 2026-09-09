@@ -4,7 +4,6 @@ import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase";
 import type { RealtimeChannel } from "@supabase/supabase-js";
 import { jsPDF } from "jspdf";
-import { FinloLogoImg } from "@/components/branding/FinloLogoImg";
 import { getUserTransactionsClient, getUserIncomeClient, getUserExpensesClient, getUserRecurringExpensesClient, getBudgetsForMonthClient, addIncomeClient, addExpenseClient, upsertBudgetClient, getUserInstallmentsClient, addInstallmentClient, updateInstallmentClient, deleteInstallmentClient } from "@/lib/database-client";
 import { ImportCenter } from "@/components/imports/ImportCenter";
 import { IncomeSource, ExpenseCategory, PaymentMethod, type Installment } from "@/lib/types";
@@ -615,7 +614,7 @@ const insts = await getUserInstallmentsClient();
           {sidebarOpen ? (
             <img src="/finlo-logo-horizontal.png" alt="Finlo" style={{ width: 121, height: "auto", display: "block" }} />
           ) : (
-            <FinloLogoImg size={36} radius={10} />
+            <img src="/finlo-brand-mark.png" alt="Finlo" style={{ width: 36, height: 36, objectFit: "contain", display: "block" }} />
           )}
         </div>
 
