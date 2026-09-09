@@ -4,7 +4,7 @@ import { createClient as createAdminClient } from '@supabase/supabase-js'
 
 export const runtime = 'nodejs'
 
-const DATA_TABLES = ['transactions', 'income', 'expenses', 'recurring_expenses', 'budgets'] as const
+const DATA_TABLES = ['transactions', 'income', 'expenses', 'recurring_expenses', 'budgets', 'installments', 'push_subscriptions'] as const
 
 export async function DELETE() {
   try {

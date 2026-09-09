@@ -27,6 +27,7 @@ import {
   Cell, Legend, ComposedChart
 } from "recharts";
 import { formatCurrency, currencySymbol } from "@/lib/format";
+import { setupPushSubscription, requestPushForDue } from "@/lib/push";
 
 // ── Types ──────────────────────────────────────────────────────────────────
 type Page = "dashboard" | "transactions" | "upcoming" | "budgets" | "analytics" | "ai" | "installments" | "settings";
@@ -116,6 +117,9 @@ export default function FinloApp() {
       mq.removeEventListener("change", onChange);
       clearTimeout(t);
     };
+  }, []);
+  useEffect(() => {
+    void setupPushSubscription();
   }, []);
   const [hasAuth, setHasAuth] = useState(false);
   const [userName, setUserName] = useState("");
@@ -339,6 +343,7 @@ const insts = await getUserInstallmentsClient();
           rec.c += 1;
           try { localStorage.setItem(dueAlertKey, JSON.stringify(rec)); } catch { /* ignore */ }
           setDueAlert(urgent);
+          void requestPushForDue(urgent);
         }
       }
       try {
