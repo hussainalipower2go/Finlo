@@ -36,8 +36,8 @@ export default function SignupPage() {
 
   const isDark = theme === "dark";
   const p = {
-    bg: isDark ? "#080b1a" : "#eef1f8",
-    navBg: isDark ? "#080b1a" : "#f8fafc",
+    bg: isDark ? "#080b1a" : "#FEFBFE",
+    navBg: isDark ? "#080b1a" : "#FEFBFE",
     line: isDark ? "rgba(10,25,61,0.2)" : "rgba(10,25,61,0.22)",
     lineSoft: isDark ? "rgba(10,25,61,0.15)" : "rgba(10,25,61,0.14)",
     lineDivider: isDark ? "rgba(10,25,61,0.18)" : "rgba(10,25,61,0.16)",

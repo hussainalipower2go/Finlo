@@ -48,7 +48,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   }
 
   return (
-    <div className="min-h-screen bg-[#f4f7fb]">
+    <div className="min-h-screen bg-[#FEFBFE]">
       {/* Top Bar - liquid glass */}
       <div className="sticky top-0 z-40 border-b border-white/70 bg-white/50 backdrop-blur-[34px] shadow-[inset_0_1px_0_rgba(255,255,255,0.95),0_12px_40px_rgba(31,45,90,0.1)]">
         <Container className="py-3 flex justify-between items-center">

@@ -21,7 +21,7 @@ interface Colors {
 
 function buildColors(isDark: boolean): Colors {
   return {
-    bg: isDark ? 'linear-gradient(160deg,#0b1220 0%,#111a35 55%,#0b1024 100%)' : 'linear-gradient(160deg,#142453 0%,#e9edfb 55%,#0A193D 100%)',
+    bg: isDark ? 'linear-gradient(160deg,#0b1220 0%,#111a35 55%,#0b1024 100%)' : '#FEFBFE',
     sidebar: isDark ? '#1e293b' : '#ffffff',
     card: isDark ? "linear-gradient(145deg,rgba(43,55,84,0.7),rgba(26,34,60,0.42))" : 'linear-gradient(145deg,rgba(255,255,255,0.85),rgba(255,255,255,0.45))',
     cardBorder: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.7)',

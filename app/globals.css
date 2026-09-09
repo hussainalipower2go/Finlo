@@ -44,7 +44,7 @@
   --ace-sidebar-text: #e2e8f0;
   --ace-sidebar-sub: #94a3b8;
   --ace-sidebar-border: rgba(255, 255, 255, 0.08);
-  --ace-shell-bg: linear-gradient(160deg, #f4f7fb 0%, #eef2f8 55%, #f8fafc 100%);
+  --ace-shell-bg: linear-gradient(160deg, #FEFBFE 0%, #FEFBFE 55%, #FEFBFE 100%);
 }
 
 .dark {
