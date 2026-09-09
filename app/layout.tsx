@@ -1,6 +1,21 @@
 import type { Metadata, Viewport } from "next";
+import { Poppins, Montserrat } from "next/font/google";
 import { ToastProvider } from "@/components/providers/ToastProvider";
 import "./globals.css";
+
+const poppins = Poppins({
+  subsets: ["latin"],
+  weight: ["700", "800"],
+  variable: "--font-poppins",
+  display: "swap",
+});
+
+const montserrat = Montserrat({
+  subsets: ["latin"],
+  weight: ["500", "600"],
+  variable: "--font-montserrat",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Finlo - Personal Finance Planning",
@@ -32,7 +47,7 @@ interface RootLayoutProps {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className={`${poppins.variable} ${montserrat.variable}`}>
       <body className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
         <ToastProvider>
           <div id="__next">{children}</div>
