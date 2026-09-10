@@ -134,6 +134,7 @@ export function LoginPage() {
               alt="Finlo"
               width={968}
               height={364}
+              quality={100}
               style={{
                 width: "clamp(220px, 22vw, 320px)",
                 height: "auto",
