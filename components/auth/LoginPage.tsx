@@ -12,8 +12,8 @@ export function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [rememberMe, setRememberMe] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [oauthLoading, setOauthLoading] = useState<"google" | "apple" | null>(null);
   const [error, setError] = useState("");
   const router = useRouter();
   const { toast } = useToast();
@@ -33,14 +33,9 @@ export function LoginPage() {
   }, [router]);
 
   const p = {
-    bg: "#FEFBFE",
     line: "rgba(10,25,61,0.22)",
-    lineSoft: "rgba(10,25,61,0.14)",
     lineDivider: "rgba(10,25,61,0.16)",
     text: "#0f172a",
-    textSoft: "#1e293b",
-    title: "#1e293b",
-    sub: "rgba(71,85,105,0.8)",
     desc: "rgba(100,116,139,0.85)",
     descFaint: "rgba(100,116,139,0.75)",
     label: "rgba(51,65,85,0.9)",
@@ -53,6 +48,10 @@ export function LoginPage() {
     if (loading) return;
     if (!email || !password) {
       setError("Please enter your email and password.");
+      return;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      setError("Please enter a valid email address.");
       return;
     }
     setError("");
@@ -73,19 +72,33 @@ export function LoginPage() {
   }
 
   async function handleGoogle() {
+    if (oauthLoading) return;
+    setOauthLoading("google");
     const supabase = createClient();
-    await supabase.auth.signInWithOAuth({
+    const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: { redirectTo: `${window.location.origin}/auth/callback` },
     });
+    if (error) {
+      setOauthLoading(null);
+      setError(error.message);
+      toast({ type: "error", message: error.message });
+    }
   }
 
   async function handleApple() {
+    if (oauthLoading) return;
+    setOauthLoading("apple");
     const supabase = createClient();
-    await supabase.auth.signInWithOAuth({
+    const { error } = await supabase.auth.signInWithOAuth({
       provider: "apple",
       options: { redirectTo: `${window.location.origin}/auth/callback` },
     });
+    if (error) {
+      setOauthLoading(null);
+      setError(error.message);
+      toast({ type: "error", message: error.message });
+    }
   }
 
   return (
@@ -144,6 +157,58 @@ export function LoginPage() {
             Finlo helps you understand your cash flow,<br />
             plan ahead, and spend with confidence.
           </p>
+
+          {/* Features */}
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "clamp(24px, 3vw, 40px)" }}>
+            {[
+              {
+                icon: (
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0A193D" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+                    <circle cx="12" cy="16" r="1.5"/>
+                  </svg>
+                ),
+                title: "Know your runway",
+                desc: "See how many days your money will last.",
+              },
+              {
+                icon: (
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#059669" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+                    <polyline points="9 12 11 14 15 10"/>
+                  </svg>
+                ),
+                title: "Spend with confidence",
+                desc: "Know how much you can safely spend today.",
+              },
+              {
+                icon: (
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                    <line x1="18" y1="20" x2="18" y2="10"/>
+                    <line x1="12" y1="20" x2="12" y2="4"/>
+                    <line x1="6" y1="20" x2="6" y2="14"/>
+                  </svg>
+                ),
+                title: "Stay on track",
+                desc: "Track upcoming bills, income, and goals.",
+              },
+            ].map((f, i) => (
+              <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: "clamp(8px, 0.9vw, 10px)", flex: "1 1 130px", minWidth: "0" }}>
+                <div style={{
+                  width: "clamp(28px, 3vw, 34px)", height: "clamp(28px, 3vw, 34px)", borderRadius: "10px", flexShrink: 0,
+                  background: "transparent", border: "none",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                }}>
+                  {f.icon}
+                </div>
+                <div>
+                  <div style={{ fontSize: "clamp(13px, 1.2vw, 15px)", fontWeight: 600, color: "#17264A", marginBottom: "2px", whiteSpace: "nowrap" }}>{f.title}</div>
+                  <div style={{ fontSize: "clamp(12px, 1.1vw, 13px)", fontWeight: 400, color: "#71809F", lineHeight: 1.45, maxWidth: "150px" }}>{f.desc}</div>
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -174,8 +239,9 @@ export function LoginPage() {
           <p style={{ fontSize: "14px", color: p.desc, margin: "0 0 32px 0" }}>Login to continue to your account</p>
 
           {/* EMAIL */}
+          <form onSubmit={e => { e.preventDefault(); handleLogin(); }} noValidate>
           <div style={{ marginBottom: "20px" }}>
-            <label style={{ display: "block", fontSize: "13px", fontWeight: 500, color: p.label, marginBottom: "8px" }}>Email address</label>
+            <label htmlFor="login-email" style={{ display: "block", fontSize: "13px", fontWeight: 500, color: p.label, marginBottom: "8px" }}>Email address</label>
             <div style={{ position: "relative" }}>
               <span style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", color: p.iconMuted, pointerEvents: "none" }}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -183,7 +249,8 @@ export function LoginPage() {
                   <polyline points="22,6 12,13 2,6"/>
                 </svg>
               </span>
-              <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com"
+              <input id="login-email" type="email" value={email} autoComplete="email"
+                onChange={e => { setEmail(e.target.value); if (error) setError(""); }} placeholder="you@example.com"
                 style={{ width: "100%", padding: "14px 14px 14px 44px", background: p.inputBg, border: `1px solid ${p.line}`, borderRadius: "12px", fontSize: "14px", color: p.inputText, outline: "none", fontFamily: "inherit", boxSizing: "border-box" }}
                 onFocus={e => e.target.style.borderColor = "rgba(10,25,61,0.55)"}
                 onBlur={e => e.target.style.borderColor = p.line}
@@ -192,8 +259,8 @@ export function LoginPage() {
           </div>
 
           {/* PASSWORD */}
-          <div style={{ marginBottom: "20px" }}>
-            <label style={{ display: "block", fontSize: "13px", fontWeight: 500, color: p.label, marginBottom: "8px" }}>Password</label>
+          <div style={{ marginBottom: "12px" }}>
+            <label htmlFor="login-password" style={{ display: "block", fontSize: "13px", fontWeight: 500, color: p.label, marginBottom: "8px" }}>Password</label>
             <div style={{ position: "relative" }}>
               <span style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", color: p.iconMuted, pointerEvents: "none" }}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -201,7 +268,8 @@ export function LoginPage() {
                   <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
                 </svg>
               </span>
-              <input type={showPassword ? "text" : "password"} value={password} onChange={e => setPassword(e.target.value)} placeholder="Enter your password"
+              <input id="login-password" type={showPassword ? "text" : "password"} value={password} autoComplete="current-password"
+                onChange={e => { setPassword(e.target.value); if (error) setError(""); }} placeholder="Enter your password"
                 style={{ width: "100%", padding: "14px 48px 14px 44px", background: p.inputBg, border: `1px solid ${p.line}`, borderRadius: "12px", fontSize: "14px", color: p.inputText, outline: "none", fontFamily: "inherit", boxSizing: "border-box" }}
                 onFocus={e => e.target.style.borderColor = "rgba(10,25,61,0.55)"}
                 onBlur={e => e.target.style.borderColor = p.line}
@@ -216,14 +284,8 @@ export function LoginPage() {
             </div>
           </div>
 
-          {/* REMEMBER + FORGOT */}
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "24px" }}>
-            <label style={{ display: "flex", alignItems: "center", gap: "9px", cursor: "pointer" }}>
-              <div onClick={() => setRememberMe(!rememberMe)} style={{ width: "18px", height: "18px", borderRadius: "5px", flexShrink: 0, background: rememberMe ? "#0A193D" : "rgba(10,25,61,0.08)", border: rememberMe ? "none" : `1px solid ${p.line}`, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
-                {rememberMe && <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="2,6 5,9 10,3"/></svg>}
-              </div>
-              <span style={{ fontSize: "13px", color: p.label }}>Remember me</span>
-            </label>
+            <span />
             <Link href="/auth/forgot-password" style={{ fontSize: "13px", color: "#0A193D", textDecoration: "none" }}>Forgot password?</Link>
           </div>
 
@@ -235,7 +297,7 @@ export function LoginPage() {
               color: "#b91c1c", fontSize: "13px", fontFamily: "inherit",
             }}>{error}</div>
           )}
-          <button onClick={handleLogin} disabled={loading}
+          <button type="submit" disabled={loading}
             style={{ width: "100%", padding: "15px", background: "linear-gradient(90deg, #142453 0%, #0A193D 100%)", border: "none", borderRadius: "14px", fontSize: "16px", fontWeight: 600, color: "#fff", cursor: loading ? "not-allowed" : "pointer", fontFamily: "inherit", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px", boxShadow: "0 2px 10px rgba(10,25,61,0.22)", marginBottom: "24px", opacity: loading ? 0.6 : 1, transition: "transform 0.12s ease" }}
             onMouseOver={e => { if (!loading) { e.currentTarget.style.transform = "translateY(-1px)"; } }}
             onMouseOut={e => { e.currentTarget.style.transform = "translateY(0)"; }}
@@ -251,6 +313,7 @@ export function LoginPage() {
               </>
             )}
           </button>
+          </form>
 
           {/* DIVIDER */}
           <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "20px" }}>
@@ -261,8 +324,9 @@ export function LoginPage() {
 
           {/* SOCIAL */}
           <div className="finlo-social" style={{ display: "flex", gap: "12px", marginBottom: "28px" }}>
-            <button onClick={handleGoogle} style={{ flex: 1, padding: "12px 16px", background: p.inputBg, border: `1px solid ${p.line}`, borderRadius: "12px", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px", fontSize: "14px", color: p.label, cursor: "pointer", fontFamily: "inherit" }}
-              onMouseOver={e => { e.currentTarget.style.borderColor = "rgba(10,25,61,0.38)"; }}
+            <button onClick={handleGoogle} disabled={oauthLoading !== null}
+              style={{ flex: 1, padding: "12px 16px", background: p.inputBg, border: `1px solid ${p.line}`, borderRadius: "12px", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px", fontSize: "14px", color: p.label, cursor: oauthLoading !== null ? "not-allowed" : "pointer", fontFamily: "inherit", opacity: oauthLoading !== null ? 0.6 : 1 }}
+              onMouseOver={e => { if (!oauthLoading) { e.currentTarget.style.borderColor = "rgba(10,25,61,0.38)"; } }}
               onMouseOut={e => { e.currentTarget.style.borderColor = p.line; }}>
               <svg width="18" height="18" viewBox="0 0 24 24">
                 <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
@@ -272,8 +336,9 @@ export function LoginPage() {
               </svg>
               Google
             </button>
-            <button onClick={handleApple} style={{ flex: 1, padding: "12px 16px", background: p.inputBg, border: `1px solid ${p.line}`, borderRadius: "12px", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px", fontSize: "14px", color: p.label, cursor: "pointer", fontFamily: "inherit" }}
-              onMouseOver={e => { e.currentTarget.style.borderColor = "rgba(10,25,61,0.38)"; }}
+            <button onClick={handleApple} disabled={oauthLoading !== null}
+              style={{ flex: 1, padding: "12px 16px", background: p.inputBg, border: `1px solid ${p.line}`, borderRadius: "12px", display: "flex", alignItems: "center", justifyContent: "center", gap: "10px", fontSize: "14px", color: p.label, cursor: oauthLoading !== null ? "not-allowed" : "pointer", fontFamily: "inherit", opacity: oauthLoading !== null ? 0.6 : 1 }}
+              onMouseOver={e => { if (!oauthLoading) { e.currentTarget.style.borderColor = "rgba(10,25,61,0.38)"; } }}
               onMouseOut={e => { e.currentTarget.style.borderColor = p.line; }}>
               <svg width="18" height="18" viewBox="0 0 24 24" fill={p.inputText}>
                 <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/>
