@@ -10,13 +10,13 @@
   "theme_color": "#0A193D",
   "icons": [
     {
-      "src": "/finlo-brand-mark.svg",
+      "src": "/finlo-app-icon.svg",
       "sizes": "192x192",
       "type": "image/svg+xml",
       "purpose": "any"
     },
     {
-      "src": "/finlo-brand-mark.svg",
+      "src": "/finlo-app-icon.svg",
       "sizes": "512x512",
       "type": "image/svg+xml",
       "purpose": "any maskable"
