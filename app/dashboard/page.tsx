@@ -7,7 +7,6 @@ import { createClient } from "@/lib/supabase";
 import type { RealtimeChannel } from "@supabase/supabase-js";
 import { jsPDF } from "jspdf";
 import { getUserTransactionsClient, getUserIncomeClient, getUserExpensesClient, getUserRecurringExpensesClient, getBudgetsForMonthClient, addIncomeClient, addExpenseClient, upsertBudgetClient, getUserInstallmentsClient, addInstallmentClient, updateInstallmentClient, deleteInstallmentClient } from "@/lib/database-client";
-import { ImportCenter } from "@/components/imports/ImportCenter";
 import { IncomeSource, ExpenseCategory, PaymentMethod, type Installment } from "@/lib/types";
 import {
   LayoutDashboard, ArrowLeftRight, Calendar, PieChart,
@@ -210,7 +209,6 @@ export default function FinloApp() {
   const [dueAlert, setDueAlert] = useState<{ kind: "recurring" | "installment"; id: string; name: string; amount: number; date: string; overdue: number }[] | null>(null);
   const dueAlertKey = "finlo_due_alert_2x";
   const [autoClearMessages, setAutoClearMessages] = useState<{ title: string; body: string }[]>([]);
-  const [smsPending, setSmsPending] = useState(0);
 
   const router = useRouter();
   const supabase = createClient();
@@ -258,9 +256,6 @@ export default function FinloApp() {
       notifications.push({ title: `Budget alert: ${b.category}`, body: `${Math.round((b.spent / b.limit) * 100)}% used — ${formatCurrency(b.spent, currency)} of ${formatCurrency(b.limit, currency)}`, color: "#ef4444", icon: <Target size={15} /> });
     }
   });
-  if (smsPending > 0) {
-    notifications.unshift({ title: `SMS import: ${smsPending} transaction${smsPending > 1 ? "s" : ""} waiting to review`, body: "Open Settings → SMS Bank Import to confirm or edit before they're saved.", color: "#10b981", icon: <Smartphone size={15} /> });
-  }
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -425,15 +420,6 @@ const insts = await getUserInstallmentsClient();
           setDueAlert(urgent);
           void requestPushForDue(urgent);
         }
-      }
-      try {
-        const pendingRes = await fetch("/api/import/pending");
-        if (pendingRes.ok) {
-          const j = (await pendingRes.json()) as { items?: unknown[] };
-          setSmsPending(Array.isArray(j.items) ? j.items.length : 0);
-        }
-      } catch {
-        setSmsPending(0);
       }
       } catch { /* transient network/auth error, next poll will retry */ }
     };
@@ -2469,9 +2455,6 @@ function SettingsPage({ colors, displayName, userEmail, onSignOut, currency, onC
           document.body
         )}
       </div>
-
-      {/* SMS Import Center */}
-      <ImportCenter colors={colors} supabase={supabase} />
 
       {/* Save */}
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
