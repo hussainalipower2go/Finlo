@@ -2196,6 +2196,7 @@ function SettingsPage({ colors, displayName, userEmail, onSignOut, currency, onC
 
       const doc = new jsPDF();
       const pageW = doc.internal.pageSize.getWidth();
+      const pageH = doc.internal.pageSize.getHeight();
       const margin = 16;
       let y = margin;
 
@@ -2211,11 +2212,11 @@ function SettingsPage({ colors, displayName, userEmail, onSignOut, currency, onC
       doc.setTextColor(120, 120, 120);
       doc.text(`Exported: ${new Date().toLocaleString()}  |  User: ${displayName || userEmail || "-"}`, margin, y);
       y += 5;
-      doc.text(`Period: ${exportMonth === "all" ? "All months" : exportMonthLabel(exportMonth) + (exportMonth)}, ${exportMonth === "all" ? "full history" : "1 year window"}`, margin, y);
+      doc.text(`Period: ${exportMonth === "all" ? "All months (full history)" : exportMonthLabel(exportMonth)}`, margin, y);
       y += 14;
 
       const drawSectionHeader = (title: string) => {
-        if (y > pageW - 18) { doc.addPage(); y = margin; }
+        if (y > pageH - 24) { doc.addPage(); y = margin; }
         doc.setFont("helvetica", "bold");
         doc.setFontSize(13);
         doc.setTextColor(99, 102, 241);
@@ -2259,15 +2260,15 @@ function SettingsPage({ colors, displayName, userEmail, onSignOut, currency, onC
       y += 6;
       doc.setFont("helvetica", "normal");
       doc.setFontSize(10);
-      inc.slice(0, 60).forEach((i) => {
-        if (y > 280) { doc.addPage(); y = margin; }
+      inc.forEach((i) => {
+        if (y > pageH - 24) { doc.addPage(); y = margin; }
         drawRow(`${i.notes || "Income"}  (${String(i.date || "").slice(0, 10)})`, fmt(i.amount), [16, 185, 129]);
       });
       y += 8;
 
       drawSectionHeader(`Expenses (${exp.length})`);
-      exp.slice(0, 80).forEach((e) => {
-        if (y > 280) { doc.addPage(); y = margin; }
+      exp.forEach((e) => {
+        if (y > pageH - 24) { doc.addPage(); y = margin; }
         doc.setTextColor(239, 68, 68);
         doc.setFont("helvetica", "normal");
         doc.setFontSize(10);
@@ -2279,7 +2280,7 @@ function SettingsPage({ colors, displayName, userEmail, onSignOut, currency, onC
 
       drawSectionHeader(`Recurring Payments (${recurring.length})`);
       recurring.forEach((r) => {
-        if (y > 280) { doc.addPage(); y = margin; }
+        if (y > pageH - 24) { doc.addPage(); y = margin; }
         doc.setTextColor(60, 60, 60);
         doc.setFont("helvetica", "normal");
         doc.setFontSize(10);
@@ -2290,8 +2291,8 @@ function SettingsPage({ colors, displayName, userEmail, onSignOut, currency, onC
       y += 8;
 
       drawSectionHeader("Recent Transactions");
-      txns.slice(0, 80).forEach((t) => {
-        if (y > 280) { doc.addPage(); y = margin; }
+      txns.forEach((t) => {
+        if (y > pageH - 24) { doc.addPage(); y = margin; }
         const c: [number, number, number] = t.type === "income" ? [16, 185, 129] : [239, 68, 68];
         doc.setTextColor(...c);
         doc.setFont("helvetica", "normal");
