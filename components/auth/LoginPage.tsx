@@ -128,24 +128,19 @@ export function LoginPage() {
       }}>
         <div style={{ position: "relative", zIndex: 1, width: "80%", maxWidth: "620px", left: "20%" }}>
           {/* Logo */}
-          <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "clamp(28px, 6vh, 48px)" }}>
+          <div style={{ display: "flex", alignItems: "center", marginBottom: "clamp(28px, 6vh, 48px)" }}>
             <Image
-              src="/finlo-brand-mark.png"
+              src="/finlo-logo-horizontal.png"
               alt="Finlo"
-              width={44}
-              height={44}
+              width={968}
+              height={364}
               style={{
-                width: "clamp(46px, 4.2vw, 64px)",
-                height: "clamp(46px, 4.2vw, 64px)",
-                borderRadius: "clamp(10px, 1vw, 13px)",
-                objectFit: "cover",
+                width: "clamp(220px, 22vw, 320px)",
+                height: "auto",
+                objectFit: "contain",
                 flexShrink: 0,
               }}
             />
-            <div>
-              <div style={{ fontSize: "clamp(24px, 3vw, 32px)", fontWeight: 700, color: "#0B1838", lineHeight: 1, letterSpacing: "-0.5px" }}>Finlo</div>
-              <div style={{ fontSize: "clamp(8px, 0.9vw, 10px)", fontWeight: 600, color: "#7A89A8", marginTop: "4px", letterSpacing: "0.4px" }}>Plan. Spend. Stay Ahead.</div>
-            </div>
           </div>
 
           {/* Hero heading */}
