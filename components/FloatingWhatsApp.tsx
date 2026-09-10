@@ -12,6 +12,7 @@ export default function FloatingWhatsApp() {
   const pathname = usePathname();
   const href = "https://wa.me/923422866127?text=" + encodeURIComponent("Assalam o Alaikum! Finlo app ke baare mein baat karni hai.");
   const isDashboard = pathname?.startsWith("/dashboard");
+  const isAuthPage = pathname?.startsWith("/login") || pathname?.startsWith("/auth");
   return (
     <a
       href={href}
@@ -25,7 +26,7 @@ export default function FloatingWhatsApp() {
         width: 56,
         height: 56,
         borderRadius: "50%",
-        display: isDashboard ? "none" : "flex",
+        display: (isDashboard || isAuthPage) ? "none" : "flex",
         alignItems: "center",
         justifyContent: "center",
         background: "linear-gradient(135deg,#25D366,#128C7E)",
