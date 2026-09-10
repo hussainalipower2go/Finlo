@@ -120,14 +120,6 @@ export function LoginPage() {
       overflow: "hidden",
     }}>
 
-      {/* Full-page readability overlay */}
-      <div style={{
-        position: "absolute",
-        inset: 0,
-        background: "rgba(254,251,254,0.88)",
-        zIndex: 0,
-      }} />
-
       <div className="finlo-outer"
         style={{
         width: "100%",
@@ -391,7 +383,7 @@ export function LoginPage() {
         {/* ═══════════ RIGHT PANEL ═══════════ */}
         <div className="finlo-right" style={{
           width: "50%", minHeight: "100vh",
-          background: isDark ? p.bg : p.navBg,
+          background: "transparent",
           display: "flex", alignItems: "center", justifyContent: "center",
           padding: "40px 60px",
           position: "relative",
@@ -406,11 +398,11 @@ export function LoginPage() {
           {/* Theme toggle pill */}
           <div className="finlo-card" style={{
             width: "100%", maxWidth: "580px",
-            background: p.cardBg,
-            border: `1px solid ${p.line}`,
+            background: "transparent",
+            border: `1px solid rgba(255,255,255,0.9)`,
             borderRadius: "24px",
             padding: "44px 48px",
-            boxShadow: isDark ? "0 6px 24px rgba(0,0,0,0.16)" : "0 6px 24px rgba(0,0,0,0.08)",
+            boxShadow: "0 6px 24px rgba(10,25,61,0.08)",
             position: "relative", zIndex: 1,
           }}>
             <h2 style={{ fontSize: "26px", fontWeight: 700, color: p.text, margin: "0 0 6px 0" }}>Welcome back 👋</h2>
