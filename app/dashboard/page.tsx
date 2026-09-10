@@ -15,7 +15,7 @@ import {
   Wallet, ShieldCheck, Timer, Home, Zap, Wifi, Dumbbell,
   ShoppingCart, Car, UtensilsCrossed, Heart,
   Search, Trash2,
-  Info, Send, ChevronDown, LogOut,
+  Info, Send, ChevronDown, ChevronLeft, LogOut,
   Download, User, ArrowUp, ArrowDown,
   Target, DollarSign, Sparkles, FileText, Pencil, Check,
   Camera, ScanLine,
@@ -852,6 +852,49 @@ const insts = await getUserInstallmentsClient();
 // ── Dashboard Page ──────────────────────────────────────────────────────────
 function DashboardPage({ colors, transactions, recurring, installments, budgets, openingBalance, onEditBalance, onViewAllUpcoming, onViewAllTransactions, onMarkPaid, onMarkInstallment, currency }: { colors: Colors; transactions: Transaction[]; recurring: UpcomingItem[]; installments: Installment[]; budgets: Budget[]; openingBalance: number; onEditBalance: () => void; onViewAllUpcoming: () => void; onViewAllTransactions: () => void; onMarkPaid: (id: string, frequency?: string) => Promise<void>; onMarkInstallment: (inst: Installment) => void; currency: string }) {
   const [showCalcModal, setShowCalcModal] = useState(false);
+  const [month, setMonth] = useState(() => new Date().toISOString().slice(0, 7));
+  const [showMonthPicker, setShowMonthPicker] = useState(false);
+  const [monthBudgets, setMonthBudgets] = useState<Budget[] | null>(null);
+  const curMonth = new Date().toISOString().slice(0, 7);
+
+  useEffect(() => {
+    let active = true;
+    if (month === curMonth) { setMonthBudgets(null); return; }
+    getBudgetsForMonthClient(month)
+      .then((bdgs) => {
+        if (!active) return;
+        const spentByCatM: Record<string, number> = {};
+        transactions
+          .filter((t) => t.type === "expense" && (t.date || "").slice(0, 7) === month)
+          .forEach((t) => {
+            const cat = t.category || "Other";
+            spentByCatM[cat] = (spentByCatM[cat] || 0) + Number(t.amount);
+          });
+        setMonthBudgets(
+          bdgs.map((b, i) => {
+            const key = b.category.charAt(0).toUpperCase() + b.category.slice(1);
+            const spent = spentByCatM[b.category] || spentByCatM[key] || 0;
+            return {
+              id: b.id,
+              category: key,
+              limit: Number(b.limit_amount),
+              spent,
+              icon: budgetIcon[b.category] || "wallet",
+              color: budgetColor[key] || budgetFallbackColors[i % budgetFallbackColors.length],
+            };
+          })
+        );
+      })
+      .catch(() => {});
+    return () => { active = false; };
+  }, [month, transactions]);
+
+  const monthLabel = new Date(month + "-01").toLocaleDateString("en-PK", { month: "long", year: "numeric" });
+  const shiftMonth = (delta: number) => {
+    const [y, m] = month.split("-").map(Number);
+    const d = new Date(y, m - 1 + delta, 1);
+    setMonth(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`);
+  };
 
   const nowMs = new Date().getTime();
   const upcomingRecurring = recurring
@@ -907,12 +950,14 @@ function DashboardPage({ colors, transactions, recurring, installments, budgets,
   const totalExpenses = transactions.filter((t) => t.type === "expense").reduce((s, t) => s + t.amount, 0);
   const balance = openingBalance + totalIncome - totalExpenses;
   const fmt = (n: number) => formatCurrency(n, currency);
-  const recent = [...transactions]
+  const monthTxns = transactions.filter((t) => (t.date || "").slice(0, 7) === month);
+  const monthlyIncome = monthTxns.filter((t) => t.type === "income").reduce((s, t) => s + t.amount, 0);
+  const monthlyExpenses = monthTxns.filter((t) => t.type === "expense").reduce((s, t) => s + t.amount, 0);
+  const recent = [...monthTxns]
     .sort((a, b) => (a.date < b.date ? 1 : -1));
-  const monthlyIncome = totalIncome;
-  const monthlyExpenses = totalExpenses;
+  const activeBudgets = month === curMonth ? budgets : (monthBudgets ?? []);
   const byCatMap: Record<string, number> = {};
-  transactions
+  monthTxns
     .filter((t) => t.type === "expense")
     .forEach((t) => {
       const cat = (t.category || "Other").charAt(0).toUpperCase() + (t.category || "Other").slice(1);
@@ -926,7 +971,7 @@ function DashboardPage({ colors, transactions, recurring, installments, budgets,
   const savingsPct = monthlyIncome > 0 ? Math.round((savings / monthlyIncome) * 100) : 0;
 
   const dateMap: Record<string, { income: number; expenses: number }> = {};
-  transactions.forEach((t) => {
+  monthTxns.forEach((t) => {
     const d = (t.date || "").slice(0, 10);
     if (!d) return;
     dateMap[d] = dateMap[d] || { income: 0, expenses: 0 };
@@ -935,7 +980,7 @@ function DashboardPage({ colors, transactions, recurring, installments, budgets,
   });
   const realCashFlowData = Object.keys(dateMap)
     .sort()
-    .slice(-8)
+    .slice(-31)
     .map((d) => {
       const v = dateMap[d];
       const parts = d.split("-");
@@ -1038,7 +1083,7 @@ function DashboardPage({ colors, transactions, recurring, installments, budgets,
             overdueRecurring.length > 0
               ? { icon: <AlertCircle size={16} color="#ef4444" />, label: "Overdue", value: fmt(totalOverdue), sub: `${overdueRecurring.length} late`, bg: "rgba(239,68,68,0.08)" }
               : { icon: <AlertCircle size={16} color="#ef4444" />, label: "Overdue", value: "None", sub: "All clear", bg: "rgba(239,68,68,0.08)" },
-            { icon: <Target size={16} color="#f59e0b" />, label: "Budgets", value: `${budgets.filter((b) => b.spent <= b.limit).length}/${budgets.length}`, sub: "On track", bg: "rgba(245,158,11,0.08)" },
+            { icon: <Target size={16} color="#f59e0b" />, label: "Budgets", value: `${activeBudgets.filter((b) => b.spent <= b.limit).length}/${activeBudgets.length}`, sub: "On track", bg: "rgba(245,158,11,0.08)" },
             { icon: <TrendingUp size={16} color="#10b981" />, label: "Savings", value: fmt(savings), sub: `${savingsPct}%`, bg: "rgba(16,185,129,0.08)" },
           ].map((s, i) => (
             <div key={i} style={{ padding: "14px 14px", borderRadius: 12, background: colors.card, border: `1px solid ${colors.cardBorder}`, display: "flex", alignItems: "center", gap: 10 }}>
@@ -1059,9 +1104,30 @@ function DashboardPage({ colors, transactions, recurring, installments, budgets,
         <div style={{ padding: "22px 24px", borderRadius: 16, background: colors.card, border: `1px solid ${colors.cardBorder}` }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
             <span style={{ fontWeight: 700, fontSize: 15 }}>Finlo Finance Overview</span>
-            <button style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 12px", borderRadius: 7, border: `1px solid ${colors.cardBorder}`, background: "transparent", color: colors.text, fontSize: 12, cursor: "pointer" }}>
-              This Month <ChevronDown size={12} />
-            </button>
+            <div style={{ position: "relative" }}>
+              <button onClick={() => setShowMonthPicker(v => !v)} style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 12px", borderRadius: 7, border: `1px solid ${colors.cardBorder}`, background: "transparent", color: colors.text, fontSize: 12, cursor: "pointer" }}>
+                {monthLabel} <ChevronDown size={12} />
+              </button>
+              {showMonthPicker && (
+                <>
+                  <div onClick={() => setShowMonthPicker(false)} style={{ position: "fixed", inset: 0, zIndex: 199 }} />
+                  <div style={{ position: "absolute", right: 0, top: 34, zIndex: 200, background: colors.card, border: `1px solid ${colors.cardBorder}`, borderRadius: 12, boxShadow: "0 14px 40px rgba(0,0,0,0.18)", padding: 12, width: 250, backdropFilter: "blur(22px)" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                      <button onClick={() => shiftMonth(-1)} title="Previous month" style={{ width: 32, height: 32, borderRadius: 8, border: `1px solid ${colors.cardBorder}`, background: colors.inputBg, color: colors.text, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                        <ChevronLeft size={15} />
+                      </button>
+                      <input type="month" value={month} onChange={(e) => { if (e.target.value) setMonth(e.target.value); }} style={{ flex: 1, padding: "7px 8px", borderRadius: 8, border: `1px solid ${colors.cardBorder}`, background: colors.inputBg, color: colors.text, fontSize: 12, outline: "none", fontFamily: "inherit" }} />
+                      <button onClick={() => shiftMonth(1)} title="Next month" style={{ width: 32, height: 32, borderRadius: 8, border: `1px solid ${colors.cardBorder}`, background: colors.inputBg, color: colors.text, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                        <ChevronRight size={15} />
+                      </button>
+                    </div>
+                    {month !== curMonth && (
+                      <button onClick={() => setMonth(curMonth)} style={{ marginTop: 10, width: "100%", padding: "8px", borderRadius: 8, border: "none", background: "#0A193D", color: "#fff", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>Back to This Month</button>
+                    )}
+                  </div>
+                </>
+              )}
+            </div>
           </div>
           <div style={{ display: "flex", gap: 16, marginBottom: 14 }}>
             {[{ color: "#10b981", label: "Income" }, { color: "#ef4444", label: "Expenses" }, { color: "#0A193D", label: "Net" }].map(l => (
@@ -1186,7 +1252,7 @@ function DashboardPage({ colors, transactions, recurring, installments, budgets,
                 </Pie>
               </RechartsPie>
               <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", textAlign: "center" }}>
-                <div style={{ fontSize: 13, fontWeight: 700, color: colors.text }}>{fmt(totalExpenses)}</div>
+                <div style={{ fontSize: 13, fontWeight: 700, color: colors.text }}>{fmt(monthlyExpenses)}</div>
                 <div style={{ fontSize: 10, color: colors.textSub }}>Total Expenses</div>
               </div>
             </div>
