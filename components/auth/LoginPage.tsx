@@ -2,11 +2,11 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { LoaderCircle } from "lucide-react";
 import { useToast } from "@/components/providers/ToastProvider";
 import { createClient } from "@/lib/supabase";
-import { FinloLogoImg } from "@/components/branding/FinloLogoImg";
 
 export function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -129,7 +129,13 @@ export function LoginPage() {
         <div style={{ position: "relative", zIndex: 1, width: "80%", maxWidth: "620px", left: "20%" }}>
           {/* Logo */}
           <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "clamp(28px, 6vh, 48px)" }}>
-            <FinloLogoImg />
+            <Image
+              src="/finlo-brand-mark.png"
+              alt="Finlo"
+              width={44}
+              height={44}
+              style={{ borderRadius: 10, objectFit: "cover", flexShrink: 0 }}
+            />
             <div>
               <div style={{ fontSize: "clamp(24px, 3vw, 32px)", fontWeight: 700, color: "#0B1838", lineHeight: 1, letterSpacing: "-0.5px" }}>Finlo</div>
               <div style={{ fontSize: "clamp(8px, 0.9vw, 10px)", fontWeight: 600, color: "#7A89A8", marginTop: "4px", letterSpacing: "0.4px" }}>Plan. Spend. Stay Ahead.</div>
