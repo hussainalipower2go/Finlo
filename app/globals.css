@@ -233,6 +233,9 @@ h1, h2, h3, h4, h5, h6,
     padding: 0 var(--f-pad-sm) !important;
     margin: var(--f-pad-xs) var(--f-pad-sm) !important;
   }
+  .finlo-dash-topbar-month {
+    display: none !important;
+  }
 }
 
 /* Onboarding — compact card + stacked currency options on mobile */
