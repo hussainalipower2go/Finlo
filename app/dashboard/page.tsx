@@ -92,6 +92,47 @@ function CustomTooltip({ active, payload, label, colors, currency }: { active?: 
   return null;
 };
 
+function MonthPickerDropdown({ month, onMonthChange, colors, variant = "card" }: { month: string; onMonthChange: (m: string) => void; colors: Colors; variant?: "topbar" | "card" }) {
+  const [show, setShow] = useState(false);
+  const curMonth = new Date().toISOString().slice(0, 7);
+  const label = new Date(month + "-01").toLocaleDateString("en-PK", { month: "long", year: "numeric" });
+  const shift = (d: number) => {
+    const [y, m] = month.split("-").map(Number);
+    const dt = new Date(y, m - 1 + d, 1);
+    onMonthChange(`${dt.getFullYear()}-${String(dt.getMonth() + 1).padStart(2, "0")}`);
+  };
+  const btnStyle: React.CSSProperties = variant === "topbar"
+    ? { display: "flex", alignItems: "center", gap: 6, padding: "7px 14px", borderRadius: 8, border: `1px solid ${colors.cardBorder}`, background: colors.card, color: colors.text, fontSize: 13, cursor: "pointer", fontWeight: 500 }
+    : { display: "flex", alignItems: "center", gap: 5, padding: "5px 12px", borderRadius: 7, border: `1px solid ${colors.cardBorder}`, background: "transparent", color: colors.text, fontSize: 12, cursor: "pointer" };
+  return (
+    <div style={{ position: "relative" }}>
+      <button onClick={() => setShow(v => !v)} style={btnStyle}>
+        {variant === "topbar" && <Calendar size={14} />}
+        {label} <ChevronDown size={13} />
+      </button>
+      {show && (
+        <>
+          <div onClick={() => setShow(false)} style={{ position: "fixed", inset: 0, zIndex: 199 }} />
+          <div style={{ position: "absolute", right: 0, top: 36, zIndex: 200, background: colors.card, border: `1px solid ${colors.cardBorder}`, borderRadius: 12, boxShadow: "0 14px 40px rgba(0,0,0,0.18)", padding: 12, width: 250, backdropFilter: "blur(22px)" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+              <button onClick={() => shift(-1)} title="Previous month" style={{ width: 32, height: 32, borderRadius: 8, border: `1px solid ${colors.cardBorder}`, background: colors.inputBg, color: colors.text, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                <ChevronLeft size={15} />
+              </button>
+              <input type="month" value={month} onChange={(e) => { if (e.target.value) onMonthChange(e.target.value); }} style={{ flex: 1, padding: "7px 8px", borderRadius: 8, border: `1px solid ${colors.cardBorder}`, background: colors.inputBg, color: colors.text, fontSize: 12, outline: "none", fontFamily: "inherit" }} />
+              <button onClick={() => shift(1)} title="Next month" style={{ width: 32, height: 32, borderRadius: 8, border: `1px solid ${colors.cardBorder}`, background: colors.inputBg, color: colors.text, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                <ChevronRight size={15} />
+              </button>
+            </div>
+            {month !== curMonth && (
+              <button onClick={() => onMonthChange(curMonth)} style={{ marginTop: 10, width: "100%", padding: "8px", borderRadius: 8, border: "none", background: "#0A193D", color: "#fff", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>Back to This Month</button>
+            )}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
 // ── Main App ────────────────────────────────────────────────────────────────
 export default function FinloApp() {
   const [page, setPage] = useState<Page>(() => {
@@ -172,6 +213,7 @@ export default function FinloApp() {
 
   const router = useRouter();
   const supabase = createClient();
+  const [dashMonth, setDashMonth] = useState(() => new Date().toISOString().slice(0, 7));
 
   const isDark = theme === "dark";
 
@@ -670,9 +712,7 @@ const insts = await getUserInstallmentsClient();
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
             {page === "dashboard" && (
-              <button className="finlo-dash-date" style={{ display: "flex", alignItems: "center", gap: 6, padding: "7px 14px", borderRadius: 8, border: `1px solid ${colors.cardBorder}`, background: colors.card, color: colors.text, fontSize: 13, cursor: "pointer", fontWeight: 500 }}>
-                <Calendar size={14} /> {new Date().toLocaleDateString("en-PK", { month: "long", year: "numeric" })} <ChevronDown size={13} />
-              </button>
+              <MonthPickerDropdown month={dashMonth} onMonthChange={setDashMonth} colors={colors} variant="topbar" />
             )}
             <button onClick={() => navigateTo("settings")} title="Settings" style={{ width: 36, height: 36, borderRadius: 8, border: `1px solid ${colors.cardBorder}`, background: colors.card, color: page === "settings" ? colors.accent : colors.textSub, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
               <Settings size={16} />
@@ -707,7 +747,7 @@ const insts = await getUserInstallmentsClient();
 
         {/* Page Content */}
         <main className="finlo-dash-main" style={{ flex: 1, padding: "24px 28px", overflowY: "auto" }}>
-          {page === "dashboard" && <DashboardPage colors={colors} transactions={realTransactions} recurring={realRecurring} installments={realInstallments} budgets={realBudgets} openingBalance={openingBalance} onEditBalance={() => setShowBalanceModal(true)} onViewAllUpcoming={() => navigateTo("upcoming")} onViewAllTransactions={() => navigateTo("transactions")} onMarkPaid={markRecurringPaid} onMarkInstallment={(inst) => { setInstallmentPayTarget(inst); setAddType("expense"); setShowAddModal(true); }} currency={currency} />}
+          {page === "dashboard" && <DashboardPage colors={colors} transactions={realTransactions} recurring={realRecurring} installments={realInstallments} budgets={realBudgets} openingBalance={openingBalance} onEditBalance={() => setShowBalanceModal(true)} onViewAllUpcoming={() => navigateTo("upcoming")} onViewAllTransactions={() => navigateTo("transactions")} onMarkPaid={markRecurringPaid} onMarkInstallment={(inst) => { setInstallmentPayTarget(inst); setAddType("expense"); setShowAddModal(true); }} currency={currency} month={dashMonth} onMonthChange={setDashMonth} />}
           {page === "transactions" && <TransactionsPage colors={colors} transactions={realTransactions} onDeleteTransaction={handleDeleteTransaction} currency={currency} />}
           {page === "upcoming" && <UpcomingPage colors={colors} transactions={realTransactions} recurring={realRecurring} installments={realInstallments} supabase={supabase} onPayInstallment={(id) => { const inst = realInstallments.find((i) => i.id === id); if (inst) { setInstallmentPayTarget(inst); setAddType("expense"); setShowAddModal(true); } }} onDeleteInstallment={handleDeleteInstallment} currency={currency} />}
           {page === "budgets" && <BudgetsPage colors={colors} budgets={realBudgets} currency={currency} onAddBudget={handleAddBudget} />}
@@ -850,10 +890,8 @@ const insts = await getUserInstallmentsClient();
 }
 
 // ── Dashboard Page ──────────────────────────────────────────────────────────
-function DashboardPage({ colors, transactions, recurring, installments, budgets, openingBalance, onEditBalance, onViewAllUpcoming, onViewAllTransactions, onMarkPaid, onMarkInstallment, currency }: { colors: Colors; transactions: Transaction[]; recurring: UpcomingItem[]; installments: Installment[]; budgets: Budget[]; openingBalance: number; onEditBalance: () => void; onViewAllUpcoming: () => void; onViewAllTransactions: () => void; onMarkPaid: (id: string, frequency?: string) => Promise<void>; onMarkInstallment: (inst: Installment) => void; currency: string }) {
+function DashboardPage({ colors, transactions, recurring, installments, budgets, openingBalance, onEditBalance, onViewAllUpcoming, onViewAllTransactions, onMarkPaid, onMarkInstallment, currency, month, onMonthChange }: { colors: Colors; transactions: Transaction[]; recurring: UpcomingItem[]; installments: Installment[]; budgets: Budget[]; openingBalance: number; onEditBalance: () => void; onViewAllUpcoming: () => void; onViewAllTransactions: () => void; onMarkPaid: (id: string, frequency?: string) => Promise<void>; onMarkInstallment: (inst: Installment) => void; currency: string; month: string; onMonthChange: (m: string) => void }) {
   const [showCalcModal, setShowCalcModal] = useState(false);
-  const [month, setMonth] = useState(() => new Date().toISOString().slice(0, 7));
-  const [showMonthPicker, setShowMonthPicker] = useState(false);
   const [monthBudgets, setMonthBudgets] = useState<Budget[] | null>(null);
   const curMonth = new Date().toISOString().slice(0, 7);
 
@@ -888,13 +926,6 @@ function DashboardPage({ colors, transactions, recurring, installments, budgets,
       .catch(() => {});
     return () => { active = false; };
   }, [month, transactions]);
-
-  const monthLabel = new Date(month + "-01").toLocaleDateString("en-PK", { month: "long", year: "numeric" });
-  const shiftMonth = (delta: number) => {
-    const [y, m] = month.split("-").map(Number);
-    const d = new Date(y, m - 1 + delta, 1);
-    setMonth(`${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`);
-  };
 
   const nowMs = new Date().getTime();
   const upcomingRecurring = recurring
@@ -1104,30 +1135,7 @@ function DashboardPage({ colors, transactions, recurring, installments, budgets,
         <div style={{ padding: "22px 24px", borderRadius: 16, background: colors.card, border: `1px solid ${colors.cardBorder}` }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
             <span style={{ fontWeight: 700, fontSize: 15 }}>Finlo Finance Overview</span>
-            <div style={{ position: "relative" }}>
-              <button onClick={() => setShowMonthPicker(v => !v)} style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 12px", borderRadius: 7, border: `1px solid ${colors.cardBorder}`, background: "transparent", color: colors.text, fontSize: 12, cursor: "pointer" }}>
-                {monthLabel} <ChevronDown size={12} />
-              </button>
-              {showMonthPicker && (
-                <>
-                  <div onClick={() => setShowMonthPicker(false)} style={{ position: "fixed", inset: 0, zIndex: 199 }} />
-                  <div style={{ position: "absolute", right: 0, top: 34, zIndex: 200, background: colors.card, border: `1px solid ${colors.cardBorder}`, borderRadius: 12, boxShadow: "0 14px 40px rgba(0,0,0,0.18)", padding: 12, width: 250, backdropFilter: "blur(22px)" }}>
-                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                      <button onClick={() => shiftMonth(-1)} title="Previous month" style={{ width: 32, height: 32, borderRadius: 8, border: `1px solid ${colors.cardBorder}`, background: colors.inputBg, color: colors.text, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                        <ChevronLeft size={15} />
-                      </button>
-                      <input type="month" value={month} onChange={(e) => { if (e.target.value) setMonth(e.target.value); }} style={{ flex: 1, padding: "7px 8px", borderRadius: 8, border: `1px solid ${colors.cardBorder}`, background: colors.inputBg, color: colors.text, fontSize: 12, outline: "none", fontFamily: "inherit" }} />
-                      <button onClick={() => shiftMonth(1)} title="Next month" style={{ width: 32, height: 32, borderRadius: 8, border: `1px solid ${colors.cardBorder}`, background: colors.inputBg, color: colors.text, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                        <ChevronRight size={15} />
-                      </button>
-                    </div>
-                    {month !== curMonth && (
-                      <button onClick={() => setMonth(curMonth)} style={{ marginTop: 10, width: "100%", padding: "8px", borderRadius: 8, border: "none", background: "#0A193D", color: "#fff", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>Back to This Month</button>
-                    )}
-                  </div>
-                </>
-              )}
-            </div>
+            <MonthPickerDropdown month={month} onMonthChange={onMonthChange} colors={colors} />
           </div>
           <div style={{ display: "flex", gap: 16, marginBottom: 14 }}>
             {[{ color: "#10b981", label: "Income" }, { color: "#ef4444", label: "Expenses" }, { color: "#0A193D", label: "Net" }].map(l => (
