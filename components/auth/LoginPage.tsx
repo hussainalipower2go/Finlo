@@ -201,12 +201,8 @@ export function LoginPage() {
             ].map((f, i) => (
               <div key={i} style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "clamp(8px, 1vh, 10px)", minWidth: "0" }}>
                 <div style={{
-                  width: "clamp(34px, 3.5vw, 42px)", height: "clamp(34px, 3.5vw, 42px)", borderRadius: "12px", flexShrink: 0,
-                  background: "rgba(255,255,255,0.35)",
-                  border: "1px solid rgba(255,255,255,0.75)",
-                  backdropFilter: "blur(14px) saturate(160%)",
-                  WebkitBackdropFilter: "blur(14px) saturate(160%)",
-                  boxShadow: "0 6px 18px rgba(10,25,61,0.12), inset 0 1px 0 rgba(255,255,255,0.85)",
+                  width: "clamp(32px, 3vw, 38px)", height: "clamp(32px, 3vw, 38px)", flexShrink: 0,
+                  background: "transparent", border: "none",
                   display: "flex", alignItems: "center", justifyContent: "center",
                 }}>
                   {f.icon}
