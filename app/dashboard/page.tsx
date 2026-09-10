@@ -707,7 +707,7 @@ const insts = await getUserInstallmentsClient();
 
         {/* Page Content */}
         <main className="finlo-dash-main" style={{ flex: 1, padding: "24px 28px", overflowY: "auto" }}>
-          {page === "dashboard" && <DashboardPage colors={colors} transactions={realTransactions} recurring={realRecurring} installments={realInstallments} budgets={realBudgets} openingBalance={openingBalance} onEditBalance={() => setShowBalanceModal(true)} onViewAllUpcoming={() => navigateTo("upcoming")} onMarkPaid={markRecurringPaid} onMarkInstallment={(inst) => { setInstallmentPayTarget(inst); setAddType("expense"); setShowAddModal(true); }} currency={currency} />}
+          {page === "dashboard" && <DashboardPage colors={colors} transactions={realTransactions} recurring={realRecurring} installments={realInstallments} budgets={realBudgets} openingBalance={openingBalance} onEditBalance={() => setShowBalanceModal(true)} onViewAllUpcoming={() => navigateTo("upcoming")} onViewAllTransactions={() => navigateTo("transactions")} onMarkPaid={markRecurringPaid} onMarkInstallment={(inst) => { setInstallmentPayTarget(inst); setAddType("expense"); setShowAddModal(true); }} currency={currency} />}
           {page === "transactions" && <TransactionsPage colors={colors} transactions={realTransactions} onDeleteTransaction={handleDeleteTransaction} currency={currency} />}
           {page === "upcoming" && <UpcomingPage colors={colors} transactions={realTransactions} recurring={realRecurring} installments={realInstallments} supabase={supabase} onPayInstallment={(id) => { const inst = realInstallments.find((i) => i.id === id); if (inst) { setInstallmentPayTarget(inst); setAddType("expense"); setShowAddModal(true); } }} onDeleteInstallment={handleDeleteInstallment} currency={currency} />}
           {page === "budgets" && <BudgetsPage colors={colors} budgets={realBudgets} currency={currency} onAddBudget={handleAddBudget} />}
@@ -850,7 +850,7 @@ const insts = await getUserInstallmentsClient();
 }
 
 // ── Dashboard Page ──────────────────────────────────────────────────────────
-function DashboardPage({ colors, transactions, recurring, installments, budgets, openingBalance, onEditBalance, onViewAllUpcoming, onMarkPaid, onMarkInstallment, currency }: { colors: Colors; transactions: Transaction[]; recurring: UpcomingItem[]; installments: Installment[]; budgets: Budget[]; openingBalance: number; onEditBalance: () => void; onViewAllUpcoming: () => void; onMarkPaid: (id: string, frequency?: string) => Promise<void>; onMarkInstallment: (inst: Installment) => void; currency: string }) {
+function DashboardPage({ colors, transactions, recurring, installments, budgets, openingBalance, onEditBalance, onViewAllUpcoming, onViewAllTransactions, onMarkPaid, onMarkInstallment, currency }: { colors: Colors; transactions: Transaction[]; recurring: UpcomingItem[]; installments: Installment[]; budgets: Budget[]; openingBalance: number; onEditBalance: () => void; onViewAllUpcoming: () => void; onViewAllTransactions: () => void; onMarkPaid: (id: string, frequency?: string) => Promise<void>; onMarkInstallment: (inst: Installment) => void; currency: string }) {
   const [showCalcModal, setShowCalcModal] = useState(false);
 
   const nowMs = new Date().getTime();
@@ -908,8 +908,7 @@ function DashboardPage({ colors, transactions, recurring, installments, budgets,
   const balance = openingBalance + totalIncome - totalExpenses;
   const fmt = (n: number) => formatCurrency(n, currency);
   const recent = [...transactions]
-    .sort((a, b) => (a.date < b.date ? 1 : -1))
-    .slice(0, 4);
+    .sort((a, b) => (a.date < b.date ? 1 : -1));
   const monthlyIncome = totalIncome;
   const monthlyExpenses = totalExpenses;
   const byCatMap: Record<string, number> = {};
@@ -1141,9 +1140,9 @@ function DashboardPage({ colors, transactions, recurring, installments, budgets,
         <div style={{ padding: "22px 24px", borderRadius: 16, background: colors.card, border: `1px solid ${colors.cardBorder}` }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
             <span style={{ fontWeight: 700, fontSize: 15 }}>Recent Transactions</span>
-            <button style={{ fontSize: 12, color: "#0A193D", background: "none", border: "none", cursor: "pointer", fontWeight: 600 }}>View all</button>
+            <button onClick={onViewAllTransactions} style={{ fontSize: 12, color: "#0A193D", background: "none", border: "none", cursor: "pointer", fontWeight: 600 }}>View all</button>
           </div>
-          <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 2, maxHeight: 440, overflowY: "auto" }}>
             {recent.map(t => (
               <div key={t.id} style={{ display: "flex", alignItems: "center", gap: 12, padding: "10px 4px", borderBottom: `1px solid ${colors.cardBorder}` }}>
                 <div style={{ width: 36, height: 36, borderRadius: 9, background: t.type === "income" ? "rgba(16,185,129,0.1)" : "rgba(239,68,68,0.1)", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
