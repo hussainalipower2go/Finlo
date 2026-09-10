@@ -1,5 +1,6 @@
 "use client";
 import { useState, useRef, useEffect, type ReactNode } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase";
 import type { RealtimeChannel } from "@supabase/supabase-js";
@@ -604,9 +605,9 @@ const insts = await getUserInstallmentsClient();
         {/* Logo */}
         <div style={{ padding: "22px 18px 14px", display: "flex", alignItems: "center", gap: 10 }}>
           {sidebarOpen ? (
-            <img src="/finlo-logo-horizontal.png" alt="Finlo" style={{ width: 157, height: "auto", display: "block" }} />
+            <Image src="/finlo-logo-horizontal.png" alt="Finlo" width={157} height={52} style={{ height: "auto", display: "block" }} />
           ) : (
-            <img src="/finlo-brand-mark.svg" alt="Finlo" style={{ width: 36, height: 36, objectFit: "contain", display: "block" }} />
+            <Image src="/finlo-brand-mark.svg" alt="Finlo" width={36} height={36} style={{ objectFit: "contain", display: "block" }} unoptimized />
           )}
         </div>
 

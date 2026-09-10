@@ -108,6 +108,10 @@ export function LoginPage() {
       minHeight: "100vh",
       width: "100%",
       background: p.bg,
+      backgroundImage: "url('/login-bg.png')",
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+      backgroundRepeat: "no-repeat",
       display: "flex",
       alignItems: "stretch",
       justifyContent: "center",
@@ -115,6 +119,14 @@ export function LoginPage() {
       position: "relative",
       overflow: "hidden",
     }}>
+
+      {/* Full-page readability overlay */}
+      <div style={{
+        position: "absolute",
+        inset: 0,
+        background: "rgba(254,251,254,0.88)",
+        zIndex: 0,
+      }} />
 
       <div className="finlo-outer"
         style={{
@@ -144,7 +156,7 @@ export function LoginPage() {
           <div style={{
             position: "absolute",
             inset: 0,
-            backgroundImage: isDark ? "url('/mountain.png')" : "url('/mountains11.png')",
+            backgroundImage: "url('/login-bg.png')",
             backgroundSize: "cover",
             backgroundPosition: "70% center",
             backgroundRepeat: "no-repeat",
