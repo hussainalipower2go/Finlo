@@ -125,9 +125,9 @@ export function LoginPage() {
         width: "100%",
         maxWidth: "1536px",
         display: "flex",
-        border: `1px solid ${p.line}`,
-        borderRadius: "20px",
-        overflow: "hidden",
+        border: "none",
+        borderRadius: 0,
+        overflow: "visible",
         position: "relative",
         zIndex: 1,
         margin: "0 auto",
@@ -138,17 +138,10 @@ export function LoginPage() {
           width: "100%", minHeight: "100vh",
           background: "transparent",
           display: "flex", alignItems: "center", justifyContent: "center",
-          padding: "40px 60px",
+          padding: "40px 24px",
           position: "relative",
         }}>
-          {/* Subtle right panel glow */}
-          <div style={{
-            position: "absolute", top: "0", left: "0", right: "0", bottom: "0",
-            background: `radial-gradient(ellipse at 60% 40%, ${p.radial} 0%, transparent 60%)`,
-            pointerEvents: "none",
-          }} />
-
-          {/* Theme toggle pill */}
+          {/* Welcome card */}
           <div className="finlo-card" style={{
             width: "100%", maxWidth: "580px",
             background: "transparent",
