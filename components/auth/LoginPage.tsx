@@ -7,6 +7,7 @@ import { LoaderCircle } from "lucide-react";
 import { useToast } from "@/components/providers/ToastProvider";
 import { createClient } from "@/lib/supabase";
 
+
 export function LoginPage() {
   const isDark = false;
   const [showPassword, setShowPassword] = useState(false);
@@ -132,7 +133,7 @@ export function LoginPage() {
         margin: "0 auto",
       }}>
 
-        {/* ═══════════ RIGHT PANEL ═══════════ (full width) */}
+        {/* ═══════════ RIGHT PANEL ═══════════ */}
         <div className="finlo-right" style={{
           width: "100%", minHeight: "100vh",
           background: "transparent",
