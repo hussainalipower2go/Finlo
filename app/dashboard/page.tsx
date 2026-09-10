@@ -286,7 +286,7 @@ export default function FinloApp() {
       const savedLang = u.user_metadata?.language as string | undefined;
       if (savedLang && LANGUAGES.some((l) => l.code === savedLang)) setLang(savedLang as LangCode);
       const onb = u.user_metadata as Record<string, unknown> | undefined;
-      if (onb && !onb.onboarded && !onb.currency && !onb.full_name) {
+      if (onb && onb.onboarded !== true) {
         router.replace("/onboarding");
         return;
       }
