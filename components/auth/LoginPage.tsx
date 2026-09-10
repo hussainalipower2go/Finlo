@@ -184,7 +184,7 @@ export function LoginPage() {
               <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: "clamp(8px, 0.9vw, 10px)", flex: "1 1 150px", minWidth: "0" }}>
                 <div style={{
                   width: "clamp(28px, 3vw, 34px)", height: "clamp(28px, 3vw, 34px)", borderRadius: "10px", flexShrink: 0,
-                  background: "rgba(23,38,74,0.06)", border: "1px solid rgba(23,38,74,0.18)",
+                  background: "transparent", border: "none",
                   display: "flex", alignItems: "center", justifyContent: "center",
                 }}>
                   {f.icon}
