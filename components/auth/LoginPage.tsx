@@ -144,58 +144,6 @@ export function LoginPage() {
             Finlo helps you understand your cash flow,<br />
             plan ahead, and spend with confidence.
           </p>
-
-          {/* Features */}
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "clamp(24px, 3vw, 40px)" }}>
-            {[
-              {
-                icon: (
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0A193D" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/>
-                    <line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
-                    <circle cx="12" cy="16" r="1.5"/>
-                  </svg>
-                ),
-                title: "Know your runway",
-                desc: "See how many days your money will last.",
-              },
-              {
-                icon: (
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#059669" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
-                    <polyline points="9 12 11 14 15 10"/>
-                  </svg>
-                ),
-                title: "Spend with confidence",
-                desc: "Know how much you can safely spend today.",
-              },
-              {
-                icon: (
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <line x1="18" y1="20" x2="18" y2="10"/>
-                    <line x1="12" y1="20" x2="12" y2="4"/>
-                    <line x1="6" y1="20" x2="6" y2="14"/>
-                  </svg>
-                ),
-                title: "Stay on track",
-                desc: "Track upcoming bills, income, and goals.",
-              },
-            ].map((f, i) => (
-              <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: "clamp(8px, 0.9vw, 10px)", flex: "1 1 130px", minWidth: "0" }}>
-                <div style={{
-                  width: "clamp(28px, 3vw, 34px)", height: "clamp(28px, 3vw, 34px)", borderRadius: "10px", flexShrink: 0,
-                  background: "transparent", border: "none",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                }}>
-                  {f.icon}
-                </div>
-                <div>
-                  <div style={{ fontSize: "clamp(13px, 1.2vw, 15px)", fontWeight: 600, color: "#17264A", marginBottom: "2px", whiteSpace: "nowrap" }}>{f.title}</div>
-                  <div style={{ fontSize: "clamp(12px, 1.1vw, 13px)", fontWeight: 400, color: "#71809F", lineHeight: 1.45, maxWidth: "150px" }}>{f.desc}</div>
-                </div>
-              </div>
-            ))}
-          </div>
         </div>
       </div>
 
