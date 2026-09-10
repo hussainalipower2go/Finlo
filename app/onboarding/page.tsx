@@ -64,7 +64,7 @@ const GOALS: { value: Goal; desc: string }[] = [
   { value: "Plan a big purchase", desc: "Save toward something specific" },
 ];
 
-const TOTAL_STEPS = 5;
+const TOTAL_STEPS = 6;
 
 export default function OnboardingPage() {
   const [step, setStep] = useState(1);
@@ -73,6 +73,7 @@ export default function OnboardingPage() {
   const [income, setIncome] = useState("");
   const [incomeType, setIncomeType] = useState<IncomeType | null>(null);
   const [goal, setGoal] = useState<Goal | null>(null);
+  const [plan, setPlan] = useState<"beginner" | "professional">("professional");
 
   const router = useRouter();
   const { toast } = useToast();
@@ -95,7 +96,8 @@ export default function OnboardingPage() {
     (step === 2 && !!currency) ||
     (step === 3 && income.trim().length > 0 && Number(income) > 0) ||
     (step === 4 && !!incomeType) ||
-    (step === 5 && !!goal);
+    (step === 5 && !!goal) ||
+    (step === 6 && !!plan);
 
   const isLastStep = step === TOTAL_STEPS;
 
@@ -114,10 +116,11 @@ export default function OnboardingPage() {
         monthlyIncome: Number(income),
         incomeType,
         goal,
+        plan,
       };
       try {
         await supabase.auth.updateUser({
-          data: { full_name: name.trim(), currency, onboarded: true },
+          data: { full_name: name.trim(), currency, plan, onboarded: true },
         });
         const { data: existing } = await supabase
           .from("income")
@@ -397,6 +400,65 @@ export default function OnboardingPage() {
                   </button>
                 );
               })}
+            </div>
+          </div>
+        )}
+
+        {/* STEP 6 — PLAN */}
+        {step === 6 && (
+          <div>
+            <h2 style={{ fontSize: "24px", fontWeight: 700, color: "#1e293b", margin: "0 0 6px 0" }}>Which plan is right for you?</h2>
+            <p style={{ fontSize: "14px", color: "rgba(71,85,105,0.8)", margin: "0 0 28px 0" }}>You can switch anytime from Settings — no lock-in.</p>
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+              <button type="button" onClick={() => setPlan("beginner")}
+                style={{
+                  ...optionBase,
+                  background: plan === "beginner" ? "rgba(10,25,61,0.18)" : "rgba(255,255,255,0.72)",
+                  border: plan === "beginner" ? "1px solid rgba(10,25,61,0.6)" : "1px solid rgba(255,255,255,0.8)",
+                  alignItems: "flex-start",
+                }}>
+                <span style={{
+                  width: "38px", height: "38px", borderRadius: "10px", flexShrink: 0,
+                  background: "rgba(16,185,129,0.18)", color: "#059669",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                </span>
+                <span>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <div style={{ fontSize: "15px", fontWeight: 700, color: "#0f172a" }}>Beginner</div>
+                    <span style={{ padding: "2px 8px", borderRadius: 999, fontSize: "10px", fontWeight: 700, background: "rgba(16,185,129,0.15)", color: "#059669" }}>BASIC</span>
+                  </div>
+                  <div style={{ fontSize: "12.5px", color: "rgba(71,85,105,0.85)", marginTop: 3, lineHeight: 1.5 }}>
+                    Simple, clean dashboard — balance, income &amp; expenses, recent transactions. Jo log bas apna kharcha track karna chahte hain.
+                  </div>
+                </span>
+              </button>
+
+              <button type="button" onClick={() => setPlan("professional")}
+                style={{
+                  ...optionBase,
+                  background: plan === "professional" ? "rgba(10,25,61,0.18)" : "rgba(255,255,255,0.72)",
+                  border: plan === "professional" ? "1px solid rgba(10,25,61,0.6)" : "1px solid rgba(255,255,255,0.8)",
+                  alignItems: "flex-start",
+                }}>
+                <span style={{
+                  width: "38px", height: "38px", borderRadius: "10px", flexShrink: 0,
+                  background: "rgba(10,25,61,0.15)", color: "#0A193D",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                }}>
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2l2.4 4.86 5.36.78-3.88 3.78.92 5.34L12 14.16 7.2 16.76l.92-5.34L4.24 7.64l5.36-.78z"/></svg>
+                </span>
+                <span>
+                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <div style={{ fontSize: "15px", fontWeight: 700, color: "#0f172a" }}>Professional</div>
+                    <span style={{ padding: "2px 8px", borderRadius: 999, fontSize: "10px", fontWeight: 700, background: "rgba(10,25,61,0.12)", color: "#0A193D" }}>FULL</span>
+                  </div>
+                  <div style={{ fontSize: "12.5px", color: "rgba(71,85,105,0.85)", marginTop: 3, lineHeight: 1.5 }}>
+                    Full dashboard — budgets, analytics, upcoming bills, installments, AI assistant, cash flow &amp; more. Jo apni finance par poori pakad chahte hain.
+                  </div>
+                </span>
+              </button>
             </div>
           </div>
         )}

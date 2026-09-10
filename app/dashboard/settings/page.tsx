@@ -111,6 +111,7 @@ export default function SettingsPage() {
   const [notifIncome, setNotifIncome] = useState(() => notifPref(NOTIF_PREF_INCOME, true))
   const [pushStatus, setPushStatus] = useState<PushStatus>('idle')
   const [lang, setLang] = useState<LangCode>('en')
+  const [plan, setPlan] = useState<'beginner' | 'professional'>('professional')
 
   const [confirmDelete, setConfirmDelete] = useState(false)
   const [deleting, setDeleting] = useState(false)
@@ -138,6 +139,8 @@ export default function SettingsPage() {
       if (metaCurrency && CURRENCIES.includes(metaCurrency)) setCurrency(metaCurrency)
       const metaLang = data.session.user.user_metadata?.language as string | undefined
       if (metaLang && LANGUAGES.some((l) => l.code === metaLang)) setLang(metaLang as LangCode)
+      const metaPlan = data.session.user.user_metadata?.plan as string | undefined
+      if (metaPlan === 'beginner' || metaPlan === 'professional') setPlan(metaPlan)
     }
 
     checkAuth()
@@ -178,6 +181,11 @@ export default function SettingsPage() {
     setLang(l)
     storeLanguage(l)
     void supabase.auth.updateUser({ data: { language: l } }).catch(() => {})
+  }
+
+  const changePlan = (p: 'beginner' | 'professional') => {
+    setPlan(p)
+    void supabase.auth.updateUser({ data: { plan: p } }).catch(() => {})
   }
 
   const inExportMonth = (date?: string | null) =>
@@ -488,6 +496,20 @@ export default function SettingsPage() {
                     </button>
                   )
                 })}
+              </div>
+            </SectionCard>
+
+            {/* Plan */}
+            <SectionCard colors={colors} icon="🎯" title="Plan">
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                <button onClick={() => changePlan('beginner')} style={{ padding: '14px 16px', borderRadius: 12, border: `1px solid ${plan === 'beginner' ? colors.accent : colors.cardBorder}`, background: plan === 'beginner' ? colors.accentSoft : colors.card, color: colors.text, cursor: 'pointer', textAlign: 'left', fontFamily: 'inherit' }}>
+                  <div style={{ fontWeight: 700, fontSize: 14 }}>Beginner</div>
+                  <div style={{ fontSize: 12, color: colors.textSub, marginTop: 3, lineHeight: 1.5 }}>Simple dashboard — balance, income & expenses, recent transactions.</div>
+                </button>
+                <button onClick={() => changePlan('professional')} style={{ padding: '14px 16px', borderRadius: 12, border: `1px solid ${plan === 'professional' ? colors.accent : colors.cardBorder}`, background: plan === 'professional' ? colors.accentSoft : colors.card, color: colors.text, cursor: 'pointer', textAlign: 'left', fontFamily: 'inherit' }}>
+                  <div style={{ fontWeight: 700, fontSize: 14 }}>Professional</div>
+                  <div style={{ fontSize: 12, color: colors.textSub, marginTop: 3, lineHeight: 1.5 }}>Full dashboard — budgets, analytics, installments, AI assistant & more.</div>
+                </button>
               </div>
             </SectionCard>
 
