@@ -160,9 +160,10 @@ export function LoginPage() {
 
           {/* Features */}
           <div style={{
-            display: "flex",
-            flexDirection: "column",
-            gap: "clamp(14px, 2.2vh, 22px)",
+            display: "grid",
+            gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+            gap: "clamp(16px, 2vw, 28px)",
+            alignItems: "start",
           }}>
             {[
               {
@@ -198,17 +199,17 @@ export function LoginPage() {
                 desc: "Track upcoming bills, income, and goals.",
               },
             ].map((f, i) => (
-              <div key={i} style={{ display: "flex", alignItems: "center", gap: "clamp(12px, 1.4vw, 16px)", minWidth: "0" }}>
+              <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: "clamp(8px, 0.9vw, 10px)", minWidth: "0" }}>
                 <div style={{
-                  width: "clamp(32px, 3.5vw, 40px)", height: "clamp(32px, 3.5vw, 40px)", borderRadius: "11px", flexShrink: 0,
+                  width: "clamp(28px, 3vw, 34px)", height: "clamp(28px, 3vw, 34px)", borderRadius: "10px", flexShrink: 0,
                   background: "transparent", border: "none",
                   display: "flex", alignItems: "center", justifyContent: "center",
                 }}>
                   {f.icon}
                 </div>
                 <div style={{ minWidth: "0" }}>
-                  <div style={{ fontSize: "clamp(14px, 1.3vw, 16px)", fontWeight: 600, color: "#17264A", marginBottom: "3px", lineHeight: 1.3, whiteSpace: "nowrap" }}>{f.title}</div>
-                  <div style={{ fontSize: "clamp(13px, 1.1vw, 14px)", fontWeight: 400, color: "#71809F", lineHeight: 1.5, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{f.desc}</div>
+                  <div style={{ fontSize: "clamp(13px, 1.2vw, 15px)", fontWeight: 600, color: "#17264A", marginBottom: "3px", lineHeight: 1.3 }}>{f.title}</div>
+                  <div style={{ fontSize: "clamp(12px, 1.1vw, 13px)", fontWeight: 400, color: "#71809F", lineHeight: 1.5, overflowWrap: "break-word" }}>{f.desc}</div>
                 </div>
               </div>
             ))}
