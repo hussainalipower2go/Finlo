@@ -73,7 +73,7 @@ export default function OnboardingPage() {
   const [income, setIncome] = useState("");
   const [incomeType, setIncomeType] = useState<IncomeType | null>(null);
   const [goal, setGoal] = useState<Goal | null>(null);
-  const [plan, setPlan] = useState<"beginner" | "professional">("professional");
+  const [openingBalance, setOpeningBalance] = useState("");
 
   const router = useRouter();
   const { toast } = useToast();
@@ -97,7 +97,7 @@ export default function OnboardingPage() {
     (step === 3 && income.trim().length > 0 && Number(income) > 0) ||
     (step === 4 && !!incomeType) ||
     (step === 5 && !!goal) ||
-    (step === 6 && !!plan);
+    (step === 6 && !isNaN(Number(openingBalance.trim())) && Number(openingBalance.trim()) >= 0);
 
   const isLastStep = step === TOTAL_STEPS;
 
@@ -116,11 +116,11 @@ export default function OnboardingPage() {
         monthlyIncome: Number(income),
         incomeType,
         goal,
-        plan,
+        openingBalance: Number(openingBalance.trim() || 0),
       };
       try {
         await supabase.auth.updateUser({
-          data: { full_name: name.trim(), currency, plan, onboarded: true },
+          data: { full_name: name.trim(), currency, onboarded: true, opening_balance: Number(openingBalance.trim() || 0) },
         });
         const { data: existing } = await supabase
           .from("income")
@@ -404,62 +404,38 @@ export default function OnboardingPage() {
           </div>
         )}
 
-        {/* STEP 6 — PLAN */}
+        {/* STEP 6 — OPENING BALANCE */}
         {step === 6 && (
           <div>
-            <h2 style={{ fontSize: "24px", fontWeight: 700, color: "#1e293b", margin: "0 0 6px 0" }}>Which plan is right for you?</h2>
-            <p style={{ fontSize: "14px", color: "rgba(71,85,105,0.8)", margin: "0 0 28px 0" }}>You can switch anytime from Settings — no lock-in.</p>
-            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-              <button type="button" onClick={() => setPlan("beginner")}
+            <h2 style={{ fontSize: "24px", fontWeight: 700, color: "#1e293b", margin: "0 0 6px 0" }}>How much do you have right now?</h2>
+            <p style={{ fontSize: "14px", color: "rgba(71,85,105,0.8)", margin: "0 0 28px 0" }}>Aapka current available balance (cash + bank + wallets). Optional — ise baad mein Settings se bhi change kar sakte hain.</p>
+            <label style={{ display: "block", fontSize: "13px", fontWeight: 500, color: "rgba(51,65,85,0.9)", marginBottom: "8px" }}>Opening balance</label>
+            <div style={{ position: "relative" }}>
+              <span style={{
+                position: "absolute", left: "16px", top: "50%", transform: "translateY(-50%)",
+                color: "rgba(10,25,61,0.6)", fontSize: "14px", fontWeight: 600, pointerEvents: "none",
+              }}>{selectedCurrency.symbol}</span>
+              <input
+                type="number"
+                min="0"
+                inputMode="decimal"
+                value={openingBalance}
+                onChange={e => setOpeningBalance(e.target.value)}
+                placeholder="0"
                 style={{
-                  ...optionBase,
-                  background: plan === "beginner" ? "rgba(10,25,61,0.18)" : "rgba(255,255,255,0.72)",
-                  border: plan === "beginner" ? "1px solid rgba(10,25,61,0.6)" : "1px solid rgba(255,255,255,0.8)",
-                  alignItems: "flex-start",
-                }}>
-                <span style={{
-                  width: "38px", height: "38px", borderRadius: "10px", flexShrink: 0,
-                  background: "rgba(16,185,129,0.18)", color: "#059669",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                }}>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
-                </span>
-                <span>
-                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                    <div style={{ fontSize: "15px", fontWeight: 700, color: "#0f172a" }}>Beginner</div>
-                    <span style={{ padding: "2px 8px", borderRadius: 999, fontSize: "10px", fontWeight: 700, background: "rgba(16,185,129,0.15)", color: "#059669" }}>BASIC</span>
-                  </div>
-                  <div style={{ fontSize: "12.5px", color: "rgba(71,85,105,0.85)", marginTop: 3, lineHeight: 1.5 }}>
-                    Simple, clean dashboard — balance, income &amp; expenses, recent transactions. Jo log bas apna kharcha track karna chahte hain.
-                  </div>
-                </span>
-              </button>
-
-              <button type="button" onClick={() => setPlan("professional")}
-                style={{
-                  ...optionBase,
-                  background: plan === "professional" ? "rgba(10,25,61,0.18)" : "rgba(255,255,255,0.72)",
-                  border: plan === "professional" ? "1px solid rgba(10,25,61,0.6)" : "1px solid rgba(255,255,255,0.8)",
-                  alignItems: "flex-start",
-                }}>
-                <span style={{
-                  width: "38px", height: "38px", borderRadius: "10px", flexShrink: 0,
-                  background: "rgba(10,25,61,0.15)", color: "#0A193D",
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                }}>
-                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2l2.4 4.86 5.36.78-3.88 3.78.92 5.34L12 14.16 7.2 16.76l.92-5.34L4.24 7.64l5.36-.78z"/></svg>
-                </span>
-                <span>
-                  <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                    <div style={{ fontSize: "15px", fontWeight: 700, color: "#0f172a" }}>Professional</div>
-                    <span style={{ padding: "2px 8px", borderRadius: 999, fontSize: "10px", fontWeight: 700, background: "rgba(10,25,61,0.12)", color: "#0A193D" }}>FULL</span>
-                  </div>
-                  <div style={{ fontSize: "12.5px", color: "rgba(71,85,105,0.85)", marginTop: 3, lineHeight: 1.5 }}>
-                    Full dashboard — budgets, analytics, upcoming bills, installments, AI assistant, cash flow &amp; more. Jo apni finance par poori pakad chahte hain.
-                  </div>
-                </span>
-              </button>
+                  width: "100%", padding: "16px 16px 16px 64px",
+                  background: "rgba(255,255,255,0.95)", border: "1px solid rgba(255,255,255,0.85)",
+                  borderRadius: "12px", fontSize: "20px", fontWeight: 600, color: "#0f172a",
+                  boxShadow: "0 6px 18px rgba(10,25,61,0.10), inset 0 1px 0 rgba(255,255,255,0.9)",
+                  outline: "none", fontFamily: "inherit", boxSizing: "border-box",
+                }}
+                onFocus={e => e.target.style.borderColor = "#0A193D"}
+                onBlur={e => e.target.style.borderColor = "rgba(10,25,61,0.35)"}
+              />
             </div>
+            <p style={{ fontSize: "12px", color: "rgba(100,116,139,0.7)", margin: "10px 0 0 0" }}>
+              Khaali chor do aur baad mein set karo — dashboard par balance 0 se start hoga.
+            </p>
           </div>
         )}
 
