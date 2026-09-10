@@ -7,8 +7,10 @@ import { useRouter } from "next/navigation";
 import { LoaderCircle } from "lucide-react";
 import { useToast } from "@/components/providers/ToastProvider";
 import { createClient } from "@/lib/supabase";
+import { t, getStoredLanguage, type LangCode } from "@/lib/i18n";
 
 export function LoginPage() {
+  const [lang, setLang] = useState<LangCode>("en");
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -39,6 +41,10 @@ export function LoginPage() {
       const reason = params.get("reason");
       setError(reason ? decodeURIComponent(reason) : `Sign in failed (${e}).`);
     }
+  }, []);
+
+  useEffect(() => {
+    setLang(getStoredLanguage());
   }, []);
 
   const p = {
@@ -263,13 +269,13 @@ export function LoginPage() {
           position: "relative",
           zIndex: 1,
         }}>
-          <h2 style={{ fontSize: "26px", fontWeight: 700, color: p.text, margin: "0 0 6px 0" }}>Welcome back 👋</h2>
-          <p style={{ fontSize: "14px", color: p.desc, margin: "0 0 32px 0" }}>Login to continue to your account</p>
+          <h2 style={{ fontSize: "26px", fontWeight: 700, color: p.text, margin: "0 0 6px 0" }}>{t(lang, "login.welcome")}</h2>
+          <p style={{ fontSize: "14px", color: p.desc, margin: "0 0 32px 0" }}>{t(lang, "login.subtitle")}</p>
 
           {/* EMAIL */}
           <form onSubmit={e => { e.preventDefault(); handleLogin(); }} noValidate>
           <div style={{ marginBottom: "20px" }}>
-            <label htmlFor="login-email" style={{ display: "block", fontSize: "13px", fontWeight: 500, color: p.label, marginBottom: "8px" }}>Email address</label>
+            <label htmlFor="login-email" style={{ display: "block", fontSize: "13px", fontWeight: 500, color: p.label, marginBottom: "8px" }}>{t(lang, "login.email")}</label>
             <div style={{ position: "relative" }}>
               <span style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", color: p.iconMuted, pointerEvents: "none" }}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -288,7 +294,7 @@ export function LoginPage() {
 
           {/* PASSWORD */}
           <div style={{ marginBottom: "12px" }}>
-            <label htmlFor="login-password" style={{ display: "block", fontSize: "13px", fontWeight: 500, color: p.label, marginBottom: "8px" }}>Password</label>
+            <label htmlFor="login-password" style={{ display: "block", fontSize: "13px", fontWeight: 500, color: p.label, marginBottom: "8px" }}>{t(lang, "login.password")}</label>
             <div style={{ position: "relative" }}>
               <span style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", color: p.iconMuted, pointerEvents: "none" }}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -314,7 +320,7 @@ export function LoginPage() {
 
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "24px" }}>
             <span />
-            <Link href="/auth/forgot-password" style={{ fontSize: "13px", color: "#0A193D", textDecoration: "none" }}>Forgot password?</Link>
+            <Link href="/auth/forgot-password" style={{ fontSize: "13px", color: "#0A193D", textDecoration: "none" }}>{t(lang, "login.forgot")}</Link>
           </div>
 
           {/* LOGIN BTN */}
@@ -334,7 +340,7 @@ export function LoginPage() {
               <LoaderCircle className="h-5 w-5 animate-spin" />
             ) : (
               <>
-                Log in
+                {t(lang, "login.signIn")}
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/>
                 </svg>
@@ -346,7 +352,7 @@ export function LoginPage() {
           {/* DIVIDER */}
           <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "20px" }}>
             <div style={{ flex: 1, height: "1px", background: p.lineDivider }} />
-            <span style={{ fontSize: "13px", color: p.descFaint, whiteSpace: "nowrap" }}>or continue with</span>
+            <span style={{ fontSize: "13px", color: p.descFaint, whiteSpace: "nowrap" }}>{t(lang, "login.or")}</span>
             <div style={{ flex: 1, height: "1px", background: p.lineDivider }} />
           </div>
 
@@ -376,8 +382,8 @@ export function LoginPage() {
           </div>
 
           <div style={{ textAlign: "center", fontSize: "14px", color: p.desc }}>
-            Don&apos;t have an account?{" "}
-            <Link href="/auth/signup" style={{ color: "#0A193D", textDecoration: "none", fontWeight: 500 }}>Sign up</Link>
+            {t(lang, "login.noAccount")}{" "}
+            <Link href="/auth/signup" style={{ color: "#0A193D", textDecoration: "none", fontWeight: 500 }}>{t(lang, "login.signUp")}</Link>
           </div>
         </div>
       </div>

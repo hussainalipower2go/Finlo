@@ -17,6 +17,7 @@ import {
   User, MoreHorizontal, Download, Trash2,
 } from 'lucide-react'
 import type { User as SupabaseUser } from '@supabase/supabase-js'
+import { LANGUAGES, t, getStoredLanguage, storeLanguage, type LangCode } from '@/lib/i18n'
 
 // ── Types ──────────────────────────────────────────────────────────────────
 interface Colors {
@@ -109,6 +110,7 @@ export default function SettingsPage() {
   const [notifBudget, setNotifBudget] = useState(() => notifPref(NOTIF_PREF_BUDGET, true))
   const [notifIncome, setNotifIncome] = useState(() => notifPref(NOTIF_PREF_INCOME, true))
   const [pushStatus, setPushStatus] = useState<PushStatus>('idle')
+  const [lang, setLang] = useState<LangCode>('en')
 
   const [confirmDelete, setConfirmDelete] = useState(false)
   const [deleting, setDeleting] = useState(false)
@@ -134,6 +136,8 @@ export default function SettingsPage() {
       setUser(data.session.user)
       const metaCurrency = data.session.user.user_metadata?.currency as string | undefined
       if (metaCurrency && CURRENCIES.includes(metaCurrency)) setCurrency(metaCurrency)
+      const metaLang = data.session.user.user_metadata?.language as string | undefined
+      if (metaLang && LANGUAGES.some((l) => l.code === metaLang)) setLang(metaLang as LangCode)
     }
 
     checkAuth()
@@ -141,6 +145,10 @@ export default function SettingsPage() {
 
   useEffect(() => {
     void getPushStatus().then(setPushStatus)
+  }, [])
+
+  useEffect(() => {
+    setLang(getStoredLanguage())
   }, [])
 
   const toggleBills = () => {
@@ -164,6 +172,12 @@ export default function SettingsPage() {
   const changeCurrency = (c: string) => {
     setCurrency(c)
     void supabase.auth.updateUser({ data: { currency: c } }).catch(() => {})
+  }
+
+  const changeLang = (l: LangCode) => {
+    setLang(l)
+    storeLanguage(l)
+    void supabase.auth.updateUser({ data: { language: l } }).catch(() => {})
   }
 
   const inExportMonth = (date?: string | null) =>
@@ -446,7 +460,7 @@ export default function SettingsPage() {
             {/* Profile summary */}
             <div style={{ background: colors.card, border: `1px solid ${colors.cardBorder}`, borderRadius: 16, padding: 22 }}>
               <div style={{ display: 'flex', alignItems: 'center', gap: 8, fontWeight: 700, fontSize: 15, marginBottom: 16 }}>
-                <span style={{ color: colors.accent }}>👤</span> Profile
+                <span style={{ color: colors.accent }}>👤</span> {t(lang, 'profile.title')}
               </div>
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12 }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
@@ -457,13 +471,13 @@ export default function SettingsPage() {
                   </div>
                 </div>
                 <button onClick={() => router.push('/dashboard/profile')} style={{ border: `1px solid ${colors.cardBorder}`, background: colors.card, color: colors.text, borderRadius: 9, padding: '9px 16px', fontSize: 13.5, fontWeight: 600, cursor: 'pointer', whiteSpace: 'nowrap' }}>
-                  Edit Profile
+                  {t(lang, 'profile.edit')}
                 </button>
               </div>
             </div>
 
             {/* Currency */}
-            <SectionCard colors={colors} icon="💲" title="Currency">
+            <SectionCard colors={colors} icon="💲" title={t(lang, 'currency.title')}>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
                 {CURRENCIES.map((c) => {
                   const active = currency === c
@@ -477,8 +491,18 @@ export default function SettingsPage() {
               </div>
             </SectionCard>
 
+            {/* Language */}
+            <SectionCard colors={colors} icon="🌐" title={t(lang, 'language.title')}>
+              <select value={lang} onChange={(e) => changeLang(e.target.value as LangCode)}
+                style={{ width: '100%', padding: '11px 13px', borderRadius: 10, border: `1px solid ${colors.cardBorder}`, background: colors.inputBg, color: colors.text, fontSize: 13.5, outline: 'none', fontFamily: 'inherit', cursor: 'pointer' }}>
+                {LANGUAGES.map((l) => (
+                  <option key={l.code} value={l.code}>{l.native} — {l.name}</option>
+                ))}
+              </select>
+            </SectionCard>
+
             {/* Notifications */}
-            <SectionCard colors={colors} icon="🔔" title="Notifications">
+            <SectionCard colors={colors} icon="🔔" title={t(lang, 'notif.title')}>
               <div style={{ display: 'flex', flexDirection: 'column' }}>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12, padding: '4px 0 14px', borderBottom: `1px solid ${colors.cardBorder}` }}>
                   <div>
@@ -545,14 +569,14 @@ export default function SettingsPage() {
             </SectionCard>
 
             {/* Data & Privacy */}
-            <SectionCard colors={colors} icon="⬇️" title="Data & Privacy">
+            <SectionCard colors={colors} icon="⬇️" title={t(lang, 'data.title')}>
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
                 <button onClick={() => { setExportMonth('all'); setExportModal('pdf') }} disabled={exporting} style={{ display: 'flex', alignItems: 'center', gap: 8, border: `1px solid ${colors.cardBorder}`, background: colors.card, color: colors.text, borderRadius: 9, padding: '10px 18px', fontSize: 14, fontWeight: 600, cursor: exporting ? 'not-allowed' : 'pointer', opacity: exporting ? 0.7 : 1 }}>
-                  <Download size={14} /> {exporting ? 'Exporting...' : 'Export Data'}
+                  <Download size={14} /> {exporting ? 'Exporting...' : t(lang, 'data.export')}
                 </button>
                 {exportMsg && <span style={{ fontSize: 13, fontWeight: 600, color: exportMsg.includes('✓') ? colors.positive : colors.danger }}>{exportMsg}</span>}
                 <button onClick={() => { setConfirmDelete(true); setDeleteErr('') }} style={{ display: 'flex', alignItems: 'center', gap: 8, border: `1px solid ${colors.danger}`, background: 'transparent', color: colors.danger, borderRadius: 9, padding: '10px 18px', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>
-                  <Trash2 size={14} /> Delete Account
+                  <Trash2 size={14} /> {t(lang, 'account.delete')}
                 </button>
               </div>
 
@@ -576,7 +600,7 @@ export default function SettingsPage() {
                         {exporting ? 'Exporting...' : 'Download PDF'}
                       </button>
                       <button onClick={() => setExportModal(null)} style={{ padding: '11px 18px', borderRadius: 10, border: `1px solid ${colors.cardBorder}`, background: 'transparent', color: colors.textSub, fontSize: 13.5, cursor: 'pointer' }}>
-                        Cancel
+                        {t(lang, 'common.cancel')}
                       </button>
                     </div>
                   </div>
@@ -593,10 +617,10 @@ export default function SettingsPage() {
                   {deleteErr && <div style={{ fontSize: 12, color: colors.danger, marginBottom: 10 }}>{deleteErr}</div>}
                   <div style={{ display: 'flex', gap: 10 }}>
                     <button onClick={handleDeleteAccount} disabled={deleting} style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '9px 18px', borderRadius: 9, border: 'none', background: colors.danger, color: '#fff', fontSize: 13, fontWeight: 600, cursor: deleting ? 'not-allowed' : 'pointer', opacity: deleting ? 0.7 : 1 }}>
-                      <Trash2 size={14} /> {deleting ? 'Deleting...' : 'Yes, delete everything'}
+                      <Trash2 size={14} /> {deleting ? 'Deleting...' : t(lang, 'common.yesDelete')}
                     </button>
                     <button onClick={() => setConfirmDelete(false)} style={{ padding: '9px 18px', borderRadius: 9, border: `1px solid ${colors.cardBorder}`, background: 'transparent', color: colors.text, fontSize: 13, cursor: 'pointer' }}>
-                      Cancel
+                      {t(lang, 'common.cancel')}
                     </button>
                   </div>
                 </div>

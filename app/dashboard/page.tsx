@@ -29,6 +29,7 @@ import {
 import { formatCurrency, currencySymbol } from "@/lib/format";
 import { autoEnablePush, requestPushForDue, getPushStatus, notifPref, setNotifPref, NOTIF_PREF_BILLS, NOTIF_PREF_BUDGET, NOTIF_PREF_INCOME, type PushStatus } from "@/lib/push";
 import { parseBankSms } from "@/lib/sms-parse";
+import { LANGUAGES, t, getStoredLanguage, storeLanguage, type LangCode } from "@/lib/i18n";
 
 // ── Types ──────────────────────────────────────────────────────────────────
 type Page = "dashboard" | "transactions" | "upcoming" | "budgets" | "analytics" | "ai" | "installments" | "settings";
@@ -92,7 +93,7 @@ function CustomTooltip({ active, payload, label, colors, currency }: { active?: 
   return null;
 };
 
-function MonthPickerDropdown({ month, onMonthChange, colors, variant = "card" }: { month: string; onMonthChange: (m: string) => void; colors: Colors; variant?: "topbar" | "card" }) {
+function MonthPickerDropdown({ month, onMonthChange, colors, variant = "card", lang = "en" }: { month: string; onMonthChange: (m: string) => void; colors: Colors; variant?: "topbar" | "card"; lang?: string }) {
   const [show, setShow] = useState(false);
   const curMonth = new Date().toISOString().slice(0, 7);
   const label = new Date(month + "-01").toLocaleDateString("en-PK", { month: "long", year: "numeric" });
@@ -124,7 +125,7 @@ function MonthPickerDropdown({ month, onMonthChange, colors, variant = "card" }:
               </button>
             </div>
             {month !== curMonth && (
-              <button onClick={() => onMonthChange(curMonth)} style={{ marginTop: 10, width: "100%", padding: "8px", borderRadius: 8, border: "none", background: "#0A193D", color: "#fff", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>Back to This Month</button>
+              <button onClick={() => onMonthChange(curMonth)} style={{ marginTop: 10, width: "100%", padding: "8px", borderRadius: 8, border: "none", background: "#0A193D", color: "#fff", fontSize: 12, fontWeight: 600, cursor: "pointer" }}>{t(lang, "month.backToThis")}</button>
             )}
           </div>
         </>
@@ -182,6 +183,9 @@ export default function FinloApp() {
       window.history.replaceState(null, "", url.pathname + url.search + url.hash);
     }
   }, []);
+  useEffect(() => {
+    setLang(getStoredLanguage());
+  }, []);
 
   useEffect(() => {
     void (async () => {
@@ -213,6 +217,7 @@ export default function FinloApp() {
   const router = useRouter();
   const supabase = createClient();
   const [dashMonth, setDashMonth] = useState(() => new Date().toISOString().slice(0, 7));
+  const [lang, setLang] = useState<LangCode>("en");
 
   const isDark = theme === "dark";
 
@@ -278,6 +283,8 @@ export default function FinloApp() {
       setCurrency(savedCurrency || "PKR");
       const savedOpeningBalance = u.user_metadata?.opening_balance;
       setOpeningBalance(typeof savedOpeningBalance === "number" ? savedOpeningBalance : 0);
+      const savedLang = u.user_metadata?.language as string | undefined;
+      if (savedLang && LANGUAGES.some((l) => l.code === savedLang)) setLang(savedLang as LangCode);
     };
     checkAuth();
   }, [supabase.auth, router]);
@@ -463,6 +470,12 @@ const insts = await getUserInstallmentsClient();
   const handleCurrencyChange = (c: string) => {
     setCurrency(c);
     supabase.auth.updateUser({ data: { currency: c } }).catch(() => {});
+  };
+
+  const changeLang = (l: LangCode) => {
+    setLang(l);
+    storeLanguage(l);
+    supabase.auth.updateUser({ data: { language: l } }).catch(() => {});
   };
 
   const saveOpeningBalance = (value: number) => {
@@ -659,7 +672,7 @@ const insts = await getUserInstallmentsClient();
                 onMouseLeave={e => { if (!active) (e.currentTarget as HTMLButtonElement).style.background = "transparent"; }}
               >
                 <span style={{ flexShrink: 0 }}>{item.icon}</span>
-                {sidebarOpen && <span>{item.label}</span>}
+                {sidebarOpen && <span>{t(lang, `nav.${item.id}`)}</span>}
               </button>
             );
           })}
@@ -685,21 +698,21 @@ const insts = await getUserInstallmentsClient();
           <div style={{ minWidth: 0, flex: 1, marginRight: 8, overflow: "hidden" }}>
             <div style={{ fontWeight: 700, fontSize: 18, letterSpacing: "-0.3px", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
               {page === "dashboard" && `${timeGreeting()}, ${userFirstName} ${timeEmoji()}`}
-              {page === "transactions" && "Transactions"}
-              {page === "upcoming" && "Upcoming"}
-              {page === "budgets" && "Budgets"}
-              {page === "analytics" && "Analytics"}
-              {page === "ai" && "AI Assistant"}
-              {page === "installments" && "Installments"}
-              {page === "settings" && "Settings"}
+              {page === "transactions" && t(lang, "nav.transactions")}
+              {page === "upcoming" && t(lang, "nav.upcoming")}
+              {page === "budgets" && t(lang, "nav.budgets")}
+              {page === "analytics" && t(lang, "nav.analytics")}
+              {page === "ai" && t(lang, "nav.ai")}
+              {page === "installments" && t(lang, "nav.installments")}
+              {page === "settings" && t(lang, "nav.settings")}
             </div>
             <div style={{ fontSize: 12, color: colors.textSub, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-              {page === "dashboard" ? "Here's your financial overview" : ""}
+              {page === "dashboard" ? t(lang, "dash.subtitle") : ""}
             </div>
           </div>
           <div style={{ display: "flex", alignItems: "center", gap: 10, flexShrink: 0 }}>
             {page === "dashboard" && (
-              <MonthPickerDropdown month={dashMonth} onMonthChange={setDashMonth} colors={colors} variant="topbar" />
+              <MonthPickerDropdown month={dashMonth} onMonthChange={setDashMonth} colors={colors} variant="topbar" lang={lang} />
             )}
             <button onClick={() => navigateTo("settings")} title="Settings" style={{ width: 36, height: 36, borderRadius: 8, border: `1px solid ${colors.cardBorder}`, background: colors.card, color: page === "settings" ? colors.accent : colors.textSub, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
               <Settings size={16} />
@@ -734,14 +747,14 @@ const insts = await getUserInstallmentsClient();
 
         {/* Page Content */}
         <main className="finlo-dash-main" style={{ flex: 1, padding: "24px 28px", overflowY: "auto" }}>
-          {page === "dashboard" && <DashboardPage colors={colors} transactions={realTransactions} recurring={realRecurring} installments={realInstallments} budgets={realBudgets} openingBalance={openingBalance} onEditBalance={() => setShowBalanceModal(true)} onViewAllUpcoming={() => navigateTo("upcoming")} onViewAllTransactions={() => navigateTo("transactions")} onMarkPaid={markRecurringPaid} onMarkInstallment={(inst) => { setInstallmentPayTarget(inst); setAddType("expense"); setShowAddModal(true); }} currency={currency} month={dashMonth} onMonthChange={setDashMonth} />}
+          {page === "dashboard" && <DashboardPage colors={colors} transactions={realTransactions} recurring={realRecurring} installments={realInstallments} budgets={realBudgets} openingBalance={openingBalance} onEditBalance={() => setShowBalanceModal(true)} onViewAllUpcoming={() => navigateTo("upcoming")} onViewAllTransactions={() => navigateTo("transactions")} onMarkPaid={markRecurringPaid} onMarkInstallment={(inst) => { setInstallmentPayTarget(inst); setAddType("expense"); setShowAddModal(true); }} currency={currency} month={dashMonth} onMonthChange={setDashMonth} lang={lang} />}
           {page === "transactions" && <TransactionsPage colors={colors} transactions={realTransactions} onDeleteTransaction={handleDeleteTransaction} currency={currency} />}
           {page === "upcoming" && <UpcomingPage colors={colors} transactions={realTransactions} recurring={realRecurring} installments={realInstallments} supabase={supabase} onPayInstallment={(id) => { const inst = realInstallments.find((i) => i.id === id); if (inst) { setInstallmentPayTarget(inst); setAddType("expense"); setShowAddModal(true); } }} onDeleteInstallment={handleDeleteInstallment} currency={currency} />}
           {page === "budgets" && <BudgetsPage colors={colors} budgets={realBudgets} currency={currency} onAddBudget={handleAddBudget} />}
           {page === "analytics" && <AnalyticsPage colors={colors} transactions={realTransactions} currency={currency} />}
           {page === "ai" && <AIPage colors={colors} transactions={realTransactions} currency={currency} />}
           {page === "installments" && <InstallmentsPage colors={colors} installments={realInstallments} onAdd={handleAddInstallment} onMarkPaid={(inst) => { setInstallmentPayTarget(inst); setAddType("expense"); setShowAddModal(true); }} onDelete={handleDeleteInstallment} currency={currency} />}
-          {page === "settings" && <SettingsPage colors={colors} displayName={displayName} userEmail={userEmail} onSignOut={handleSignOut} currency={currency} onCurrencyChange={handleCurrencyChange} supabase={supabase} />}
+          {page === "settings" && <SettingsPage colors={colors} displayName={displayName} userEmail={userEmail} onSignOut={handleSignOut} currency={currency} onCurrencyChange={handleCurrencyChange} supabase={supabase} lang={lang} onLanguageChange={changeLang} />}
         </main>
       </div>
 
@@ -807,7 +820,7 @@ const insts = await getUserInstallmentsClient();
                 boxShadow: active ? (isDark ? "inset 0 1px 0 rgba(255,255,255,0.12), 0 6px 16px rgba(10,25,61,0.38)" : "inset 0 1px 0 rgba(255,255,255,0.95), 0 6px 16px rgba(10,25,61,0.3)") : "none",
               }}>
               <span style={{ transition: "transform 0.2s ease", transform: active ? "scale(1.12)" : "scale(1)" }}>{tab.icon}</span>
-              <span>{tab.label}</span>
+              <span>{t(lang, `nav.${tab.id}`)}</span>
             </button>
           );
         })}
@@ -877,7 +890,7 @@ const insts = await getUserInstallmentsClient();
 }
 
 // ── Dashboard Page ──────────────────────────────────────────────────────────
-function DashboardPage({ colors, transactions, recurring, installments, budgets, openingBalance, onEditBalance, onViewAllUpcoming, onViewAllTransactions, onMarkPaid, onMarkInstallment, currency, month, onMonthChange }: { colors: Colors; transactions: Transaction[]; recurring: UpcomingItem[]; installments: Installment[]; budgets: Budget[]; openingBalance: number; onEditBalance: () => void; onViewAllUpcoming: () => void; onViewAllTransactions: () => void; onMarkPaid: (id: string, frequency?: string) => Promise<void>; onMarkInstallment: (inst: Installment) => void; currency: string; month: string; onMonthChange: (m: string) => void }) {
+function DashboardPage({ colors, transactions, recurring, installments, budgets, openingBalance, onEditBalance, onViewAllUpcoming, onViewAllTransactions, onMarkPaid, onMarkInstallment, currency, month, onMonthChange, lang = "en" }: { colors: Colors; transactions: Transaction[]; recurring: UpcomingItem[]; installments: Installment[]; budgets: Budget[]; openingBalance: number; onEditBalance: () => void; onViewAllUpcoming: () => void; onViewAllTransactions: () => void; onMarkPaid: (id: string, frequency?: string) => Promise<void>; onMarkInstallment: (inst: Installment) => void; currency: string; month: string; onMonthChange: (m: string) => void; lang?: string }) {
   const [showCalcModal, setShowCalcModal] = useState(false);
   const [monthBudgets, setMonthBudgets] = useState<Budget[] | null>(null);
   const curMonth = new Date().toISOString().slice(0, 7);
@@ -1024,7 +1037,7 @@ function DashboardPage({ colors, transactions, recurring, installments, budgets,
         {/* Current Balance */}
         <div style={{ padding: "22px 24px", borderRadius: 16, background: colors.card, border: `1px solid ${colors.cardBorder}` }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
-            <span style={{ fontSize: 13, fontWeight: 500, color: colors.textSub }}>Current Balance</span>
+            <span style={{ fontSize: 13, fontWeight: 500, color: colors.textSub }}>{t(lang, "dash.current")}</span>
             <button onClick={onEditBalance} title="Set opening balance" style={{ width: 30, height: 30, borderRadius: 8, border: "none", background: colors.inputBg, color: colors.textSub, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
               <Pencil size={14} />
             </button>
@@ -1038,14 +1051,14 @@ function DashboardPage({ colors, transactions, recurring, installments, budgets,
             <div>
               <div style={{ display: "flex", alignItems: "center", gap: 5, marginBottom: 2 }}>
                 <ArrowUp size={13} color="#10b981" />
-                <span style={{ fontSize: 11, color: colors.textSub }}>Income this month</span>
+                <span style={{ fontSize: 11, color: colors.textSub }}>{t(lang, "dash.incomeThisMonth")}</span>
               </div>
               <div style={{ fontSize: 14, fontWeight: 700, color: "#10b981" }}>{fmt(monthlyIncome)}</div>
             </div>
             <div>
               <div style={{ display: "flex", alignItems: "center", gap: 5, marginBottom: 2 }}>
                 <ArrowDown size={13} color="#ef4444" />
-                <span style={{ fontSize: 11, color: colors.textSub }}>Expenses this month</span>
+                <span style={{ fontSize: 11, color: colors.textSub }}>{t(lang, "dash.expensesThisMonth")}</span>
               </div>
               <div style={{ fontSize: 14, fontWeight: 700, color: "#ef4444" }}>{fmt(monthlyExpenses)}</div>
             </div>
@@ -1096,13 +1109,13 @@ function DashboardPage({ colors, transactions, recurring, installments, budgets,
         <div className="finlo-grid-30" style={{ flex: "0 0 30%", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
           {[
             next7Days.length > 0
-              ? { icon: <Calendar size={16} color="#0A193D" />, label: "Upcoming", value: fmt(totalUpcoming7), sub: `${next7Days.length} due`, bg: "rgba(10,25,61,0.08)" }
-              : { icon: <Calendar size={16} color="#0A193D" />, label: "Upcoming", value: fmt(0), sub: "None due", bg: "rgba(10,25,61,0.08)" },
+              ? { icon: <Calendar size={16} color="#0A193D" />, label: t(lang, "nav.upcoming"), value: fmt(totalUpcoming7), sub: `${next7Days.length} due`, bg: "rgba(10,25,61,0.08)" }
+              : { icon: <Calendar size={16} color="#0A193D" />, label: t(lang, "nav.upcoming"), value: fmt(0), sub: "None due", bg: "rgba(10,25,61,0.08)" },
             overdueRecurring.length > 0
-              ? { icon: <AlertCircle size={16} color="#ef4444" />, label: "Overdue", value: fmt(totalOverdue), sub: `${overdueRecurring.length} late`, bg: "rgba(239,68,68,0.08)" }
-              : { icon: <AlertCircle size={16} color="#ef4444" />, label: "Overdue", value: "None", sub: "All clear", bg: "rgba(239,68,68,0.08)" },
-            { icon: <Target size={16} color="#f59e0b" />, label: "Budgets", value: `${activeBudgets.filter((b) => b.spent <= b.limit).length}/${activeBudgets.length}`, sub: "On track", bg: "rgba(245,158,11,0.08)" },
-            { icon: <TrendingUp size={16} color="#10b981" />, label: "Savings", value: fmt(savings), sub: `${savingsPct}%`, bg: "rgba(16,185,129,0.08)" },
+              ? { icon: <AlertCircle size={16} color="#ef4444" />, label: t(lang, "stat.overdue"), value: fmt(totalOverdue), sub: `${overdueRecurring.length} late`, bg: "rgba(239,68,68,0.08)" }
+              : { icon: <AlertCircle size={16} color="#ef4444" />, label: t(lang, "stat.overdue"), value: "None", sub: "All clear", bg: "rgba(239,68,68,0.08)" },
+            { icon: <Target size={16} color="#f59e0b" />, label: t(lang, "nav.budgets"), value: `${activeBudgets.filter((b) => b.spent <= b.limit).length}/${activeBudgets.length}`, sub: "On track", bg: "rgba(245,158,11,0.08)" },
+            { icon: <TrendingUp size={16} color="#10b981" />, label: t(lang, "dash.savings"), value: fmt(savings), sub: `${savingsPct}%`, bg: "rgba(16,185,129,0.08)" },
           ].map((s, i) => (
             <div key={i} style={{ padding: "14px 14px", borderRadius: 12, background: colors.card, border: `1px solid ${colors.cardBorder}`, display: "flex", alignItems: "center", gap: 10 }}>
               <div style={{ width: 34, height: 34, borderRadius: 8, background: s.bg, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>{s.icon}</div>
@@ -1121,8 +1134,8 @@ function DashboardPage({ colors, transactions, recurring, installments, budgets,
         {/* Cash Flow Chart */}
         <div style={{ padding: "22px 24px", borderRadius: 16, background: colors.card, border: `1px solid ${colors.cardBorder}` }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
-            <span style={{ fontWeight: 700, fontSize: 15 }}>Finlo Finance Overview</span>
-            <MonthPickerDropdown month={month} onMonthChange={onMonthChange} colors={colors} />
+            <span style={{ fontWeight: 700, fontSize: 15 }}>{t(lang, "dash.overview")}</span>
+            <MonthPickerDropdown month={month} onMonthChange={onMonthChange} colors={colors} lang={lang} />
           </div>
           <div style={{ display: "flex", gap: 16, marginBottom: 14 }}>
             {[{ color: "#10b981", label: "Income" }, { color: "#ef4444", label: "Expenses" }, { color: "#0A193D", label: "Net" }].map(l => (
@@ -1148,7 +1161,7 @@ function DashboardPage({ colors, transactions, recurring, installments, budgets,
         <div style={{ padding: "22px 24px", borderRadius: 16, background: colors.card, border: `1px solid ${colors.cardBorder}`, containerType: "inline-size" }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16, gap: 8 }}>
             <span style={{ fontWeight: 700, whiteSpace: "nowrap", lineHeight: 1.25, fontSize: "clamp(11px, 2.9cqw, 15px)" }}>Upcoming Payments / Installments</span>
-            <button onClick={onViewAllUpcoming} style={{ fontSize: "clamp(10px, 2.4cqw, 12px)", color: "#0A193D", background: "none", border: "none", cursor: "pointer", fontWeight: 600, whiteSpace: "nowrap", flexShrink: 0 }}>View all</button>
+            <button onClick={onViewAllUpcoming} style={{ fontSize: "clamp(10px, 2.4cqw, 12px)", color: "#0A193D", background: "none", border: "none", cursor: "pointer", fontWeight: 600, whiteSpace: "nowrap", flexShrink: 0 }}>{t(lang, "common.viewAll")}</button>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             {upcomingList.length === 0 ? (
@@ -1200,8 +1213,8 @@ function DashboardPage({ colors, transactions, recurring, installments, budgets,
         {/* Transactions */}
         <div style={{ padding: "22px 24px", borderRadius: 16, background: colors.card, border: `1px solid ${colors.cardBorder}` }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
-            <span style={{ fontWeight: 700, fontSize: 15 }}>Recent Transactions</span>
-            <button onClick={onViewAllTransactions} style={{ fontSize: 12, color: "#0A193D", background: "none", border: "none", cursor: "pointer", fontWeight: 600 }}>View all</button>
+            <span style={{ fontWeight: 700, fontSize: 15 }}>{t(lang, "dash.recent")}</span>
+            <button onClick={onViewAllTransactions} style={{ fontSize: 12, color: "#0A193D", background: "none", border: "none", cursor: "pointer", fontWeight: 600 }}>{t(lang, "common.viewAll")}</button>
           </div>
           <div style={{ display: "flex", flexDirection: "column", gap: 2, maxHeight: 440, overflowY: "auto" }}>
             {recent.map(t => (
@@ -1234,9 +1247,9 @@ function DashboardPage({ colors, transactions, recurring, installments, budgets,
         {/* Spending by Category */}
         <div style={{ padding: "22px 24px", borderRadius: 16, background: colors.card, border: `1px solid ${colors.cardBorder}` }}>
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 16 }}>
-            <span style={{ fontWeight: 700, fontSize: 15 }}>Spending by Category</span>
+            <span style={{ fontWeight: 700, fontSize: 15 }}>{t(lang, "dash.spending")}</span>
             <button style={{ display: "flex", alignItems: "center", gap: 5, padding: "5px 10px", borderRadius: 7, border: `1px solid ${colors.cardBorder}`, background: "transparent", color: colors.text, fontSize: 12, cursor: "pointer" }}>
-              This Month <ChevronDown size={12} />
+              {t(lang, "month.this")} <ChevronDown size={12} />
             </button>
           </div>
           <div style={{ display: "flex", justifyContent: "center", marginBottom: 14 }}>
@@ -1248,7 +1261,7 @@ function DashboardPage({ colors, transactions, recurring, installments, budgets,
               </RechartsPie>
               <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", textAlign: "center" }}>
                 <div style={{ fontSize: 13, fontWeight: 700, color: colors.text }}>{fmt(monthlyExpenses)}</div>
-                <div style={{ fontSize: 10, color: colors.textSub }}>Total Expenses</div>
+                <div style={{ fontSize: 10, color: colors.textSub }}>{t(lang, "dash.totalExpenses")}</div>
               </div>
             </div>
           </div>
@@ -2123,7 +2136,7 @@ function AIPage({ colors, transactions, currency }: { colors: Colors; transactio
 }
 
 // ── Settings Page ───────────────────────────────────────────────────────────
-function SettingsPage({ colors, displayName, userEmail, onSignOut, currency, onCurrencyChange, supabase }: { colors: Colors; displayName: string; userEmail: string; onSignOut: () => void; currency: string; onCurrencyChange: (c: string) => void; supabase: ReturnType<typeof createClient> }) {
+function SettingsPage({ colors, displayName, userEmail, onSignOut, currency, onCurrencyChange, supabase, lang = "en", onLanguageChange }: { colors: Colors; displayName: string; userEmail: string; onSignOut: () => void; currency: string; onCurrencyChange: (c: string) => void; supabase: ReturnType<typeof createClient>; lang?: string; onLanguageChange: (l: LangCode) => void }) {
   const currencies = ["PKR", "USD", "AED", "SAR", "GBP", "EUR"];
   const profileInitial = (displayName || "U").charAt(0).toUpperCase();
   const [draftCurrency, setDraftCurrency] = useState(currency);
@@ -2334,20 +2347,20 @@ function SettingsPage({ colors, displayName, userEmail, onSignOut, currency, onC
     <div style={{ maxWidth: 680, display: "flex", flexDirection: "column", gap: 18 }}>
       {/* Profile */}
       <div style={{ padding: "22px 24px", borderRadius: 16, background: colors.card, border: `1px solid ${colors.cardBorder}` }}>
-        <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 18, display: "flex", alignItems: "center", gap: 8 }}><User size={16} color="#0A193D" /> Profile</div>
+        <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 18, display: "flex", alignItems: "center", gap: 8 }}><User size={16} color="#0A193D" /> {t(lang, "profile.title")}</div>
         <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: 20 }}>
           <div style={{ width: 56, height: 56, borderRadius: "50%", background: "linear-gradient(135deg,#142453,#0A193D)", display: "flex", alignItems: "center", justifyContent: "center", color: "#fff", fontWeight: 700, fontSize: 22 }}>{profileInitial}</div>
           <div style={{ minWidth: 0 }}>
             <div style={{ fontWeight: 700, fontSize: 16, color: colors.text, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{displayName}</div>
             <div style={{ fontSize: 13, color: colors.textSub, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>{userEmail}</div>
           </div>
-          <a href="/dashboard/profile" style={{ marginLeft: "auto", padding: "8px 16px", borderRadius: 9, border: `1px solid ${colors.cardBorder}`, background: "transparent", color: colors.text, fontSize: 13, cursor: "pointer", textDecoration: "none" }}>Edit Profile</a>
+          <a href="/dashboard/profile" style={{ marginLeft: "auto", padding: "8px 16px", borderRadius: 9, border: `1px solid ${colors.cardBorder}`, background: "transparent", color: colors.text, fontSize: 13, cursor: "pointer", textDecoration: "none" }}>{t(lang, "profile.edit")}</a>
         </div>
       </div>
 
       {/* Currency */}
       <div style={{ padding: "22px 24px", borderRadius: 16, background: colors.card, border: `1px solid ${colors.cardBorder}` }}>
-        <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 14, display: "flex", alignItems: "center", gap: 8 }}><DollarSign size={16} color="#0A193D" /> Currency</div>
+        <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 14, display: "flex", alignItems: "center", gap: 8 }}><DollarSign size={16} color="#0A193D" /> {t(lang, "currency.title")}</div>
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
           {currencies.map(c => (
             <button key={c} onClick={() => { setDraftCurrency(c); setSaved(false); }} style={{ padding: "8px 18px", borderRadius: 9, border: `1px solid ${draftCurrency === c ? "#0A193D" : colors.cardBorder}`, background: draftCurrency === c ? "rgba(10,25,61,0.1)" : "transparent", color: draftCurrency === c ? "#0A193D" : colors.textSub, fontWeight: draftCurrency === c ? 700 : 400, fontSize: 13, cursor: "pointer" }}>
@@ -2357,9 +2370,22 @@ function SettingsPage({ colors, displayName, userEmail, onSignOut, currency, onC
         </div>
       </div>
 
+      {/* Language */}
+      <div style={{ padding: "22px 24px", borderRadius: 16, background: colors.card, border: `1px solid ${colors.cardBorder}` }}>
+        <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 14, display: "flex", alignItems: "center", gap: 8 }}><span style={{ color: "#0A193D" }}>🌐</span> {t(lang, "language.title")}</div>
+        <select value={lang} onChange={(e) => onLanguageChange(e.target.value as LangCode)} style={{ width: "100%", padding: "11px 13px", borderRadius: 10, border: `1px solid ${colors.cardBorder}`, background: colors.inputBg, color: colors.text, fontSize: 13.5, outline: "none", fontFamily: "inherit", cursor: "pointer" }}>
+          {LANGUAGES.map(l => (
+            <option key={l.code} value={l.code}>{l.native} — {l.name}</option>
+          ))}
+        </select>
+        <div style={{ fontSize: 11.5, color: colors.textSub, marginTop: 8 }}>
+          {lang === "en" ? "English" : LANGUAGES.find(l => l.code === lang)?.native} — {LANGUAGES.find(l => l.code === lang)?.name}
+        </div>
+      </div>
+
       {/* Notifications */}
       <div style={{ padding: "22px 24px", borderRadius: 16, background: colors.card, border: `1px solid ${colors.cardBorder}` }}>
-        <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 14, display: "flex", alignItems: "center", gap: 8 }}><Bell size={16} color="#0A193D" /> Notifications</div>
+        <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 14, display: "flex", alignItems: "center", gap: 8 }}><Bell size={16} color="#0A193D" /> {t(lang, "notif.title")}</div>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, padding: "4px 0 12px", borderBottom: `1px solid ${colors.cardBorder}` }}>
           <div>
             <div style={{ fontSize: 13, fontWeight: 600, color: colors.text }}>Mobile / Desktop notifications</div>
@@ -2398,13 +2424,13 @@ function SettingsPage({ colors, displayName, userEmail, onSignOut, currency, onC
 
       {/* Data */}
       <div style={{ padding: "22px 24px", borderRadius: 16, background: colors.card, border: `1px solid ${colors.cardBorder}` }}>
-        <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 14, display: "flex", alignItems: "center", gap: 8 }}><Download size={16} color="#0A193D" /> Data & Privacy</div>
+        <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 14, display: "flex", alignItems: "center", gap: 8 }}><Download size={16} color="#0A193D" /> {t(lang, "data.title")}</div>
         <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
           <button onClick={() => { setExportMonth("all"); setExportModal("pdf"); }} disabled={exporting} style={{ display: "flex", alignItems: "center", gap: 6, padding: "9px 16px", borderRadius: 9, border: `1px solid ${colors.cardBorder}`, background: "transparent", color: colors.text, fontSize: 13, cursor: exporting ? "not-allowed" : "pointer", opacity: exporting ? 0.7 : 1 }}>
-            <FileText size={14} /> {exporting ? "Exporting..." : "Export PDF (Statement)"}
+            <FileText size={14} /> {exporting ? "Exporting..." : t(lang, "data.exportPdf")}
           </button>
           <button onClick={() => { setConfirmDelete(true); setDeleteErr(""); }} style={{ display: "flex", alignItems: "center", gap: 6, padding: "9px 16px", borderRadius: 9, border: "1px solid rgba(239,68,68,0.4)", background: "transparent", color: "#ef4444", fontSize: 13, cursor: "pointer" }}>
-            <Trash2 size={14} /> Delete Account
+            <Trash2 size={14} /> {t(lang, "account.delete")}
           </button>
           {exportMsg && <span style={{ fontSize: 13, fontWeight: 600, color: exportMsg.includes("✓") ? "#10b981" : "#ef4444" }}>{exportMsg}</span>}
         </div>
@@ -2418,7 +2444,7 @@ function SettingsPage({ colors, displayName, userEmail, onSignOut, currency, onC
             {deleteErr && <div style={{ fontSize: 12, color: "#ef4444", marginBottom: 10 }}>{deleteErr}</div>}
             <div style={{ display: "flex", gap: 10 }}>
               <button onClick={handleDeleteAccount} disabled={deleting} style={{ display: "flex", alignItems: "center", gap: 6, padding: "9px 18px", borderRadius: 9, border: "none", background: "#ef4444", color: "#fff", fontSize: 13, fontWeight: 600, cursor: deleting ? "not-allowed" : "pointer", opacity: deleting ? 0.7 : 1 }}>
-                <Trash2 size={14} /> {deleting ? "Deleting..." : "Yes, delete everything"}
+                <Trash2 size={14} /> {deleting ? "Deleting..." : t(lang, "common.yesDelete")}
               </button>
               <button onClick={() => setConfirmDelete(false)} style={{ padding: "9px 18px", borderRadius: 9, border: `1px solid ${colors.cardBorder}`, background: "transparent", color: colors.text, fontSize: 13, cursor: "pointer" }}>
                 Cancel
@@ -2460,14 +2486,14 @@ function SettingsPage({ colors, displayName, userEmail, onSignOut, currency, onC
       <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
         <button onClick={handleSave} style={{ display: "flex", alignItems: "center", gap: 8, padding: "12px 26px", borderRadius: 12, border: "none", background: "#0A193D", color: "#fff", fontSize: 14, fontWeight: 600, cursor: "pointer", boxShadow: "0 4px 16px rgba(10,25,61,0.35)" }}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-          Save Changes
+          {t(lang, "common.saveChanges")}
         </button>
         {saved && <span style={{ fontSize: 13, fontWeight: 600, color: "#10b981" }}>✓ Saved</span>}
       </div>
 
       {/* Logout */}
       <button onClick={onSignOut} style={{ display: "flex", alignItems: "center", gap: 8, padding: "12px 20px", borderRadius: 12, border: `1px solid ${colors.cardBorder}`, background: colors.card, color: colors.textSub, fontSize: 13, fontWeight: 500, cursor: "pointer", width: "fit-content" }}>
-        <LogOut size={15} /> Sign Out
+        <LogOut size={15} /> {t(lang, "common.signOut")}
       </button>
     </div>
   );

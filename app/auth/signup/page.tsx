@@ -7,8 +7,10 @@ import { useRouter } from "next/navigation";
 import { LoaderCircle } from "lucide-react";
 import { useToast } from "@/components/providers/ToastProvider";
 import { createClient } from "@/lib/supabase";
+import { t, getStoredLanguage, type LangCode } from "@/lib/i18n";
 
 export default function SignupPage() {
+  const [lang, setLang] = useState<LangCode>("en");
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [email, setEmail] = useState("");
@@ -46,6 +48,10 @@ export default function SignupPage() {
     check();
     return () => { active = false; };
   }, [router]);
+
+  useEffect(() => {
+    setLang(getStoredLanguage());
+  }, []);
 
   async function handleSignup() {
     if (loading) return;
@@ -274,13 +280,13 @@ export default function SignupPage() {
           position: "relative",
           zIndex: 1,
         }}>
-          <h2 style={{ fontSize: "26px", fontWeight: 700, color: p.text, margin: "0 0 6px 0" }}>Create account 🚀</h2>
-          <p style={{ fontSize: "14px", color: p.desc, margin: "0 0 28px 0" }}>Sign up to get started with Finlo</p>
+          <h2 style={{ fontSize: "26px", fontWeight: 700, color: p.text, margin: "0 0 6px 0" }}>{t(lang, "signup.welcome")}</h2>
+          <p style={{ fontSize: "14px", color: p.desc, margin: "0 0 28px 0" }}>{t(lang, "signup.subtitle")}</p>
 
           {/* EMAIL */}
           <form onSubmit={e => { e.preventDefault(); handleSignup(); }} noValidate>
           <div style={{ marginBottom: "20px" }}>
-            <label htmlFor="signup-email" style={{ display: "block", fontSize: "13px", fontWeight: 500, color: p.label, marginBottom: "8px" }}>Email address</label>
+            <label htmlFor="signup-email" style={{ display: "block", fontSize: "13px", fontWeight: 500, color: p.label, marginBottom: "8px" }}>{t(lang, "login.email")}</label>
             <div style={{ position: "relative" }}>
               <span style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", color: p.iconMuted, pointerEvents: "none" }}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -299,7 +305,7 @@ export default function SignupPage() {
 
           {/* PASSWORD */}
           <div style={{ marginBottom: "20px" }}>
-            <label htmlFor="signup-password" style={{ display: "block", fontSize: "13px", fontWeight: 500, color: p.label, marginBottom: "8px" }}>Password</label>
+            <label htmlFor="signup-password" style={{ display: "block", fontSize: "13px", fontWeight: 500, color: p.label, marginBottom: "8px" }}>{t(lang, "login.password")}</label>
             <div style={{ position: "relative" }}>
               <span style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", color: p.iconMuted, pointerEvents: "none" }}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -325,7 +331,7 @@ export default function SignupPage() {
 
           {/* CONFIRM PASSWORD */}
           <div style={{ marginBottom: "16px" }}>
-            <label htmlFor="signup-confirm" style={{ display: "block", fontSize: "13px", fontWeight: 500, color: p.label, marginBottom: "8px" }}>Confirm password</label>
+            <label htmlFor="signup-confirm" style={{ display: "block", fontSize: "13px", fontWeight: 500, color: p.label, marginBottom: "8px" }}>{t(lang, "signup.confirm")}</label>
             <div style={{ position: "relative" }}>
               <span style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)", color: p.iconMuted, pointerEvents: "none" }}>
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -378,7 +384,7 @@ export default function SignupPage() {
               <LoaderCircle className="h-5 w-5 animate-spin" />
             ) : (
               <>
-                Create account
+                {t(lang, "login.signUp")}
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                   <line x1="5" y1="12" x2="19" y2="12"/><polyline points="12,5 19,12 12,19"/>
                 </svg>
@@ -390,7 +396,7 @@ export default function SignupPage() {
           {/* DIVIDER */}
           <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "20px" }}>
             <div style={{ flex: 1, height: "1px", background: p.lineDivider }} />
-            <span style={{ fontSize: "13px", color: p.descFaint, whiteSpace: "nowrap" }}>or continue with</span>
+            <span style={{ fontSize: "13px", color: p.descFaint, whiteSpace: "nowrap" }}>{t(lang, "login.or")}</span>
             <div style={{ flex: 1, height: "1px", background: p.lineDivider }} />
           </div>
 
@@ -420,8 +426,8 @@ export default function SignupPage() {
           </div>
 
           <div style={{ textAlign: "center", fontSize: "14px", color: p.desc }}>
-            Already have an account?{" "}
-            <Link href="/login" style={{ color: "#0A193D", textDecoration: "none", fontWeight: 500 }}>Log in</Link>
+            {t(lang, "login.haveAccount")}{" "}
+            <Link href="/login" style={{ color: "#0A193D", textDecoration: "none", fontWeight: 500 }}>{t(lang, "login.signIn")}</Link>
           </div>
         </div>
       </div>
