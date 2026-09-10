@@ -79,7 +79,7 @@ export default function SignupPage() {
     const { error: signUpError } = await supabase.auth.signUp({
       email,
       password,
-      options: { emailRedirectTo: `${window.location.origin}/auth/callback?next=/dashboard` },
+      options: { emailRedirectTo: `${window.location.origin}/auth/callback?next=/onboarding` },
     });
     setLoading(false);
     if (signUpError) {
@@ -90,7 +90,7 @@ export default function SignupPage() {
     const { data } = await supabase.auth.getSession();
     if (data.session) {
       toast({ type: "success", message: "Account created. Welcome to Finlo." });
-      router.push("/dashboard");
+      router.push("/onboarding");
       router.refresh();
     } else {
       toast({ type: "success", message: "Check your email to confirm your account." });

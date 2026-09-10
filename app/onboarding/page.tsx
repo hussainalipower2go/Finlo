@@ -64,10 +64,11 @@ const GOALS: { value: Goal; desc: string }[] = [
   { value: "Plan a big purchase", desc: "Save toward something specific" },
 ];
 
-const TOTAL_STEPS = 4;
+const TOTAL_STEPS = 5;
 
 export default function OnboardingPage() {
   const [step, setStep] = useState(1);
+  const [name, setName] = useState("");
   const [currency, setCurrency] = useState("PKR");
   const [income, setIncome] = useState("");
   const [incomeType, setIncomeType] = useState<IncomeType | null>(null);
@@ -90,10 +91,11 @@ export default function OnboardingPage() {
   const selectedCurrency = CURRENCIES.find(c => c.code === currency)!;
 
   const canContinue =
-    (step === 1 && !!currency) ||
-    (step === 2 && income.trim().length > 0 && Number(income) > 0) ||
-    (step === 3 && !!incomeType) ||
-    (step === 4 && !!goal);
+    (step === 1 && name.trim().length > 0) ||
+    (step === 2 && !!currency) ||
+    (step === 3 && income.trim().length > 0 && Number(income) > 0) ||
+    (step === 4 && !!incomeType) ||
+    (step === 5 && !!goal);
 
   const isLastStep = step === TOTAL_STEPS;
 
@@ -107,12 +109,16 @@ export default function OnboardingPage() {
         return;
       }
       const preferences = {
+        name: name.trim(),
         currency,
         monthlyIncome: Number(income),
         incomeType,
         goal,
       };
       try {
+        await supabase.auth.updateUser({
+          data: { full_name: name.trim(), currency, onboarded: true },
+        });
         const { data: existing } = await supabase
           .from("income")
           .select("id")
@@ -221,8 +227,36 @@ export default function OnboardingPage() {
           </div>
         </div>
 
-        {/* STEP 1 — CURRENCY */}
+        {/* STEP 1 — NAME */}
         {step === 1 && (
+          <div>
+            <h2 style={{ fontSize: "24px", fontWeight: 700, color: "#1e293b", margin: "0 0 6px 0" }}>What should we call you?</h2>
+            <p style={{ fontSize: "14px", color: "rgba(71,85,105,0.8)", margin: "0 0 28px 0" }}>This will show on your dashboard and in reports.</p>
+            <label style={{ display: "block", fontSize: "13px", fontWeight: 500, color: "rgba(51,65,85,0.9)", marginBottom: "8px" }}>Your name</label>
+            <input
+              type="text"
+              value={name}
+              onChange={e => setName(e.target.value)}
+              placeholder="e.g. Ali Khan"
+              autoFocus
+              style={{
+                width: "100%", padding: "16px",
+                background: "rgba(255,255,255,0.92)", border: "1px solid rgba(10,25,61,0.22)",
+                borderRadius: "12px", fontSize: "16px", fontWeight: 500, color: "#0f172a",
+                outline: "none", fontFamily: "inherit", boxSizing: "border-box",
+              }}
+              onFocus={e => e.target.style.borderColor = "rgba(10,25,61,0.55)"}
+              onBlur={e => e.target.style.borderColor = "rgba(10,25,61,0.22)"}
+              onKeyDown={e => { if (e.key === "Enter" && canContinue) goNext(); }}
+            />
+            <p style={{ fontSize: "12px", color: "rgba(100,116,139,0.7)", margin: "10px 0 0 0" }}>
+              Aap ise baad mein Settings → Edit Profile se kabhi bhi change kar sakte hain.
+            </p>
+          </div>
+        )}
+
+        {/* STEP 2 — CURRENCY */}
+        {step === 2 && (
           <div>
             <h2 style={{ fontSize: "24px", fontWeight: 700, color: "#1e293b", margin: "0 0 6px 0" }}>What&apos;s your currency?</h2>
             <p style={{ fontSize: "14px", color: "rgba(71,85,105,0.8)", margin: "0 0 28px 0" }}>We&apos;ll use this everywhere your money is shown.</p>
@@ -253,8 +287,8 @@ export default function OnboardingPage() {
           </div>
         )}
 
-        {/* STEP 2 — MONTHLY INCOME */}
-        {step === 2 && (
+        {/* STEP 3 — MONTHLY INCOME */}
+        {step === 3 && (
           <div>
             <h2 style={{ fontSize: "24px", fontWeight: 700, color: "#1e293b", margin: "0 0 6px 0" }}>Typical monthly income</h2>
             <p style={{ fontSize: "14px", color: "rgba(71,85,105,0.8)", margin: "0 0 28px 0" }}>A rough figure is fine — you can refine this later.</p>
@@ -287,8 +321,8 @@ export default function OnboardingPage() {
           </div>
         )}
 
-        {/* STEP 3 — INCOME TYPE */}
-        {step === 3 && (
+        {/* STEP 4 — INCOME TYPE */}
+        {step === 4 && (
           <div>
             <h2 style={{ fontSize: "24px", fontWeight: 700, color: "#1e293b", margin: "0 0 6px 0" }}>How does your income arrive?</h2>
             <p style={{ fontSize: "14px", color: "rgba(71,85,105,0.8)", margin: "0 0 28px 0" }}>This shapes how we forecast your upcoming money.</p>
@@ -318,8 +352,8 @@ export default function OnboardingPage() {
           </div>
         )}
 
-        {/* STEP 4 — FINANCIAL GOAL */}
-        {step === 4 && (
+        {/* STEP 5 — FINANCIAL GOAL */}
+        {step === 5 && (
           <div>
             <h2 style={{ fontSize: "24px", fontWeight: 700, color: "#1e293b", margin: "0 0 6px 0" }}>What matters most right now?</h2>
             <p style={{ fontSize: "14px", color: "rgba(71,85,105,0.8)", margin: "0 0 28px 0" }}>We&apos;ll tailor your dashboard around this.</p>

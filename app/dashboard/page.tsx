@@ -285,6 +285,11 @@ export default function FinloApp() {
       setOpeningBalance(typeof savedOpeningBalance === "number" ? savedOpeningBalance : 0);
       const savedLang = u.user_metadata?.language as string | undefined;
       if (savedLang && LANGUAGES.some((l) => l.code === savedLang)) setLang(savedLang as LangCode);
+      const onb = u.user_metadata as Record<string, unknown> | undefined;
+      if (onb && !onb.onboarded && !onb.currency && !onb.full_name) {
+        router.replace("/onboarding");
+        return;
+      }
     };
     checkAuth();
   }, [supabase.auth, router]);
