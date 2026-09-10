@@ -724,6 +724,3 @@ html.dark .admin-bottom-nav .admin-bnav-item.active,
     opacity: 0.45;
   }
 }
-
-.finlo-wa { position: fixed; right: 22px; bottom: 22px; }
-@media (max-width: 767px) { .finlo-wa { right: 16px; bottom: calc(90px + env(safe-area-inset-bottom, 0px)); } }
