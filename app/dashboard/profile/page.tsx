@@ -188,16 +188,6 @@ export default function ProfilePage() {
           </button>
         </nav>
 
-        {/* Upgrade Banner */}
-        <div style={{ margin: '0 12px 14px', padding: '14px', borderRadius: 12, background: 'linear-gradient(135deg,rgba(20,36,83,0.12),rgba(10,25,61,0.08))', border: '1px solid rgba(10,25,61,0.2)' }}>
-          <div style={{ fontSize: 18, marginBottom: 4 }}>👑</div>
-          <div style={{ fontWeight: 600, fontSize: 13, marginBottom: 4, color: colors.text }}>Upgrade to Premium</div>
-          <div style={{ fontSize: 11.5, color: colors.textSub, marginBottom: 10, lineHeight: 1.4 }}>Unlock advanced analytics, custom categories and more.</div>
-          <button style={{ width: '100%', padding: '7px 0', borderRadius: 7, border: `1px solid ${colors.accent}`, background: 'transparent', color: colors.accent, fontWeight: 600, fontSize: 12, cursor: 'pointer' }}>
-            Upgrade Now
-          </button>
-        </div>
-
         {/* User */}
         <div style={{ padding: '12px 14px', borderTop: `1px solid ${colors.cardBorder}`, display: 'flex', alignItems: 'center', gap: 10 }}>
           <div style={{ width: 34, height: 34, borderRadius: '50%', background: 'linear-gradient(135deg,#142453,#0A193D)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700, fontSize: 13, flexShrink: 0 }}>{initial}</div>
