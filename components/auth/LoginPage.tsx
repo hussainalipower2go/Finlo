@@ -223,7 +223,7 @@ export function LoginPage() {
                 </div>
                 <div className="finlo-f-text">
                   <div className="finlo-f-title" style={{ fontSize: "clamp(13px, 1.15vw, 15px)", color: "#17264A" }}>{f.title}</div>
-                  <div className="finlo-f-desc" style={{ fontSize: "clamp(12px, 1.1vw, 13px)", color: "#7890FF" }}>{f.desc}</div>
+                  <div className="finlo-f-desc" style={{ fontSize: "clamp(12px, 1.1vw, 13px)", color: "#fff", fontWeight: 500 }}>{f.desc}</div>
                 </div>
               </div>
             ))}
