@@ -1,10 +1,10 @@
 "use client";
 import { useState, useEffect } from "react";
+import Image from "next/image";
 import React from "react";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/components/providers/ToastProvider";
 import { createClient } from "@/lib/supabase";
-import { FinloLogoImg } from "@/components/branding/FinloLogoImg";
 
 type IncomeType = "Salary" | "Freelance" | "Business" | "Mixed";
 type Goal = "Build savings" | "Get out of debt" | "Track spending" | "Plan a big purchase";
@@ -153,13 +153,16 @@ export default function OnboardingPage() {
   }
 
   const cardStyle: React.CSSProperties = {
-    background: "rgba(255,255,255,0.9)",
-    border: "1px solid rgba(10,25,61,0.22)",
-    borderRadius: "24px",
-    padding: "48px",
+    background: "rgba(255,255,255,0.38)",
+    border: "1px solid rgba(255,255,255,0.75)",
+    borderRadius: "28px",
+    padding: "clamp(28px, 4vw, 44px)",
     width: "100%",
     maxWidth: "520px",
     boxSizing: "border-box",
+    boxShadow: "0 24px 60px rgba(10,25,61,0.20), inset 0 1px 0 rgba(255,255,255,0.85)",
+    backdropFilter: "blur(22px) saturate(180%)",
+    WebkitBackdropFilter: "blur(22px) saturate(180%)",
   };
 
   const optionBase: React.CSSProperties = {
@@ -172,6 +175,9 @@ export default function OnboardingPage() {
     cursor: "pointer",
     textAlign: "left",
     fontFamily: "inherit",
+    border: "1px solid rgba(255,255,255,0.8)",
+    background: "rgba(255,255,255,0.72)",
+    boxShadow: "0 6px 18px rgba(10,25,61,0.10), inset 0 1px 0 rgba(255,255,255,0.85)",
     transition: "border-color 120ms ease, background 120ms ease",
   };
 
@@ -179,29 +185,35 @@ export default function OnboardingPage() {
     <div style={{
       minHeight: "100vh",
       width: "100%",
-      background: "#FEFBFE",
+      backgroundImage: "url('/login-bg.png')",
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+      backgroundRepeat: "no-repeat",
       display: "flex",
       flexDirection: "column",
       alignItems: "center",
       justifyContent: "center",
-      fontFamily: "'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+      fontFamily: "var(--font-manrope), 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
       position: "relative",
       overflow: "hidden",
       padding: "40px 20px",
     }}>
 
-      {/* ambient glow */}
-      <div style={{
-        position: "absolute", top: "-120px", left: "50%", transform: "translateX(-50%)",
-        width: "560px", height: "300px",
-        background: "radial-gradient(ellipse, rgba(20,36,83,0.35) 0%, transparent 70%)",
-        filter: "blur(40px)", pointerEvents: "none", zIndex: 0,
-      }} />
-
       {/* LOGO */}
-      <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "36px", position: "relative", zIndex: 1 }}>
-        <FinloLogoImg size={36} />
-        <span style={{ fontSize: "16px", fontWeight: 700, color: "#0f172a" }}>Finlo</span>
+      <div style={{ display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "30px", position: "relative", zIndex: 1 }}>
+        <Image
+          src="/finlo-logo-horizontal.png"
+          alt="Finlo"
+          width={968}
+          height={364}
+          quality={100}
+          style={{
+            width: "clamp(180px, 30vw, 240px)",
+            height: "auto",
+            objectFit: "contain",
+            flexShrink: 0,
+          }}
+        />
       </div>
 
       <div className="finlo-onboard-card" style={{ ...cardStyle, position: "relative", zIndex: 1 }}>
@@ -241,12 +253,13 @@ export default function OnboardingPage() {
               autoFocus
               style={{
                 width: "100%", padding: "16px",
-                background: "rgba(255,255,255,0.92)", border: "1px solid rgba(10,25,61,0.22)",
+                background: "rgba(255,255,255,0.95)", border: "1px solid rgba(255,255,255,0.85)",
                 borderRadius: "12px", fontSize: "16px", fontWeight: 500, color: "#0f172a",
+                boxShadow: "0 6px 18px rgba(10,25,61,0.10), inset 0 1px 0 rgba(255,255,255,0.9)",
                 outline: "none", fontFamily: "inherit", boxSizing: "border-box",
               }}
-              onFocus={e => e.target.style.borderColor = "rgba(10,25,61,0.55)"}
-              onBlur={e => e.target.style.borderColor = "rgba(10,25,61,0.22)"}
+              onFocus={e => e.target.style.borderColor = "#0A193D" }
+              onBlur={e => e.target.style.borderColor = "rgba(10,25,61,0.35)"}
               onKeyDown={e => { if (e.key === "Enter" && canContinue) goNext(); }}
             />
             <p style={{ fontSize: "12px", color: "rgba(100,116,139,0.7)", margin: "10px 0 0 0" }}>
@@ -267,8 +280,8 @@ export default function OnboardingPage() {
                   <button key={c.code} type="button" onClick={() => setCurrency(c.code)}
                     style={{
                       ...optionBase,
-                      background: active ? "rgba(10,25,61,0.14)" : "rgba(255,255,255,0.92)",
-                      border: active ? "1px solid rgba(10,25,61,0.6)" : "1px solid rgba(10,25,61,0.22)",
+                      background: active ? "rgba(10,25,61,0.18)" : "rgba(255,255,255,0.72)",
+                      border: active ? "1px solid rgba(10,25,61,0.6)" : "1px solid rgba(255,255,255,0.8)",
                     }}>
                     <span style={{
                       width: "34px", height: "34px", borderRadius: "9px", flexShrink: 0,
@@ -307,12 +320,13 @@ export default function OnboardingPage() {
                 placeholder="0"
                 style={{
                   width: "100%", padding: "16px 16px 16px 64px",
-                  background: "rgba(255,255,255,0.92)", border: "1px solid rgba(10,25,61,0.22)",
+                  background: "rgba(255,255,255,0.95)", border: "1px solid rgba(255,255,255,0.85)",
                   borderRadius: "12px", fontSize: "20px", fontWeight: 600, color: "#0f172a",
+                  boxShadow: "0 6px 18px rgba(10,25,61,0.10), inset 0 1px 0 rgba(255,255,255,0.9)",
                   outline: "none", fontFamily: "inherit", boxSizing: "border-box",
                 }}
-                onFocus={e => e.target.style.borderColor = "rgba(10,25,61,0.55)"}
-                onBlur={e => e.target.style.borderColor = "rgba(10,25,61,0.22)"}
+                onFocus={e => e.target.style.borderColor = "#0A193D"}
+                onBlur={e => e.target.style.borderColor = "rgba(10,25,61,0.35)"}
               />
             </div>
             <p style={{ fontSize: "12px", color: "rgba(100,116,139,0.7)", margin: "10px 0 0 0" }}>
@@ -333,8 +347,8 @@ export default function OnboardingPage() {
                   <button key={t.value} type="button" onClick={() => setIncomeType(t.value)}
                     style={{
                       ...optionBase,
-                      background: active ? "rgba(10,25,61,0.14)" : "rgba(255,255,255,0.92)",
-                      border: active ? "1px solid rgba(10,25,61,0.6)" : "1px solid rgba(10,25,61,0.22)",
+                      background: active ? "rgba(10,25,61,0.18)" : "rgba(255,255,255,0.72)",
+                      border: active ? "1px solid rgba(10,25,61,0.6)" : "1px solid rgba(255,255,255,0.8)",
                     }}>
                     <span style={{
                       width: "38px", height: "38px", borderRadius: "10px", flexShrink: 0,
@@ -364,8 +378,8 @@ export default function OnboardingPage() {
                   <button key={g.value} type="button" onClick={() => setGoal(g.value)}
                     style={{
                       ...optionBase,
-                      background: active ? "rgba(10,25,61,0.14)" : "rgba(255,255,255,0.92)",
-                      border: active ? "1px solid rgba(10,25,61,0.6)" : "1px solid rgba(10,25,61,0.22)",
+                      background: active ? "rgba(10,25,61,0.18)" : "rgba(255,255,255,0.72)",
+                      border: active ? "1px solid rgba(10,25,61,0.6)" : "1px solid rgba(255,255,255,0.8)",
                       justifyContent: "space-between",
                     }}>
                     <span>
@@ -392,13 +406,14 @@ export default function OnboardingPage() {
           {step > 1 && (
             <button type="button" onClick={goBack}
               style={{
-                flex: "0 0 auto", padding: "15px 22px", background: "rgba(255,255,255,0.92)",
-                border: "1px solid rgba(10,25,61,0.25)", borderRadius: "14px",
+                flex: "0 0 auto", padding: "15px 22px", background: "rgba(255,255,255,0.72)",
+                border: "1px solid rgba(255,255,255,0.85)", borderRadius: "14px",
                 fontSize: "15px", fontWeight: 600, color: "rgba(51,65,85,0.9)",
+                boxShadow: "0 6px 18px rgba(10,25,61,0.10), inset 0 1px 0 rgba(255,255,255,0.85)",
                 cursor: "pointer", fontFamily: "inherit",
               }}
-              onMouseOver={e => { e.currentTarget.style.borderColor = "rgba(10,25,61,0.4)"; }}
-              onMouseOut={e => { e.currentTarget.style.borderColor = "rgba(10,25,61,0.25)"; }}
+              onMouseOver={e => { e.currentTarget.style.borderColor = "#0A193D"; }}
+              onMouseOut={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.85)"; }}
             >
               Back
             </button>
