@@ -135,8 +135,8 @@ export function LoginPage() {
               width={44}
               height={44}
               style={{
-                width: "clamp(34px, 3vw, 44px)",
-                height: "clamp(34px, 3vw, 44px)",
+                width: "clamp(41px, 3.6vw, 53px)",
+                height: "clamp(41px, 3.6vw, 53px)",
                 borderRadius: "clamp(8px, 0.8vw, 10px)",
                 objectFit: "cover",
                 flexShrink: 0,
