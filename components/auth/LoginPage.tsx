@@ -134,7 +134,13 @@ export function LoginPage() {
               alt="Finlo"
               width={44}
               height={44}
-              style={{ borderRadius: 10, objectFit: "cover", flexShrink: 0 }}
+              style={{
+                width: "clamp(34px, 3vw, 44px)",
+                height: "clamp(34px, 3vw, 44px)",
+                borderRadius: "clamp(8px, 0.8vw, 10px)",
+                objectFit: "cover",
+                flexShrink: 0,
+              }}
             />
             <div>
               <div style={{ fontSize: "clamp(24px, 3vw, 32px)", fontWeight: 700, color: "#0B1838", lineHeight: 1, letterSpacing: "-0.5px" }}>Finlo</div>
