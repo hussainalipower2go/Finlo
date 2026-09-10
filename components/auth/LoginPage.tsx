@@ -110,12 +110,12 @@ export function LoginPage() {
         display: "flex",
         flexDirection: "column",
         justifyContent: "center",
-        padding: "60px 56px",
+        padding: "clamp(28px, 5vw, 60px) clamp(24px, 5vw, 56px)",
         overflow: "hidden",
       }}>
-        <div style={{ position: "relative", zIndex: 1 }}>
+        <div style={{ position: "relative", zIndex: 1, width: "100%", maxWidth: "520px" }}>
           {/* Logo */}
-          <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "48px" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "clamp(28px, 6vh, 48px)" }}>
             <FinloLogoImg />
             <div>
               <div style={{ fontSize: "17px", fontWeight: 700, color: p.text, lineHeight: 1.1 }}>Finlo</div>
@@ -125,8 +125,8 @@ export function LoginPage() {
 
           {/* Hero heading */}
           <h1 style={{
-            fontSize: "clamp(36px, 4vw, 58px)", fontWeight: 800, lineHeight: 1.05,
-            color: p.text, letterSpacing: "-1.5px", margin: "0 0 18px 0",
+            fontSize: "clamp(32px, 4.2vw, 58px)", fontWeight: 800, lineHeight: 1.05,
+            color: p.text, letterSpacing: "-1.5px", margin: "0 0 clamp(14px, 2vh, 18px) 0",
           }}>
             Plan today.<br />
             Live <span style={{
@@ -136,15 +136,15 @@ export function LoginPage() {
           </h1>
 
           <p style={{
-            fontSize: "15px", color: p.sub, lineHeight: 1.65,
-            margin: "0 0 36px 0", maxWidth: "390px",
+            fontSize: "clamp(13px, 1.4vw, 15px)", color: p.sub, lineHeight: 1.65,
+            margin: "0 0 clamp(24px, 4vh, 36px) 0", maxWidth: "390px",
           }}>
             Finlo helps you understand your cash flow,<br />
             plan ahead, and spend with confidence.
           </p>
 
           {/* Features */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: "clamp(12px, 2vh, 18px)" }}>
             {[
               {
                 icon: (
@@ -179,17 +179,17 @@ export function LoginPage() {
                 desc: "Track upcoming bills, income, and goals.",
               },
             ].map((f, i) => (
-              <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: "12px" }}>
+              <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: "clamp(10px, 1.2vw, 12px)" }}>
                 <div style={{
-                  width: "38px", height: "38px", borderRadius: "10px", flexShrink: 0,
+                  width: "clamp(32px, 3.5vw, 38px)", height: "clamp(32px, 3.5vw, 38px)", borderRadius: "10px", flexShrink: 0,
                   background: "rgba(10,25,61,0.08)", border: "1px solid rgba(10,25,61,0.25)",
                   display: "flex", alignItems: "center", justifyContent: "center",
                 }}>
                   {f.icon}
                 </div>
                 <div>
-                  <div style={{ fontSize: "13.5px", fontWeight: 600, color: p.title, marginBottom: "2px" }}>{f.title}</div>
-                  <div style={{ fontSize: "12px", color: p.desc, lineHeight: 1.5 }}>{f.desc}</div>
+                  <div style={{ fontSize: "clamp(12.5px, 1.2vw, 13.5px)", fontWeight: 600, color: p.title, marginBottom: "2px" }}>{f.title}</div>
+                  <div style={{ fontSize: "clamp(11px, 1.1vw, 12px)", color: p.desc, lineHeight: 1.5 }}>{f.desc}</div>
                 </div>
               </div>
             ))}
@@ -204,7 +204,7 @@ export function LoginPage() {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        padding: "40px 48px",
+        padding: "clamp(24px, 4vw, 48px) clamp(20px, 5vw, 48px)",
         position: "relative",
       }}>
         <div className="finlo-card" style={{
@@ -213,7 +213,7 @@ export function LoginPage() {
           background: "rgba(255,255,255,0.38)",
           border: "1px solid rgba(255,255,255,0.75)",
           borderRadius: "28px",
-          padding: "44px 44px",
+          padding: "clamp(28px, 4vw, 44px)",
           boxShadow: "0 24px 60px rgba(10,25,61,0.20), inset 0 1px 0 rgba(255,255,255,0.85)",
           backdropFilter: "blur(22px) saturate(180%)",
           WebkitBackdropFilter: "blur(22px) saturate(180%)",
