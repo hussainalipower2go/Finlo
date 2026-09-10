@@ -113,13 +113,6 @@ export function LoginPage() {
         padding: "60px 56px",
         overflow: "hidden",
       }}>
-        {/* Subtle overlay for text readability */}
-        <div style={{
-          position: "absolute", inset: 0,
-          background: "linear-gradient(160deg, rgba(254,251,254,0.82) 0%, rgba(254,251,254,0.65) 50%, rgba(254,251,254,0.75) 100%)",
-          zIndex: 0,
-        }} />
-
         <div style={{ position: "relative", zIndex: 1 }}>
           {/* Logo */}
           <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "48px" }}>
@@ -217,8 +210,13 @@ export function LoginPage() {
         <div className="finlo-card" style={{
           width: "100%",
           maxWidth: "480px",
-          background: "transparent",
-          padding: "40px 0",
+          background: "rgba(255,255,255,0.38)",
+          border: "1px solid rgba(255,255,255,0.75)",
+          borderRadius: "28px",
+          padding: "44px 44px",
+          boxShadow: "0 24px 60px rgba(10,25,61,0.20), inset 0 1px 0 rgba(255,255,255,0.85)",
+          backdropFilter: "blur(22px) saturate(180%)",
+          WebkitBackdropFilter: "blur(22px) saturate(180%)",
           position: "relative",
           zIndex: 1,
         }}>
