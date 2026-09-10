@@ -32,6 +32,15 @@ export function LoginPage() {
     return () => { active = false; };
   }, [router]);
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const e = params.get("error");
+    if (e) {
+      const reason = params.get("reason");
+      setError(reason ? decodeURIComponent(reason) : `Sign in failed (${e}).`);
+    }
+  }, []);
+
   const p = {
     line: "rgba(10,25,61,0.22)",
     lineDivider: "rgba(10,25,61,0.16)",
