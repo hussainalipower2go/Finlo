@@ -126,7 +126,7 @@ export function LoginPage() {
         padding: "clamp(28px, 5vw, 60px) clamp(24px, 5vw, 56px)",
         overflow: "hidden",
       }}>
-        <div style={{ position: "relative", zIndex: 1, width: "100%", maxWidth: "620px" }}>
+        <div style={{ position: "relative", zIndex: 1, width: "80%", maxWidth: "620px", left: "20%" }}>
           {/* Logo */}
           <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "clamp(28px, 6vh, 48px)" }}>
             <FinloLogoImg />
