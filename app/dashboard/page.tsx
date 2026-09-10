@@ -2150,7 +2150,7 @@ function SettingsPage({ colors, displayName, userEmail, onSignOut, currency, onC
   const [notifBills, setNotifBills] = useState(() => notifPref(NOTIF_PREF_BILLS, true));
   const [notifBudget, setNotifBudget] = useState(() => notifPref(NOTIF_PREF_BUDGET, true));
   const [notifIncome, setNotifIncome] = useState(() => notifPref(NOTIF_PREF_INCOME, true));
-  const [exportModal, setExportModal] = useState<"json" | "pdf" | null>(null);
+  const [exportModal, setExportModal] = useState<"pdf" | null>(null);
   const [exportMonth, setExportMonth] = useState("all");
 
   const exportMonthOptions = Array.from({ length: 12 }, (_, i) => {
@@ -2177,47 +2177,6 @@ function SettingsPage({ colors, displayName, userEmail, onSignOut, currency, onC
     onCurrencyChange(draftCurrency);
     setSaved(true);
     setTimeout(() => setSaved(false), 2000);
-  };
-
-  const handleExport = async () => {
-    if (exporting) return;
-    setExporting(true);
-    setExportMsg("");
-    try {
-      const [transactions, income, expenses, recurring] = await Promise.all([
-        getUserTransactionsClient(),
-        getUserIncomeClient(),
-        getUserExpensesClient(),
-        getUserRecurringExpensesClient(),
-      ]);
-      const txns = transactions.filter((t) => inExportMonth(t.date));
-      const inc = income.filter((i) => inExportMonth(i.date));
-      const exp = expenses.filter((e) => inExportMonth(e.date));
-      const payload = {
-        exportedAt: new Date().toISOString(),
-        currency,
-        period: exportMonth === "all" ? "all" : exportMonth,
-        transactions: txns,
-        income: inc,
-        expenses: exp,
-        recurring,
-      };
-      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `finlo-export-${exportMonth === "all" ? "all" : exportMonth}-${new Date().toISOString().slice(0, 10)}.json`;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-      setExportMsg("✓ Data exported");
-    } catch (e) {
-      setExportMsg("Export failed, please try again");
-      console.error(e);
-    } finally {
-      setExporting(false);
-    }
   };
 
   const handleExportPDF = async () => {
@@ -2453,11 +2412,8 @@ function SettingsPage({ colors, displayName, userEmail, onSignOut, currency, onC
       <div style={{ padding: "22px 24px", borderRadius: 16, background: colors.card, border: `1px solid ${colors.cardBorder}` }}>
         <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 14, display: "flex", alignItems: "center", gap: 8 }}><Download size={16} color="#0A193D" /> Data & Privacy</div>
         <div style={{ display: "flex", gap: 10, flexWrap: "wrap", alignItems: "center" }}>
-          <button onClick={() => { setExportMonth("all"); setExportModal("json"); }} disabled={exporting} style={{ display: "flex", alignItems: "center", gap: 6, padding: "9px 16px", borderRadius: 9, border: `1px solid ${colors.cardBorder}`, background: "transparent", color: colors.text, fontSize: 13, cursor: exporting ? "not-allowed" : "pointer", opacity: exporting ? 0.7 : 1 }}>
-            <Download size={14} /> {exporting ? "Exporting..." : "Export JSON"}
-          </button>
           <button onClick={() => { setExportMonth("all"); setExportModal("pdf"); }} disabled={exporting} style={{ display: "flex", alignItems: "center", gap: 6, padding: "9px 16px", borderRadius: 9, border: `1px solid ${colors.cardBorder}`, background: "transparent", color: colors.text, fontSize: 13, cursor: exporting ? "not-allowed" : "pointer", opacity: exporting ? 0.7 : 1 }}>
-            <FileText size={14} /> {exporting ? "Exporting..." : "Export PDF"}
+            <FileText size={14} /> {exporting ? "Exporting..." : "Export PDF (Statement)"}
           </button>
           <button onClick={() => { setConfirmDelete(true); setDeleteErr(""); }} style={{ display: "flex", alignItems: "center", gap: 6, padding: "9px 16px", borderRadius: 9, border: "1px solid rgba(239,68,68,0.4)", background: "transparent", color: "#ef4444", fontSize: 13, cursor: "pointer" }}>
             <Trash2 size={14} /> Delete Account
@@ -2486,7 +2442,7 @@ function SettingsPage({ colors, displayName, userEmail, onSignOut, currency, onC
         {exportModal && (
           <div onClick={() => setExportModal(null)} style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.45)", backdropFilter: "blur(4px)", display: "flex", alignItems: "center", justifyContent: "center", zIndex: 300, padding: 20 }}>
             <div onClick={(e) => e.stopPropagation()} style={{ width: "min(460px, 100%)", borderRadius: 20, background: colors.card, border: `1px solid ${colors.cardBorder}`, boxShadow: "0 20px 60px rgba(0,0,0,0.25)", padding: 24 }}>
-              <div style={{ fontWeight: 700, fontSize: 16, color: colors.text, marginBottom: 4 }}>Export {exportModal === "json" ? "JSON" : "PDF"} Statement</div>
+              <div style={{ fontWeight: 700, fontSize: 16, color: colors.text, marginBottom: 4 }}>Export PDF Statement</div>
               <div style={{ fontSize: 12.5, color: colors.textSub, marginBottom: 16 }}>Kis month ka data export karna hai? (last 1 year ke months available hain)</div>
               <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 8 }}>
                 <button onClick={() => setExportMonth("all")} style={{ padding: "9px 4px", borderRadius: 9, border: `1px solid ${exportMonth === "all" ? "#0A193D" : colors.cardBorder}`, background: exportMonth === "all" ? "rgba(10,25,61,0.1)" : "transparent", color: exportMonth === "all" ? "#0A193D" : colors.textSub, fontSize: 12, fontWeight: exportMonth === "all" ? 700 : 500, cursor: "pointer" }}>
@@ -2499,8 +2455,8 @@ function SettingsPage({ colors, displayName, userEmail, onSignOut, currency, onC
                 ))}
               </div>
               <div style={{ display: "flex", gap: 10, marginTop: 18 }}>
-                <button disabled={exporting} onClick={() => { setExportModal(null); void (exportModal === "json" ? handleExport() : handleExportPDF()); }} style={{ flex: 1, padding: "11px", borderRadius: 10, border: "none", background: "#0A193D", color: "#fff", fontWeight: 700, fontSize: 13.5, cursor: exporting ? "not-allowed" : "pointer", opacity: exporting ? 0.6 : 1 }}>
-                  {exporting ? "Exporting..." : exportModal === "json" ? "Download JSON" : "Download PDF"}
+                <button disabled={exporting} onClick={() => { setExportModal(null); void handleExportPDF(); }} style={{ flex: 1, padding: "11px", borderRadius: 10, border: "none", background: "#0A193D", color: "#fff", fontWeight: 700, fontSize: 13.5, cursor: exporting ? "not-allowed" : "pointer", opacity: exporting ? 0.6 : 1 }}>
+                  {exporting ? "Exporting..." : "Download PDF"}
                 </button>
                 <button onClick={() => setExportModal(null)} style={{ padding: "11px 18px", borderRadius: 10, border: `1px solid ${colors.cardBorder}`, background: "transparent", color: colors.textSub, fontSize: 13.5, cursor: "pointer" }}>
                   Cancel
