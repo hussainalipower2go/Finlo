@@ -144,6 +144,11 @@ h1, h2, h3, h4, h5, h6,
   gap: var(--f-pad-xs);
   z-index: 100;
 }
+@media (min-width: 768px) {
+  .finlo-dash-fab > button:first-child {
+    display: none !important;
+  }
+}
 .finlo-dash-bottomnav {
   left: var(--f-pad-sm) !important;
   right: var(--f-pad-sm) !important;
@@ -214,14 +219,7 @@ h1, h2, h3, h4, h5, h6,
   }
 }
 
-.finlo-dash-ai {
-  display: none;
-}
-
 @media (max-width: 767px) {
-  .finlo-dash-ai {
-    display: flex;
-  }
   .finlo-dash-bottomnav {
     display: flex !important;
   }
