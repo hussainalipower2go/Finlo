@@ -159,7 +159,12 @@ export function LoginPage() {
           </p>
 
           {/* Features */}
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "clamp(24px, 3vw, 40px)" }}>
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+            gap: "clamp(20px, 2.5vw, 32px)",
+            alignItems: "start",
+          }}>
             {[
               {
                 icon: (
@@ -194,7 +199,7 @@ export function LoginPage() {
                 desc: "Track upcoming bills, income, and goals.",
               },
             ].map((f, i) => (
-              <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: "clamp(8px, 0.9vw, 10px)", flex: "1 1 130px", minWidth: "0" }}>
+              <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: "clamp(8px, 0.9vw, 10px)", minWidth: "0" }}>
                 <div style={{
                   width: "clamp(28px, 3vw, 34px)", height: "clamp(28px, 3vw, 34px)", borderRadius: "10px", flexShrink: 0,
                   background: "transparent", border: "none",
@@ -202,9 +207,9 @@ export function LoginPage() {
                 }}>
                   {f.icon}
                 </div>
-                <div>
-                  <div style={{ fontSize: "clamp(13px, 1.2vw, 15px)", fontWeight: 600, color: "#17264A", marginBottom: "2px", whiteSpace: "nowrap" }}>{f.title}</div>
-                  <div style={{ fontSize: "clamp(12px, 1.1vw, 13px)", fontWeight: 400, color: "#71809F", lineHeight: 1.45, maxWidth: "150px" }}>{f.desc}</div>
+                <div style={{ minWidth: "0" }}>
+                  <div style={{ fontSize: "clamp(13px, 1.2vw, 15px)", fontWeight: 600, color: "#17264A", marginBottom: "3px", lineHeight: 1.3 }}>{f.title}</div>
+                  <div style={{ fontSize: "clamp(12px, 1.1vw, 13px)", fontWeight: 400, color: "#71809F", lineHeight: 1.5, overflowWrap: "break-word" }}>{f.desc}</div>
                 </div>
               </div>
             ))}
