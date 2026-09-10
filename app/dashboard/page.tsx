@@ -719,7 +719,7 @@ const insts = await getUserInstallmentsClient();
       </div>
 
       {/* FAB - AI on top, Add below */}
-      <div className="finlo-dash-fab" style={{ position: "fixed", bottom: 28, right: 28, zIndex: 100, display: "flex", flexDirection: "column", alignItems: "center", gap: 10 }}>
+      <div className="finlo-dash-fab" style={{ position: "fixed", bottom: 102, right: 28, zIndex: 100, display: "flex", flexDirection: "column", alignItems: "center", gap: 10 }}>
         <button
           onClick={() => navigateTo("ai")}
           style={{ width: 46, height: 46, borderRadius: "50%", background: isDark ? "linear-gradient(135deg,#334155,#142453)" : "linear-gradient(135deg,#142453,#0A193D)", border: `2px solid ${colors.card}`, color: "#fff", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", boxShadow: "0 4px 16px rgba(10,25,61,0.4)", transition: "transform 0.12s" }}

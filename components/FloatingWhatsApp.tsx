@@ -14,10 +14,8 @@ export default function FloatingWhatsApp() {
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Chat on WhatsApp"
+      className="finlo-wa"
       style={{
-        position: "fixed",
-        right: 22,
-        bottom: 22,
         width: 56,
         height: 56,
         borderRadius: "50%",
