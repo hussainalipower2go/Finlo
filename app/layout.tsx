@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Poppins, Montserrat } from "next/font/google";
+import { Poppins, Montserrat, Manrope } from "next/font/google";
 import { ToastProvider } from "@/components/providers/ToastProvider";
 import "./globals.css";
 
@@ -14,6 +14,13 @@ const montserrat = Montserrat({
   subsets: ["latin"],
   weight: ["500", "600"],
   variable: "--font-montserrat",
+  display: "swap",
+});
+
+const manrope = Manrope({
+  subsets: ["latin"],
+  weight: ["600"],
+  variable: "--font-manrope",
   display: "swap",
 });
 
@@ -47,7 +54,7 @@ interface RootLayoutProps {
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
-    <html lang="en" suppressHydrationWarning className={`${poppins.variable} ${montserrat.variable}`}>
+    <html lang="en" suppressHydrationWarning className={`${poppins.variable} ${montserrat.variable} ${manrope.variable}`}>
       <body className="min-h-screen bg-[var(--bg)] text-[var(--text)]">
         <ToastProvider>
           <div id="__next">{children}</div>

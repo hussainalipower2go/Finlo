@@ -125,14 +125,11 @@ export function LoginPage() {
 
           {/* Hero heading */}
           <h1 style={{
-            fontSize: "clamp(32px, 4.2vw, 58px)", fontWeight: 800, lineHeight: 1.05,
-            color: p.text, letterSpacing: "-1.5px", margin: "0 0 clamp(14px, 2vh, 18px) 0",
+            fontFamily: "var(--font-manrope), 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+            fontSize: "clamp(64px, 5vw, 72px)", fontWeight: 600, lineHeight: 1.05,
+            color: "#0B1838", letterSpacing: "-2.5px", margin: "0 0 clamp(14px, 2vh, 18px) 0",
           }}>
-            Plan today.<br />
-            Live <span style={{
-              background: "linear-gradient(90deg, #142453, #0A193D)",
-              WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
-            }}>tomorrow.</span>
+            Clarity today.
           </h1>
 
           <p style={{
