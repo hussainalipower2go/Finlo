@@ -558,7 +558,7 @@ export default function SettingsPage() {
 
               {exportModal && createPortal(
                 <div onClick={() => setExportModal(null)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(5px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, padding: 20 }}>
-                  <div onClick={(e) => e.stopPropagation()} style={{ width: 'min(460px, 100%)', borderRadius: 20, background: colors.card, border: `1px solid ${colors.cardBorder}`, boxShadow: '0 20px 60px rgba(0,0,0,0.35)', padding: 24 }}>
+                  <div onClick={(e) => e.stopPropagation()} style={{ width: 'min(460px, 100%)', maxHeight: '92vh', overflowY: 'auto', borderRadius: 20, background: colors.card, border: `1px solid ${colors.cardBorder}`, boxShadow: '0 20px 60px rgba(0,0,0,0.35)', padding: 24 }}>
                     <div style={{ fontWeight: 700, fontSize: 16, color: colors.text, marginBottom: 4 }}>Export PDF Statement</div>
                     <div style={{ fontSize: 12.5, color: colors.textSub, marginBottom: 16 }}>Kis month ka data export karna hai? (last 1 year ke months available hain)</div>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
