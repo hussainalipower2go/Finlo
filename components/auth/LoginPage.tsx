@@ -146,7 +146,7 @@ export function LoginPage() {
           </p>
 
           {/* Features */}
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "clamp(12px, 1.5vw, 18px)" }}>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "clamp(24px, 3vw, 40px)" }}>
             {[
               {
                 icon: (
@@ -181,7 +181,7 @@ export function LoginPage() {
                 desc: "Track upcoming bills, income, and goals.",
               },
             ].map((f, i) => (
-              <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: "clamp(8px, 0.9vw, 10px)", flex: "1 1 150px", minWidth: "0" }}>
+              <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: "clamp(8px, 0.9vw, 10px)", flex: "1 1 130px", minWidth: "0" }}>
                 <div style={{
                   width: "clamp(28px, 3vw, 34px)", height: "clamp(28px, 3vw, 34px)", borderRadius: "10px", flexShrink: 0,
                   background: "transparent", border: "none",
