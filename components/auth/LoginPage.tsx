@@ -202,14 +202,20 @@ export function LoginPage() {
                 desc: "Track upcoming bills, income, and goals.",
               },
             ].map((f, i) => (
-              <div key={i} className="finlo-feature">
+              <div key={i} className="finlo-feature" style={{
+                padding: "clamp(16px, 1.6vw, 22px)",
+                borderRadius: "18px",
+                background: "rgba(255,255,255,0.30)",
+                border: "1px solid rgba(255,255,255,0.70)",
+                backdropFilter: "blur(16px) saturate(170%)",
+                WebkitBackdropFilter: "blur(16px) saturate(170%)",
+                boxShadow: "0 8px 24px rgba(10,25,61,0.14), inset 0 1px 0 rgba(255,255,255,0.85)",
+              }}>
                 <div className="finlo-f-icon" style={{
                   width: "clamp(34px, 3.5vw, 42px)", height: "clamp(34px, 3.5vw, 42px)", borderRadius: "12px",
-                  background: "rgba(255,255,255,0.35)",
-                  border: "1px solid rgba(255,255,255,0.75)",
-                  backdropFilter: "blur(14px) saturate(160%)",
-                  WebkitBackdropFilter: "blur(14px) saturate(160%)",
-                  boxShadow: "0 6px 18px rgba(10,25,61,0.12), inset 0 1px 0 rgba(255,255,255,0.85)",
+                  background: "rgba(255,255,255,0.45)",
+                  border: "1px solid rgba(255,255,255,0.80)",
+                  boxShadow: "0 4px 12px rgba(10,25,61,0.10), inset 0 1px 0 rgba(255,255,255,0.9)",
                 }}>
                   {f.icon}
                 </div>
