@@ -97,7 +97,7 @@ export function LoginPage() {
       backgroundPosition: "center",
       backgroundRepeat: "no-repeat",
       display: "flex",
-      fontFamily: "'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+      fontFamily: "var(--font-manrope), 'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
       position: "relative",
       overflow: "hidden",
     }}>
@@ -113,33 +113,33 @@ export function LoginPage() {
         padding: "clamp(28px, 5vw, 60px) clamp(24px, 5vw, 56px)",
         overflow: "hidden",
       }}>
-        <div style={{ position: "relative", zIndex: 1, width: "100%", maxWidth: "520px", marginLeft: "20%" }}>
+        <div style={{ position: "relative", zIndex: 1, width: "100%", maxWidth: "520px" }}>
           {/* Logo */}
-          <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "clamp(28px, 6vh, 48px)" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "clamp(28px, 6vh, 48px)" }}>
             <FinloLogoImg />
             <div>
-              <div style={{ fontSize: "17px", fontWeight: 700, color: p.text, lineHeight: 1.1 }}>Finlo</div>
-              <div style={{ fontSize: "11px", color: "rgba(10,25,61,0.72)", marginTop: "1px" }}>Plan. Spend. Stay Ahead.</div>
+              <div style={{ fontSize: "clamp(24px, 3vw, 32px)", fontWeight: 700, color: "#0B1838", lineHeight: 1, letterSpacing: "-0.5px" }}>Finlo</div>
+              <div style={{ fontSize: "clamp(8px, 0.9vw, 10px)", fontWeight: 600, color: "#7A89A8", marginTop: "4px", letterSpacing: "0.4px" }}>Plan. Spend. Stay Ahead.</div>
             </div>
           </div>
 
           {/* Hero heading */}
           <h1 style={{
-            fontSize: "clamp(40px, 6.4vw, 72px)", fontWeight: 600, lineHeight: 1.08,
-            color: "#0B1838", letterSpacing: "-1.5px", margin: "0 0 clamp(14px, 2vh, 18px) 0",
-            fontFamily: "var(--font-manrope), sans-serif",
+            fontFamily: "var(--font-manrope), 'Manrope', sans-serif",
+            fontSize: "clamp(38px, 5.8vw, 72px)", fontWeight: 600, lineHeight: 1.1,
+            color: "#0B1838", letterSpacing: "-2px", margin: "0 0 clamp(16px, 2.5vh, 24px) 0",
           }}>
-            Clarity today.
-            <br />
+            Clarity today.<br />
             <span style={{
-              background: "linear-gradient(90deg, #7890FF 0%, #526DDF 100%)",
+              background: "linear-gradient(90deg, #7890FF, #526DDF)",
               WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
             }}>A brighter tomorrow.</span>
           </h1>
 
           <p style={{
-            fontSize: "clamp(13px, 1.4vw, 15px)", color: p.sub, lineHeight: 1.65,
-            margin: "0 0 clamp(24px, 4vh, 36px) 0", maxWidth: "390px",
+            fontSize: "clamp(16px, 1.4vw, 18px)", fontWeight: 400, color: "#61708F", lineHeight: 1.6,
+            margin: "0 0 clamp(28px, 5vh, 40px) 0", maxWidth: "400px",
           }}>
             Finlo helps you understand your cash flow,<br />
             plan ahead, and spend with confidence.
@@ -184,14 +184,14 @@ export function LoginPage() {
               <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: "clamp(10px, 1.2vw, 12px)" }}>
                 <div style={{
                   width: "clamp(32px, 3.5vw, 38px)", height: "clamp(32px, 3.5vw, 38px)", borderRadius: "10px", flexShrink: 0,
-                  background: "rgba(10,25,61,0.08)", border: "1px solid rgba(10,25,61,0.25)",
+                  background: "rgba(23,38,74,0.06)", border: "1px solid rgba(23,38,74,0.18)",
                   display: "flex", alignItems: "center", justifyContent: "center",
                 }}>
                   {f.icon}
                 </div>
                 <div>
-                  <div style={{ fontSize: "clamp(12.5px, 1.2vw, 13.5px)", fontWeight: 600, color: p.title, marginBottom: "2px" }}>{f.title}</div>
-                  <div style={{ fontSize: "clamp(11px, 1.1vw, 12px)", color: p.desc, lineHeight: 1.5 }}>{f.desc}</div>
+                  <div style={{ fontSize: "clamp(14px, 1.3vw, 16px)", fontWeight: 600, color: "#17264A", marginBottom: "3px" }}>{f.title}</div>
+                  <div style={{ fontSize: "clamp(13px, 1.1vw, 14px)", fontWeight: 400, color: "#71809F", lineHeight: 1.5 }}>{f.desc}</div>
                 </div>
               </div>
             ))}

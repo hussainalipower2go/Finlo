@@ -19,7 +19,7 @@ const montserrat = Montserrat({
 
 const manrope = Manrope({
   subsets: ["latin"],
-  weight: ["600"],
+  weight: ["400", "600", "700"],
   variable: "--font-manrope",
   display: "swap",
 });
