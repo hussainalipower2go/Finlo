@@ -126,7 +126,7 @@ export function LoginPage() {
         padding: "clamp(28px, 5vw, 60px) clamp(24px, 5vw, 56px)",
         overflow: "hidden",
       }}>
-        <div style={{ position: "relative", zIndex: 1, width: "100%", maxWidth: "520px" }}>
+        <div style={{ position: "relative", zIndex: 1, width: "100%", maxWidth: "620px" }}>
           {/* Logo */}
           <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "clamp(28px, 6vh, 48px)" }}>
             <FinloLogoImg />
@@ -162,7 +162,7 @@ export function LoginPage() {
           <div style={{
             display: "grid",
             gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
-            gap: "clamp(16px, 2vw, 28px)",
+            gap: "clamp(12px, 1.5vw, 20px)",
             alignItems: "start",
           }}>
             {[
@@ -213,7 +213,7 @@ export function LoginPage() {
                 </div>
                 <div style={{ minWidth: "0" }}>
                   <div style={{ fontSize: "clamp(13px, 1.15vw, 15px)", fontWeight: 600, color: "#17264A", marginBottom: "3px", lineHeight: 1.3, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{f.title}</div>
-                  <div style={{ fontSize: "clamp(12px, 1.1vw, 13px)", fontWeight: 400, color: "#71809F", lineHeight: 1.5, overflowWrap: "break-word" }}>{f.desc}</div>
+                  <div style={{ fontSize: "clamp(11px, 1vw, 12px)", fontWeight: 400, color: "#71809F", lineHeight: 1.5, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", letterSpacing: "-0.1px" }}>{f.desc}</div>
                 </div>
               </div>
             ))}
