@@ -214,7 +214,7 @@ export default function SignupPage() {
             </p>
 
             {/* FEATURES */}
-            <div style={{ display: "flex", flexDirection: "column", gap: "20px", marginBottom: "36px" }}>
+            <div className="finlo-features" style={{ marginBottom: "36px" }}>
               {[
                 {
                   icon: (
@@ -252,17 +252,16 @@ export default function SignupPage() {
                   desc: "Track upcoming bills, income, and goals.",
                 },
               ].map((f, i) => (
-                <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: "14px" }}>
-                  <div style={{
-                    width: "44px", height: "44px", borderRadius: "12px", flexShrink: 0,
+                <div key={i} className="finlo-feature">
+                  <div className="finlo-f-icon" style={{
+                    width: "44px", height: "44px", borderRadius: "12px",
                     background: f.bg, border: `1px solid ${f.border}`,
-                    display: "flex", alignItems: "center", justifyContent: "center",
                   }}>
                     {f.icon}
                   </div>
-                  <div>
-                    <div style={{ fontSize: "14px", fontWeight: 600, color: p.title, marginBottom: "3px", textShadow: isDark ? "0 1px 6px rgba(0,0,0,0.5)" : "none" }}>{f.title}</div>
-                    <div style={{ fontSize: "12.5px", color: p.desc, lineHeight: 1.5 }}>{f.desc}</div>
+                  <div className="finlo-f-text">
+                    <div className="finlo-f-title" style={{ fontSize: "14px", color: p.title, textShadow: isDark ? "0 1px 6px rgba(0,0,0,0.5)" : "none" }}>{f.title}</div>
+                    <div className="finlo-f-desc" style={{ fontSize: "12.5px", color: p.desc }}>{f.desc}</div>
                   </div>
                 </div>
               ))}

@@ -159,12 +159,7 @@ export function LoginPage() {
           </p>
 
           {/* Features */}
-          <div style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
-            gap: "clamp(16px, 2vw, 26px)",
-            alignItems: "start",
-          }}>
+          <div className="finlo-features">
             {[
               {
                 icon: (
@@ -199,21 +194,20 @@ export function LoginPage() {
                 desc: "Track upcoming bills, income, and goals.",
               },
             ].map((f, i) => (
-              <div key={i} style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "clamp(8px, 1vh, 10px)", minWidth: "0" }}>
-                <div style={{
-                  width: "clamp(34px, 3.5vw, 42px)", height: "clamp(34px, 3.5vw, 42px)", borderRadius: "12px", flexShrink: 0,
+              <div key={i} className="finlo-feature">
+                <div className="finlo-f-icon" style={{
+                  width: "clamp(34px, 3.5vw, 42px)", height: "clamp(34px, 3.5vw, 42px)", borderRadius: "12px",
                   background: "rgba(255,255,255,0.35)",
                   border: "1px solid rgba(255,255,255,0.75)",
                   backdropFilter: "blur(14px) saturate(160%)",
                   WebkitBackdropFilter: "blur(14px) saturate(160%)",
                   boxShadow: "0 6px 18px rgba(10,25,61,0.12), inset 0 1px 0 rgba(255,255,255,0.85)",
-                  display: "flex", alignItems: "center", justifyContent: "center",
                 }}>
                   {f.icon}
                 </div>
-                <div style={{ minWidth: "0" }}>
-                  <div style={{ fontSize: "clamp(13px, 1.15vw, 15px)", fontWeight: 600, color: "#17264A", marginBottom: "3px", lineHeight: 1.3, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{f.title}</div>
-                  <div style={{ fontSize: "clamp(11px, 1vw, 12px)", fontWeight: 400, color: "#71809F", lineHeight: 1.5, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", letterSpacing: "-0.1px" }}>{f.desc}</div>
+                <div className="finlo-f-text">
+                  <div className="finlo-f-title" style={{ fontSize: "clamp(13px, 1.15vw, 15px)", color: "#17264A" }}>{f.title}</div>
+                  <div className="finlo-f-desc" style={{ fontSize: "clamp(12px, 1.1vw, 13px)", color: "#71809F" }}>{f.desc}</div>
                 </div>
               </div>
             ))}
