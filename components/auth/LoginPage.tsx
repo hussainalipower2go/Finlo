@@ -146,7 +146,7 @@ export function LoginPage() {
           </p>
 
           {/* Features */}
-          <div style={{ display: "flex", flexDirection: "column", gap: "clamp(12px, 2vh, 18px)" }}>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "clamp(12px, 1.5vw, 18px)" }}>
             {[
               {
                 icon: (
@@ -181,17 +181,17 @@ export function LoginPage() {
                 desc: "Track upcoming bills, income, and goals.",
               },
             ].map((f, i) => (
-              <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: "clamp(10px, 1.2vw, 12px)" }}>
+              <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: "clamp(8px, 0.9vw, 10px)", flex: "1 1 150px", minWidth: "0" }}>
                 <div style={{
-                  width: "clamp(32px, 3.5vw, 38px)", height: "clamp(32px, 3.5vw, 38px)", borderRadius: "10px", flexShrink: 0,
+                  width: "clamp(28px, 3vw, 34px)", height: "clamp(28px, 3vw, 34px)", borderRadius: "10px", flexShrink: 0,
                   background: "rgba(23,38,74,0.06)", border: "1px solid rgba(23,38,74,0.18)",
                   display: "flex", alignItems: "center", justifyContent: "center",
                 }}>
                   {f.icon}
                 </div>
                 <div>
-                  <div style={{ fontSize: "clamp(14px, 1.3vw, 16px)", fontWeight: 600, color: "#17264A", marginBottom: "3px" }}>{f.title}</div>
-                  <div style={{ fontSize: "clamp(13px, 1.1vw, 14px)", fontWeight: 400, color: "#71809F", lineHeight: 1.5 }}>{f.desc}</div>
+                  <div style={{ fontSize: "clamp(13px, 1.2vw, 15px)", fontWeight: 600, color: "#17264A", marginBottom: "2px", whiteSpace: "nowrap" }}>{f.title}</div>
+                  <div style={{ fontSize: "clamp(12px, 1.1vw, 13px)", fontWeight: 400, color: "#71809F", lineHeight: 1.45, maxWidth: "150px" }}>{f.desc}</div>
                 </div>
               </div>
             ))}
