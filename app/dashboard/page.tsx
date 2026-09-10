@@ -2385,7 +2385,7 @@ function SettingsPage({ colors, displayName, userEmail, onSignOut, currency, onC
                   : pushStatus === "unsupported"
                     ? "Is browser mein push supported nahi"
 : pushStatus === "error"
-                  ? "Status check fail hua. Dobara try karein."
+                    ? "Status check fail hua. Dobara try karein."
                   : "Automatic hain — app kholte hi apne aap enable ho jayengi. Mobile par nahi ho raha to pehle \"Add to Home Screen\" karein (iPhone ke liye zaroori)"}
             </div>
           </div>

@@ -1,8 +1,12 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
+import { jsPDF } from 'jspdf'
+import { getUserTransactionsClient, getUserIncomeClient, getUserExpensesClient, getUserRecurringExpensesClient } from '@/lib/database-client'
+import { formatCurrency } from '@/lib/format'
 import {
   getPushStatus, notifPref, setNotifPref,
   NOTIF_PREF_BILLS, NOTIF_PREF_BUDGET, NOTIF_PREF_INCOME, type PushStatus,
@@ -15,30 +19,26 @@ import {
 import type { User as SupabaseUser } from '@supabase/supabase-js'
 
 // ── Types ──────────────────────────────────────────────────────────────────
-type Theme = 'light' | 'dark'
-
 interface Colors {
   bg: string; sidebar: string; card: string; cardBorder: string
   text: string; textSub: string; accent: string; accentSoft: string
   positive: string; danger: string; warning: string; inputBg: string; hover: string
 }
 
-function buildColors(isDark: boolean): Colors {
-  return {
-    bg: isDark ? 'linear-gradient(160deg,#0b1220 0%,#111a35 55%,#0b1024 100%)' : '#FEFBFE',
-    sidebar: isDark ? '#1e293b' : '#ffffff',
-    card: isDark ? "linear-gradient(145deg,rgba(43,55,84,0.7),rgba(26,34,60,0.42))" : 'linear-gradient(145deg,rgba(255,255,255,0.85),rgba(255,255,255,0.45))',
-    cardBorder: isDark ? 'rgba(255,255,255,0.08)' : 'rgba(255,255,255,0.7)',
-    text: isDark ? '#f1f5f9' : '#0f172a',
-    textSub: isDark ? '#94a3b8' : '#64748b',
-    accent: '#0A193D',
-    accentSoft: isDark ? 'rgba(10,25,61,0.15)' : '#EEF1F8',
-    positive: '#10b981',
-    danger: '#ef4444',
-    warning: '#f59e0b',
-    inputBg: isDark ? 'rgba(15,23,42,0.5)' : 'rgba(255,255,255,0.65)',
-    hover: isDark ? '#334155' : '#f1f5f9',
-  }
+const colors: Colors = {
+  bg: '#FEFBFE',
+  sidebar: '#ffffff',
+  card: 'linear-gradient(145deg,rgba(255,255,255,0.85),rgba(255,255,255,0.45))',
+  cardBorder: 'rgba(255,255,255,0.7)',
+  text: '#0f172a',
+  textSub: '#64748b',
+  accent: '#0A193D',
+  accentSoft: '#EEF1F8',
+  positive: '#10b981',
+  danger: '#ef4444',
+  warning: '#f59e0b',
+  inputBg: 'rgba(255,255,255,0.65)',
+  hover: '#f1f5f9',
 }
 
 const navItems = [
@@ -51,6 +51,15 @@ const navItems = [
 ]
 
 const CURRENCIES = ['PKR', 'USD', 'AED', 'SAR', 'GBP', 'EUR']
+
+const MONTHS_BACK = 12
+const exportMonthOptions = Array.from({ length: MONTHS_BACK }, (_, i) => {
+  const d = new Date()
+  d.setDate(1)
+  d.setMonth(d.getMonth() - i)
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`
+})
+const exportMonthLabel = (m: string) => new Date(m + '-01').toLocaleDateString('en-PK', { month: 'long', year: 'numeric' })
 
 function Toggle({ on, onClick, colors }: { on: boolean; onClick: () => void; colors: Colors }) {
   return (
@@ -88,11 +97,14 @@ function SectionCard({ icon, title, children, colors }: { icon: React.ReactNode;
 }
 
 export default function SettingsPage() {
-  const [appTheme, setAppTheme] = useState<Theme>('light')
   const [hasAuth, setHasAuth] = useState(false)
   const [user, setUser] = useState<SupabaseUser | null>(null)
 
   const [currency, setCurrency] = useState('PKR')
+  const [exportMonth, setExportMonth] = useState('all')
+  const [exportModal, setExportModal] = useState<'pdf' | null>(null)
+  const [exporting, setExporting] = useState(false)
+  const [exportMsg, setExportMsg] = useState('')
   const [notifBills, setNotifBills] = useState(() => notifPref(NOTIF_PREF_BILLS, true))
   const [notifBudget, setNotifBudget] = useState(() => notifPref(NOTIF_PREF_BUDGET, true))
   const [notifIncome, setNotifIncome] = useState(() => notifPref(NOTIF_PREF_INCOME, true))
@@ -111,9 +123,6 @@ export default function SettingsPage() {
   const router = useRouter()
   const supabase = createClient()
 
-  const isDark = appTheme === 'dark'
-  const colors = buildColors(isDark)
-
   useEffect(() => {
     const checkAuth = async () => {
       const { data } = await supabase.auth.getSession()
@@ -123,6 +132,8 @@ export default function SettingsPage() {
       }
       setHasAuth(true)
       setUser(data.session.user)
+      const metaCurrency = data.session.user.user_metadata?.currency as string | undefined
+      if (metaCurrency && CURRENCIES.includes(metaCurrency)) setCurrency(metaCurrency)
     }
 
     checkAuth()
@@ -148,6 +159,120 @@ export default function SettingsPage() {
     const next = !notifIncome
     setNotifIncome(next)
     setNotifPref(NOTIF_PREF_INCOME, next)
+  }
+
+  const changeCurrency = (c: string) => {
+    setCurrency(c)
+    void supabase.auth.updateUser({ data: { currency: c } }).catch(() => {})
+  }
+
+  const inExportMonth = (date?: string | null) =>
+    exportMonth === 'all' || !date ? true : (date || '').slice(0, 7) === exportMonth
+
+  const handleExportPDF = async () => {
+    if (exporting) return
+    setExporting(true)
+    setExportMsg('')
+    try {
+      const [transactions, income, expenses, recurring] = await Promise.all([
+        getUserTransactionsClient(),
+        getUserIncomeClient(),
+        getUserExpensesClient(),
+        getUserRecurringExpensesClient(),
+      ])
+      const txns = transactions.filter((t) => inExportMonth(t.date))
+      const inc = income.filter((i) => inExportMonth(i.date))
+      const exp = expenses.filter((e) => inExportMonth(e.date))
+
+      const doc = new jsPDF()
+      const pageW = doc.internal.pageSize.getWidth()
+      const pageH = doc.internal.pageSize.getHeight()
+      const margin = 16
+      const fmt = (n: number) => formatCurrency(Number(n || 0), currency)
+      let y = margin
+
+      doc.setFont('helvetica', 'bold')
+      doc.setFontSize(20)
+      doc.setTextColor(99, 102, 241)
+      doc.text('Finlo - Data Export', margin, y)
+      y += 6
+      doc.setFont('helvetica', 'normal')
+      doc.setFontSize(10)
+      doc.setTextColor(120, 120, 120)
+      doc.text(`Exported: ${new Date().toLocaleString()}  |  User: ${displayName || email || '-'}`, margin, y)
+      y += 5
+      doc.text(`Period: ${exportMonth === 'all' ? 'All months (full history)' : exportMonthLabel(exportMonth)}`, margin, y)
+      y += 14
+
+      const drawSectionHeader = (title: string) => {
+        if (y > pageH - 24) { doc.addPage(); y = margin }
+        doc.setFont('helvetica', 'bold')
+        doc.setFontSize(13)
+        doc.setTextColor(99, 102, 241)
+        doc.text(title, margin, y)
+        y += 6
+        doc.setDrawColor(99, 102, 241)
+        doc.setLineWidth(0.4)
+        doc.line(margin, y, pageW - margin, y)
+        y += 5
+      }
+
+      const drawRow = (left: string, right: string, color: [number, number, number] = [60, 60, 60]) => {
+        doc.setFont('helvetica', 'normal')
+        doc.setFontSize(10)
+        doc.setTextColor(...color)
+        doc.text(left, margin, y)
+        doc.text(right, pageW - margin - doc.getTextWidth(right), y)
+        y += 5
+      }
+
+      drawSectionHeader('Summary')
+      drawRow('Total Income', fmt(inc.reduce((s, i) => s + Number(i.amount), 0)), [16, 185, 129])
+      drawRow('Total Expenses', fmt(exp.reduce((s, e) => s + Number(e.amount), 0)), [239, 68, 68])
+      drawRow(
+        'Net',
+        fmt(inc.reduce((s, i) => s + Number(i.amount), 0) - exp.reduce((s, e) => s + Number(e.amount), 0))
+      )
+      drawRow('Transactions (records)', String(txns.length))
+      drawRow('Recurring Payments', String(recurring.length))
+      y += 8
+
+      drawSectionHeader(`Income (${inc.length})`)
+      inc.forEach((i) => {
+        if (y > pageH - 24) { doc.addPage(); y = margin }
+        drawRow(`${i.notes || 'Income'}  (${String(i.date || '').slice(0, 10)})`, fmt(i.amount), [16, 185, 129])
+      })
+      y += 8
+
+      drawSectionHeader(`Expenses (${exp.length})`)
+      exp.forEach((e) => {
+        if (y > pageH - 24) { doc.addPage(); y = margin }
+        drawRow(`${e.description || 'Expense'}  (${String(e.date || '').slice(0, 10)})`, fmt(e.amount), [239, 68, 68])
+      })
+      y += 8
+
+      drawSectionHeader(`Recurring Payments (${recurring.length})`)
+      recurring.forEach((r) => {
+        if (y > pageH - 24) { doc.addPage(); y = margin }
+        drawRow(`${r.name}  (${String(r.next_due_date || '').slice(0, 10)})`, fmt(r.amount))
+      })
+      y += 8
+
+      drawSectionHeader('Recent Transactions')
+      txns.forEach((t) => {
+        if (y > pageH - 24) { doc.addPage(); y = margin }
+        const c: [number, number, number] = t.type === 'income' ? [16, 185, 129] : [239, 68, 68]
+        drawRow(`${t.description || 'Transaction'}  (${String(t.date || '').slice(0, 10)})  [${t.type}]`, fmt(t.amount), c)
+      })
+
+      doc.save(`finlo-export-${exportMonth === 'all' ? 'all' : exportMonth}-${new Date().toISOString().slice(0, 10)}.pdf`)
+      setExportMsg('✓ PDF exported')
+    } catch (err) {
+      setExportMsg('PDF export failed, please try again')
+      console.error(err)
+    } finally {
+      setExporting(false)
+    }
   }
 
   const displayName =
@@ -343,23 +468,12 @@ export default function SettingsPage() {
                 {CURRENCIES.map((c) => {
                   const active = currency === c
                   return (
-                    <button key={c} onClick={() => setCurrency(c)}
+                    <button key={c} onClick={() => changeCurrency(c)}
                       style={{ padding: '9px 18px', borderRadius: 8, border: `1px solid ${active ? colors.accent : colors.cardBorder}`, background: active ? colors.accentSoft : colors.card, color: active ? colors.accent : colors.text, fontWeight: active ? 700 : 500, fontSize: 14, cursor: 'pointer' }}>
                       {c}
                     </button>
                   )
                 })}
-              </div>
-            </SectionCard>
-
-            {/* Appearance */}
-            <SectionCard colors={colors} icon="☀️" title="Appearance">
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
-                <div>
-                  <div style={{ fontWeight: 600, fontSize: 14 }}>{isDark ? 'Dark Mode' : 'Light Mode'}</div>
-                  <div style={{ fontSize: 12.5, color: colors.textSub, marginTop: 2 }}>Switch between light and dark theme</div>
-                </div>
-                <Toggle colors={colors} on={isDark} onClick={() => setAppTheme(isDark ? 'light' : 'dark')} />
               </div>
             </SectionCard>
 
@@ -433,13 +547,42 @@ export default function SettingsPage() {
             {/* Data & Privacy */}
             <SectionCard colors={colors} icon="⬇️" title="Data & Privacy">
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12 }}>
-                <button style={{ display: 'flex', alignItems: 'center', gap: 8, border: `1px solid ${colors.cardBorder}`, background: colors.card, color: colors.text, borderRadius: 9, padding: '10px 18px', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>
-                  <Download size={14} /> Export Data
+                <button onClick={() => { setExportMonth('all'); setExportModal('pdf') }} disabled={exporting} style={{ display: 'flex', alignItems: 'center', gap: 8, border: `1px solid ${colors.cardBorder}`, background: colors.card, color: colors.text, borderRadius: 9, padding: '10px 18px', fontSize: 14, fontWeight: 600, cursor: exporting ? 'not-allowed' : 'pointer', opacity: exporting ? 0.7 : 1 }}>
+                  <Download size={14} /> {exporting ? 'Exporting...' : 'Export Data'}
                 </button>
+                {exportMsg && <span style={{ fontSize: 13, fontWeight: 600, color: exportMsg.includes('✓') ? colors.positive : colors.danger }}>{exportMsg}</span>}
                 <button onClick={() => { setConfirmDelete(true); setDeleteErr('') }} style={{ display: 'flex', alignItems: 'center', gap: 8, border: `1px solid ${colors.danger}`, background: 'transparent', color: colors.danger, borderRadius: 9, padding: '10px 18px', fontSize: 14, fontWeight: 600, cursor: 'pointer' }}>
                   <Trash2 size={14} /> Delete Account
                 </button>
               </div>
+
+              {exportModal && createPortal(
+                <div onClick={() => setExportModal(null)} style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.55)', backdropFilter: 'blur(5px)', display: 'flex', alignItems: 'center', justifyContent: 'center', zIndex: 9999, padding: 20 }}>
+                  <div onClick={(e) => e.stopPropagation()} style={{ width: 'min(460px, 100%)', borderRadius: 20, background: colors.card, border: `1px solid ${colors.cardBorder}`, boxShadow: '0 20px 60px rgba(0,0,0,0.35)', padding: 24 }}>
+                    <div style={{ fontWeight: 700, fontSize: 16, color: colors.text, marginBottom: 4 }}>Export PDF Statement</div>
+                    <div style={{ fontSize: 12.5, color: colors.textSub, marginBottom: 16 }}>Kis month ka data export karna hai? (last 1 year ke months available hain)</div>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
+                      <button onClick={() => setExportMonth('all')} style={{ padding: '9px 4px', borderRadius: 9, border: `1px solid ${exportMonth === 'all' ? '#0A193D' : colors.cardBorder}`, background: exportMonth === 'all' ? 'rgba(10,25,61,0.1)' : 'transparent', color: exportMonth === 'all' ? '#0A193D' : colors.textSub, fontSize: 12, fontWeight: exportMonth === 'all' ? 700 : 500, cursor: 'pointer' }}>
+                        All history
+                      </button>
+                      {exportMonthOptions.map((m) => (
+                        <button key={m} onClick={() => setExportMonth(m)} style={{ padding: '9px 4px', borderRadius: 9, border: `1px solid ${exportMonth === m ? '#0A193D' : colors.cardBorder}`, background: exportMonth === m ? 'rgba(10,25,61,0.1)' : 'transparent', color: exportMonth === m ? '#0A193D' : colors.textSub, fontSize: 12, fontWeight: exportMonth === m ? 700 : 500, cursor: 'pointer' }}>
+                          {exportMonthLabel(m)}
+                        </button>
+                      ))}
+                    </div>
+                    <div style={{ display: 'flex', gap: 10, marginTop: 18 }}>
+                      <button disabled={exporting} onClick={() => { setExportModal(null); void handleExportPDF() }} style={{ flex: 1, padding: '11px', borderRadius: 10, border: 'none', background: '#0A193D', color: '#fff', fontWeight: 700, fontSize: 13.5, cursor: exporting ? 'not-allowed' : 'pointer', opacity: exporting ? 0.6 : 1 }}>
+                        {exporting ? 'Exporting...' : 'Download PDF'}
+                      </button>
+                      <button onClick={() => setExportModal(null)} style={{ padding: '11px 18px', borderRadius: 10, border: `1px solid ${colors.cardBorder}`, background: 'transparent', color: colors.textSub, fontSize: 13.5, cursor: 'pointer' }}>
+                        Cancel
+                      </button>
+                    </div>
+                  </div>
+                </div>,
+                document.body
+              )}
 
               {confirmDelete && (
                 <div style={{ marginTop: 16, padding: '16px 18px', borderRadius: 12, background: 'rgba(239,68,68,0.06)', border: `1px solid rgba(239,68,68,0.3)` }}>
