@@ -199,7 +199,7 @@ export function LoginPage() {
                 desc: "Track upcoming bills, income, and goals.",
               },
             ].map((f, i) => (
-              <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: "clamp(8px, 0.9vw, 10px)", minWidth: "0" }}>
+              <div key={i} style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", gap: "clamp(8px, 1vh, 10px)", minWidth: "0" }}>
                 <div style={{
                   width: "clamp(34px, 3.5vw, 42px)", height: "clamp(34px, 3.5vw, 42px)", borderRadius: "12px", flexShrink: 0,
                   background: "rgba(255,255,255,0.35)",
@@ -212,7 +212,7 @@ export function LoginPage() {
                   {f.icon}
                 </div>
                 <div style={{ minWidth: "0" }}>
-                  <div style={{ fontSize: "clamp(13px, 1.2vw, 15px)", fontWeight: 600, color: "#17264A", marginBottom: "3px", lineHeight: 1.3 }}>{f.title}</div>
+                  <div style={{ fontSize: "clamp(13px, 1.15vw, 15px)", fontWeight: 600, color: "#17264A", marginBottom: "3px", lineHeight: 1.3, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{f.title}</div>
                   <div style={{ fontSize: "clamp(12px, 1.1vw, 13px)", fontWeight: 400, color: "#71809F", lineHeight: 1.5, overflowWrap: "break-word" }}>{f.desc}</div>
                 </div>
               </div>
