@@ -118,9 +118,6 @@ h1, h2, h3, h4, h5, h6,
 }
 
 /* Dashboard responsiveness (FinloApp - app/dashboard/page.tsx) */
-.finlo-dash-fab-ai {
-  display: none;
-}
 .finlo-dash-burger,
 .finlo-dash-backdrop,
 .finlo-dash-date,
@@ -217,12 +214,16 @@ h1, h2, h3, h4, h5, h6,
   }
 }
 
+.finlo-dash-ai {
+  display: none;
+}
+
 @media (max-width: 767px) {
+  .finlo-dash-ai {
+    display: flex;
+  }
   .finlo-dash-bottomnav {
     display: flex !important;
-  }
-  .finlo-dash-fab-ai {
-    display: flex;
   }
   .finlo-dash-main {
     padding-bottom: calc(var(--f-bottom-offset) + 6px) !important;
