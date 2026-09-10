@@ -28,5 +28,11 @@ export async function GET(request: Request) {
   }
 
   const redirectTo = next && next.startsWith('/') ? next : '/dashboard'
+
+  const meta = data.user.user_metadata as Record<string, unknown> | undefined
+  const onboarded = !!meta?.onboarded || !!meta?.currency || !!meta?.full_name
+  if (!onboarded && redirectTo !== '/onboarding') {
+    return NextResponse.redirect(new URL('/onboarding', requestUrl.origin))
+  }
   return NextResponse.redirect(new URL(redirectTo, requestUrl.origin))
 }
