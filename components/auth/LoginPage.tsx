@@ -166,8 +166,8 @@ export function LoginPage() {
             plan ahead, and spend with confidence.
           </p>
 
-          {/* Feature Tabs */}
-          <div className="finlo-features" style={{ display: "flex", flexDirection: "column", gap: "clamp(12px, 1.5vw, 16px)" }}>
+          {/* Features */}
+          <div className="finlo-features">
             {[
               {
                 icon: (
@@ -203,31 +203,25 @@ export function LoginPage() {
               },
             ].map((f, i) => (
               <div key={i} className="finlo-feature" style={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                gap: "clamp(12px, 1.4vw, 16px)",
-                background: "rgba(255,255,255,0.35)",
-                border: "1px solid rgba(255,255,255,0.75)",
-                borderRadius: "16px",
-                padding: "clamp(13px, 1.4vw, 16px) clamp(15px, 1.6vw, 18px)",
-                backdropFilter: "blur(14px) saturate(160%)",
-                WebkitBackdropFilter: "blur(14px) saturate(160%)",
-                boxShadow: "0 8px 22px rgba(10,25,61,0.10), inset 0 1px 0 rgba(255,255,255,0.85)",
-                minWidth: 0,
+                display: "flex", alignItems: "center", gap: "clamp(10px, 1vw, 14px)",
+                padding: "14px 16px", borderRadius: 16, minWidth: 0,
+                background: "rgba(255,255,255,0.28)",
+                border: "1px solid rgba(255,255,255,0.7)",
+                backdropFilter: "blur(20px) saturate(160%)",
+                WebkitBackdropFilter: "blur(20px) saturate(160%)",
+                boxShadow: "0 12px 30px rgba(10,25,61,0.14), inset 0 1px 0 rgba(255,255,255,0.9)",
               }}>
                 <div className="finlo-f-icon" style={{
                   width: "clamp(34px, 3.5vw, 42px)", height: "clamp(34px, 3.5vw, 42px)", borderRadius: "12px",
-                  background: "rgba(255,255,255,0.45)",
-                  border: "1px solid rgba(255,255,255,0.85)",
+                  background: "rgba(255,255,255,0.35)",
+                  border: "1px solid rgba(255,255,255,0.75)",
                   backdropFilter: "blur(14px) saturate(160%)",
                   WebkitBackdropFilter: "blur(14px) saturate(160%)",
                   boxShadow: "0 6px 18px rgba(10,25,61,0.12), inset 0 1px 0 rgba(255,255,255,0.85)",
-                  display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
                 }}>
                   {f.icon}
                 </div>
-                <div className="finlo-f-text" style={{ minWidth: 0 }}>
+                <div className="finlo-f-text">
                   <div className="finlo-f-title" style={{ fontSize: "clamp(13px, 1.15vw, 15px)", color: "#17264A" }}>{f.title}</div>
                   <div className="finlo-f-desc" style={{ fontSize: "clamp(12px, 1.1vw, 13px)", color: "#fff" }}>{f.desc}</div>
                 </div>
