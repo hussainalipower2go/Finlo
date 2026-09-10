@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Poppins, Montserrat, Manrope } from "next/font/google";
 import { ToastProvider } from "@/components/providers/ToastProvider";
+import FloatingWhatsApp from "@/components/FloatingWhatsApp";
 import "./globals.css";
 
 const poppins = Poppins({
@@ -59,6 +60,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
         <ToastProvider>
           <div id="__next">{children}</div>
         </ToastProvider>
+        <FloatingWhatsApp />
       </body>
     </html>
   );
