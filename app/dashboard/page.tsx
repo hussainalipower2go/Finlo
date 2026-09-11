@@ -218,6 +218,7 @@ export default function FinloApp() {
   const supabase = createClient();
   const [dashMonth, setDashMonth] = useState(() => new Date().toISOString().slice(0, 7));
   const [lang, setLang] = useState<LangCode>("en");
+  const [plan, setPlan] = useState<"beginner" | "professional">("professional");
 
   const isDark = theme === "dark";
 
@@ -285,6 +286,8 @@ export default function FinloApp() {
       setOpeningBalance(typeof savedOpeningBalance === "number" ? savedOpeningBalance : 0);
       const savedLang = u.user_metadata?.language as string | undefined;
       if (savedLang && LANGUAGES.some((l) => l.code === savedLang)) setLang(savedLang as LangCode);
+      const savedPlan = u.user_metadata?.plan as string | undefined;
+      if (savedPlan === "beginner" || savedPlan === "professional") setPlan(savedPlan);
       const onb = u.user_metadata as Record<string, unknown> | undefined;
       if (onb && onb.onboarded !== true) {
         router.replace("/onboarding");
@@ -618,6 +621,15 @@ const insts = await getUserInstallmentsClient();
     } catch {}
   };
 
+  const switchPlan = (p: "beginner" | "professional") => {
+    setPlan(p);
+    supabase.auth.updateUser({ data: { plan: p } }).catch(() => {});
+  };
+
+  const beginnerIds = ["dashboard", "transactions", "settings"];
+  const navItemsVisible = plan === "beginner" ? navItems.filter((x) => beginnerIds.includes(x.id)) : navItems;
+  const mobileTabsVisible = plan === "beginner" ? mobileTabs.filter((x) => x.id === "dashboard" || x.id === "transactions") : mobileTabs;
+
   function timeGreeting() {
     const h = new Date().getHours();
     if (h >= 5 && h < 12) return "Good morning";
@@ -660,7 +672,7 @@ const insts = await getUserInstallmentsClient();
 
         {/* Nav */}
         <nav style={{ flex: 1, padding: "8px 10px" }}>
-          {navItems.map(item => {
+          {navItemsVisible.map(item => {
             const active = page === item.id;
             return (
               <button key={item.id} onClick={() => navigateTo(item.id as Page)}
@@ -754,14 +766,14 @@ const insts = await getUserInstallmentsClient();
 
         {/* Page Content */}
         <main className="finlo-dash-main" style={{ flex: 1, padding: "24px 28px", overflowY: "auto" }}>
-          {page === "dashboard" && <DashboardPage colors={colors} transactions={realTransactions} recurring={realRecurring} installments={realInstallments} budgets={realBudgets} openingBalance={openingBalance} onEditBalance={() => setShowBalanceModal(true)} onViewAllUpcoming={() => navigateTo("upcoming")} onViewAllTransactions={() => navigateTo("transactions")} onMarkPaid={markRecurringPaid} onMarkInstallment={(inst) => { setInstallmentPayTarget(inst); setAddType("expense"); setShowAddModal(true); }} currency={currency} month={dashMonth} onMonthChange={setDashMonth} lang={lang} />}
+          {page === "dashboard" && (plan === "beginner" ? <BeginnerDashboard colors={colors} transactions={realTransactions} openingBalance={openingBalance} onEditBalance={() => setShowBalanceModal(true)} onViewAllTransactions={() => navigateTo("transactions")} currency={currency} month={dashMonth} onSwitchPro={() => switchPlan("professional")} lang={lang} /> : <DashboardPage colors={colors} transactions={realTransactions} recurring={realRecurring} installments={realInstallments} budgets={realBudgets} openingBalance={openingBalance} onEditBalance={() => setShowBalanceModal(true)} onViewAllUpcoming={() => navigateTo("upcoming")} onViewAllTransactions={() => navigateTo("transactions")} onMarkPaid={markRecurringPaid} onMarkInstallment={(inst) => { setInstallmentPayTarget(inst); setAddType("expense"); setShowAddModal(true); }} currency={currency} month={dashMonth} onMonthChange={setDashMonth} lang={lang} />)}
           {page === "transactions" && <TransactionsPage colors={colors} transactions={realTransactions} onDeleteTransaction={handleDeleteTransaction} currency={currency} />}
           {page === "upcoming" && <UpcomingPage colors={colors} transactions={realTransactions} recurring={realRecurring} installments={realInstallments} supabase={supabase} onPayInstallment={(id) => { const inst = realInstallments.find((i) => i.id === id); if (inst) { setInstallmentPayTarget(inst); setAddType("expense"); setShowAddModal(true); } }} onDeleteInstallment={handleDeleteInstallment} currency={currency} />}
           {page === "budgets" && <BudgetsPage colors={colors} budgets={realBudgets} currency={currency} onAddBudget={handleAddBudget} />}
           {page === "analytics" && <AnalyticsPage colors={colors} transactions={realTransactions} currency={currency} />}
           {page === "ai" && <AIPage colors={colors} transactions={realTransactions} currency={currency} />}
           {page === "installments" && <InstallmentsPage colors={colors} installments={realInstallments} onAdd={handleAddInstallment} onMarkPaid={(inst) => { setInstallmentPayTarget(inst); setAddType("expense"); setShowAddModal(true); }} onDelete={handleDeleteInstallment} currency={currency} />}
-          {page === "settings" && <SettingsPage colors={colors} displayName={displayName} userEmail={userEmail} onSignOut={handleSignOut} currency={currency} onCurrencyChange={handleCurrencyChange} supabase={supabase} lang={lang} onLanguageChange={changeLang} />}
+          {page === "settings" && <SettingsPage colors={colors} displayName={displayName} userEmail={userEmail} onSignOut={handleSignOut} currency={currency} onCurrencyChange={handleCurrencyChange} supabase={supabase} lang={lang} onLanguageChange={changeLang} plan={plan} onPlanChange={switchPlan} />}
         </main>
       </div>
 
@@ -813,7 +825,7 @@ const insts = await getUserInstallmentsClient();
         alignItems: "center", justifyContent: "space-around",
         zIndex: 30,
       }}>
-        {mobileTabs.map(tab => {
+        {mobileTabsVisible.map(tab => {
           const active = page === tab.id;
           return (
             <button key={tab.id} onClick={() => { setSidebarOpen(false); navigateTo(tab.id); }}
@@ -2143,7 +2155,107 @@ function AIPage({ colors, transactions, currency }: { colors: Colors; transactio
 }
 
 // ── Settings Page ───────────────────────────────────────────────────────────
-function SettingsPage({ colors, displayName, userEmail, onSignOut, currency, onCurrencyChange, supabase, lang = "en", onLanguageChange }: { colors: Colors; displayName: string; userEmail: string; onSignOut: () => void; currency: string; onCurrencyChange: (c: string) => void; supabase: ReturnType<typeof createClient>; lang?: string; onLanguageChange: (l: LangCode) => void }) {
+// ── Beginner Dashboard ──────────────────────────────────────────────────────
+function BeginnerDashboard({ colors, transactions, openingBalance, onEditBalance, onViewAllTransactions, currency, month, onSwitchPro, lang = "en" }: {
+  colors: Colors; transactions: Transaction[]; openingBalance: number; onEditBalance: () => void; onViewAllTransactions: () => void; currency: string; month: string; onSwitchPro: () => void; lang?: string;
+}) {
+  const fmt = (n: number) => formatCurrency(n, currency);
+  const totalIncome = transactions.filter((t) => t.type === "income").reduce((s, t) => s + t.amount, 0);
+  const totalExpenses = transactions.filter((t) => t.type === "expense").reduce((s, t) => s + t.amount, 0);
+  const balance = openingBalance + totalIncome - totalExpenses;
+  const monthTxns = transactions.filter((t) => (t.date || "").slice(0, 7) === month);
+  const monthlyIncome = monthTxns.filter((t) => t.type === "income").reduce((s, t) => s + t.amount, 0);
+  const monthlyExpenses = monthTxns.filter((t) => t.type === "expense").reduce((s, t) => s + t.amount, 0);
+  const savingsPct = monthlyIncome > 0 ? Math.round((Math.max(0, monthlyIncome - monthlyExpenses) / monthlyIncome) * 100) : 0;
+  const recent = [...transactions].sort((a, b) => (a.date < b.date ? 1 : -1)).slice(0, 6);
+  const hasTxns = transactions.length > 0;
+
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 20, maxWidth: 900 }}>
+      {/* Balance hero */}
+      <div style={{ padding: "30px 32px", borderRadius: 20, background: "linear-gradient(135deg,#142453,#0A193D)", boxShadow: "0 18px 40px rgba(10,25,61,0.35)", color: "#fff" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 10 }}>
+          <span style={{ fontSize: 14, fontWeight: 500, opacity: 0.85 }}>{t(lang, "dash.current")}</span>
+          <button onClick={onEditBalance} title="Set opening balance" style={{ width: 30, height: 30, borderRadius: 8, border: "none", background: "rgba(255,255,255,0.16)", color: "#fff", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}><Pencil size={14} /></button>
+        </div>
+        <div style={{ fontSize: 38, fontWeight: 800, letterSpacing: "-1px", marginBottom: 14 }}>{fmt(balance)}</div>
+        <span style={{ padding: "4px 10px", borderRadius: 7, background: "rgba(74,222,128,0.2)", color: "#86efac", fontSize: 12, fontWeight: 600 }}>{savingsPct}% saved this month</span>
+      </div>
+
+      {/* Income / Expenses */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
+        <div style={{ padding: "20px 22px", borderRadius: 16, background: "rgba(16,185,129,0.09)", border: "1px solid rgba(16,185,129,0.25)" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+            <ArrowUp size={15} color="#10b981" />
+            <span style={{ fontSize: 12.5, fontWeight: 600, color: colors.textSub }}>{t(lang, "dash.incomeThisMonth")}</span>
+          </div>
+          <div style={{ fontSize: 24, fontWeight: 800, color: "#059669" }}>{fmt(monthlyIncome)}</div>
+        </div>
+        <div style={{ padding: "20px 22px", borderRadius: 16, background: "rgba(239,68,68,0.09)", border: "1px solid rgba(239,68,68,0.25)" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 8 }}>
+            <ArrowDown size={15} color="#ef4444" />
+            <span style={{ fontSize: 12.5, fontWeight: 600, color: colors.textSub }}>{t(lang, "dash.expensesThisMonth")}</span>
+          </div>
+          <div style={{ fontSize: 24, fontWeight: 800, color: "#dc2626" }}>{fmt(monthlyExpenses)}</div>
+        </div>
+      </div>
+
+      {!hasTxns && (
+        <div style={{ padding: "20px 24px", borderRadius: 16, background: colors.card, border: `1px solid ${colors.cardBorder}` }}>
+          <div style={{ fontWeight: 700, fontSize: 14, marginBottom: 6, color: colors.text }}>🚀 Shuru karna itna aasan hai</div>
+          <div style={{ fontSize: 13, color: colors.textSub, lineHeight: 1.7, marginBottom: 12 }}>
+            1. Apni pehli income ya expense add karo (Money tab par ➕)<br />
+            2. Bill/note likho — amount khud yaad ho jayega<br />
+            3. Roz 2 minute lagao — budget control aapke haath mein
+          </div>
+          <button onClick={onViewAllTransactions} style={{ padding: "10px 18px", borderRadius: 10, border: "none", background: "#0A193D", color: "#fff", fontWeight: 700, fontSize: 13, cursor: "pointer" }}>+ Add your first transaction</button>
+        </div>
+      )}
+
+      {/* Recent transactions */}
+      <div style={{ padding: "22px 24px", borderRadius: 16, background: colors.card, border: `1px solid ${colors.cardBorder}` }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 6 }}>
+          <span style={{ fontWeight: 700, fontSize: 15, color: colors.text }}>{t(lang, "dash.recent")}</span>
+          {recent.length > 0 && <button onClick={onViewAllTransactions} style={{ fontSize: 12, color: "#0A193D", background: "none", border: "none", cursor: "pointer", fontWeight: 600 }}>{t(lang, "common.viewAll")}</button>}
+        </div>
+        {recent.length === 0 ? (
+          <div style={{ fontSize: 13, color: colors.textSub, padding: "14px 2px" }}>Abhi koi transactions nahi — upar se pehla add karo.</div>
+        ) : (
+          recent.map((txn, i) => (
+            <div key={txn.id || i} style={{ display: "flex", alignItems: "center", gap: 12, padding: "11px 0", borderBottom: i < recent.length - 1 ? `1px solid ${colors.cardBorder}` : "none" }}>
+              <span style={{ width: 34, height: 34, borderRadius: 10, flexShrink: 0, display: "flex", alignItems: "center", justifyContent: "center", background: txn.type === "income" ? "rgba(16,185,129,0.12)" : "rgba(239,68,68,0.1)", color: txn.type === "income" ? "#10b981" : "#ef4444" }}>
+                {txn.type === "income" ? <ArrowUp size={15} /> : <ArrowDown size={15} />}
+              </span>
+              <div style={{ minWidth: 0, flex: 1 }}>
+                <div style={{ fontSize: 13.5, fontWeight: 600, color: colors.text, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{txn.description || txn.category || "Transaction"}</div>
+                <div style={{ fontSize: 11.5, color: colors.textSub, marginTop: 2 }}>{txn.date?.slice(0, 10)} · {txn.category || ""}</div>
+              </div>
+              <div style={{ fontSize: 14, fontWeight: 700, color: txn.type === "income" ? "#10b981" : colors.text, whiteSpace: "nowrap" }}>
+                {txn.type === "income" ? "+" : "−"}{fmt(txn.amount)}
+              </div>
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* Upgrade */}
+      <div style={{ padding: "22px 24px", borderRadius: 16, background: "linear-gradient(135deg, rgba(10,25,61,0.06), rgba(16,185,129,0.08))", border: "1px solid rgba(10,25,61,0.18)" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 6, color: colors.text }}>
+          <Sparkles size={17} color="#f59e0b" />
+          <span style={{ fontWeight: 700, fontSize: 14 }}>Professional features are unlocked — sirf switch karo</span>
+        </div>
+        <div style={{ fontSize: 12.5, color: colors.textSub, lineHeight: 1.6, marginBottom: 12 }}>
+          Budgets, analytics, upcoming bills, installments, cash flow aur AI assistant — sab isi account par mil jayega. Bilkul free, kabhi bhi change kar sakte ho.
+        </div>
+        <button onClick={onSwitchPro} style={{ padding: "11px 22px", borderRadius: 11, border: "none", background: "linear-gradient(90deg,#142453,#0A193D)", color: "#fff", fontWeight: 700, fontSize: 13.5, cursor: "pointer", boxShadow: "0 6px 18px rgba(10,25,61,0.3)" }}>
+          Switch to Professional →
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function SettingsPage({ colors, displayName, userEmail, onSignOut, currency, onCurrencyChange, supabase, lang = "en", onLanguageChange, plan = "professional", onPlanChange }: { colors: Colors; displayName: string; userEmail: string; onSignOut: () => void; currency: string; onCurrencyChange: (c: string) => void; supabase: ReturnType<typeof createClient>; lang?: string; onLanguageChange: (l: LangCode) => void; plan?: "beginner" | "professional"; onPlanChange: (p: "beginner" | "professional") => void }) {
   const currencies = ["PKR", "USD", "AED", "SAR", "GBP", "EUR"];
   const profileInitial = (displayName || "U").charAt(0).toUpperCase();
   const [draftCurrency, setDraftCurrency] = useState(currency);
@@ -2387,6 +2499,21 @@ function SettingsPage({ colors, displayName, userEmail, onSignOut, currency, onC
         </select>
         <div style={{ fontSize: 11.5, color: colors.textSub, marginTop: 8 }}>
           {lang === "en" ? "English" : LANGUAGES.find(l => l.code === lang)?.native} — {LANGUAGES.find(l => l.code === lang)?.name}
+        </div>
+      </div>
+
+      {/* Plan */}
+      <div style={{ padding: "22px 24px", borderRadius: 16, background: colors.card, border: `1px solid ${colors.cardBorder}` }}>
+        <div style={{ fontWeight: 700, fontSize: 15, marginBottom: 14, display: "flex", alignItems: "center", gap: 8 }}><span style={{ color: "#0A193D" }}>🎯</span> Plan</div>
+        <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+          <button onClick={() => onPlanChange("beginner")} style={{ flex: 1, minWidth: 140, padding: "14px 16px", borderRadius: 12, border: `1px solid ${plan === "beginner" ? "#0A193D" : colors.cardBorder}`, background: plan === "beginner" ? "rgba(10,25,61,0.08)" : "transparent", cursor: "pointer", textAlign: "left", fontFamily: "inherit" }}>
+            <div style={{ fontSize: 14, fontWeight: 700, color: colors.text, marginBottom: 3 }}>Beginner</div>
+            <div style={{ fontSize: 11.5, color: colors.textSub, lineHeight: 1.45 }}>Simple dashboard — balance, income & expenses, recent transactions.</div>
+          </button>
+          <button onClick={() => onPlanChange("professional")} style={{ flex: 1, minWidth: 140, padding: "14px 16px", borderRadius: 12, border: `1px solid ${plan === "professional" ? "#0A193D" : colors.cardBorder}`, background: plan === "professional" ? "rgba(10,25,61,0.08)" : "transparent", cursor: "pointer", textAlign: "left", fontFamily: "inherit" }}>
+            <div style={{ fontSize: 14, fontWeight: 700, color: colors.text, marginBottom: 3 }}>Professional</div>
+            <div style={{ fontSize: 11.5, color: colors.textSub, lineHeight: 1.45 }}>Full dashboard — budgets, analytics, installments, AI assistant & more.</div>
+          </button>
         </div>
       </div>
 

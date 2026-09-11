@@ -64,7 +64,14 @@ const GOALS: { value: Goal; desc: string }[] = [
   { value: "Plan a big purchase", desc: "Save toward something specific" },
 ];
 
-const TOTAL_STEPS = 6;
+type Plan = "beginner" | "professional";
+
+const PLANS: { value: Plan; title: string; desc: string }[] = [
+  { value: "beginner", title: "Beginner", desc: "Simple dashboard — balance, income & expenses, recent transactions." },
+  { value: "professional", title: "Professional", desc: "Full dashboard — budgets, analytics, installments, AI assistant & more. (Recommended)" },
+];
+
+const TOTAL_STEPS = 7;
 
 export default function OnboardingPage() {
   const [step, setStep] = useState(1);
@@ -74,6 +81,7 @@ export default function OnboardingPage() {
   const [incomeType, setIncomeType] = useState<IncomeType | null>(null);
   const [goal, setGoal] = useState<Goal | null>(null);
   const [openingBalance, setOpeningBalance] = useState("");
+  const [plan, setPlan] = useState<Plan | null>("professional");
 
   const router = useRouter();
   const { toast } = useToast();
@@ -97,7 +105,8 @@ export default function OnboardingPage() {
     (step === 3 && income.trim().length > 0 && Number(income) > 0) ||
     (step === 4 && !!incomeType) ||
     (step === 5 && !!goal) ||
-    (step === 6 && !isNaN(Number(openingBalance.trim())) && Number(openingBalance.trim()) >= 0);
+    (step === 6 && !isNaN(Number(openingBalance.trim())) && Number(openingBalance.trim()) >= 0) ||
+    (step === 7 && !!plan);
 
   const isLastStep = step === TOTAL_STEPS;
 
@@ -117,10 +126,11 @@ export default function OnboardingPage() {
         incomeType,
         goal,
         openingBalance: Number(openingBalance.trim() || 0),
+        plan,
       };
       try {
         await supabase.auth.updateUser({
-          data: { full_name: name.trim(), currency, onboarded: true, opening_balance: Number(openingBalance.trim() || 0) },
+          data: { full_name: name.trim(), currency, onboarded: true, opening_balance: Number(openingBalance.trim() || 0), plan: plan || "professional" },
         });
         const { data: existing } = await supabase
           .from("income")
@@ -436,6 +446,42 @@ export default function OnboardingPage() {
             <p style={{ fontSize: "12px", color: "rgba(100,116,139,0.7)", margin: "10px 0 0 0" }}>
               Khaali chor do aur baad mein set karo — dashboard par balance 0 se start hoga.
             </p>
+          </div>
+        )}
+
+        {/* STEP 7 — PLAN */}
+        {step === 7 && (
+          <div>
+            <h2 style={{ fontSize: "24px", fontWeight: 700, color: "#1e293b", margin: "0 0 6px 0" }}>Choose your dashboard plan</h2>
+            <p style={{ fontSize: "14px", color: "rgba(71,85,105,0.8)", margin: "0 0 24px 0" }}>Apna milestone select karo — plan kabhi bhi Settings se switch kar sakte ho.</p>
+            <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+              {PLANS.map(p => {
+                const active = plan === p.value;
+                return (
+                  <button key={p.value} type="button" onClick={() => setPlan(p.value)}
+                    style={{
+                      ...optionBase,
+                      background: active ? "rgba(10,25,61,0.18)" : "rgba(255,255,255,0.72)",
+                      border: active ? "1px solid rgba(10,25,61,0.6)" : "1px solid rgba(255,255,255,0.8)",
+                      justifyContent: "space-between",
+                      padding: "16px 18px",
+                    }}>
+                    <span>
+                      <div style={{ fontSize: "14px", fontWeight: 700, color: "#0f172a" }}>{p.title}</div>
+                      <div style={{ fontSize: "12px", color: "rgba(71,85,105,0.8)", marginTop: "3px", lineHeight: 1.5 }}>{p.desc}</div>
+                    </span>
+                    <span style={{
+                      width: "20px", height: "20px", borderRadius: "50%", flexShrink: 0,
+                      border: active ? "none" : "1px solid rgba(10,25,61,0.4)",
+                      background: active ? "#0A193D" : "transparent",
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                    }}>
+                      {active && <svg width="11" height="11" viewBox="0 0 12 12" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="2,6 5,9 10,3" /></svg>}
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
           </div>
         )}
 
