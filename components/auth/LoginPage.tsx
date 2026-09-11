@@ -7,10 +7,11 @@ import { useRouter } from "next/navigation";
 import { LoaderCircle } from "lucide-react";
 import { useToast } from "@/components/providers/ToastProvider";
 import { createClient } from "@/lib/supabase";
-import { t, getStoredLanguage, type LangCode } from "@/lib/i18n";
+import { t, getStoredLanguage, storeLanguage, type LangCode } from "@/lib/i18n";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 
 export function LoginPage() {
-  const [lang] = useState<LangCode>(() => getStoredLanguage());
+  const [lang, setLang] = useState<LangCode>(() => getStoredLanguage());
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -30,6 +31,11 @@ export function LoginPage() {
   });
   const router = useRouter();
   const { toast } = useToast();
+
+  const changeLang = (l: LangCode) => {
+    setLang(l);
+    storeLanguage(l);
+  };
 
   useEffect(() => {
     let active = true;
@@ -127,6 +133,11 @@ export function LoginPage() {
       position: "relative",
       overflow: "hidden",
     }}>
+
+      {/* Language switcher */}
+      <div style={{ position: "absolute", top: 20, right: 20, zIndex: 10 }}>
+        <LanguageSwitcher value={lang} onChange={changeLang} />
+      </div>
 
       {/* ═══════════ LEFT PANEL — Branding / Text ═══════════ */}
       <div className="finlo-left" style={{

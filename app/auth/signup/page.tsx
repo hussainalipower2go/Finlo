@@ -7,10 +7,11 @@ import { useRouter } from "next/navigation";
 import { LoaderCircle } from "lucide-react";
 import { useToast } from "@/components/providers/ToastProvider";
 import { createClient } from "@/lib/supabase";
-import { t, getStoredLanguage, type LangCode } from "@/lib/i18n";
+import { t, getStoredLanguage, storeLanguage, type LangCode } from "@/lib/i18n";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 
 export default function SignupPage() {
-  const [lang] = useState<LangCode>(() => getStoredLanguage());
+  const [lang, setLang] = useState<LangCode>(() => getStoredLanguage());
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [email, setEmail] = useState("");
@@ -22,6 +23,11 @@ export default function SignupPage() {
   const [error, setError] = useState("");
   const router = useRouter();
   const { toast } = useToast();
+
+  const changeLang = (l: LangCode) => {
+    setLang(l);
+    storeLanguage(l);
+  };
 
   const p = {
     line: "rgba(10,25,61,0.22)",
@@ -136,6 +142,11 @@ export default function SignupPage() {
       position: "relative",
       overflow: "hidden",
     }}>
+
+      {/* Language switcher */}
+      <div style={{ position: "absolute", top: 20, right: 20, zIndex: 10 }}>
+        <LanguageSwitcher value={lang} onChange={changeLang} />
+      </div>
 
       {/* ═══════════ LEFT PANEL — Branding / Text ═══════════ */}
       <div className="finlo-left" style={{

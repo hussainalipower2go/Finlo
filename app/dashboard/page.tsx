@@ -30,6 +30,7 @@ import { formatCurrency, currencySymbol } from "@/lib/format";
 import { autoEnablePush, requestPushForDue, getPushStatus, notifPref, setNotifPref, NOTIF_PREF_BILLS, NOTIF_PREF_BUDGET, NOTIF_PREF_INCOME, type PushStatus } from "@/lib/push";
 import { hasExistingUserData } from "@/lib/user-data";
 import { parseBankSms } from "@/lib/sms-parse";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { LANGUAGES, t, getStoredLanguage, storeLanguage, type LangCode } from "@/lib/i18n";
 
 // ── Types ──────────────────────────────────────────────────────────────────
@@ -736,6 +737,7 @@ const insts = await getUserInstallmentsClient();
                 <MonthPickerDropdown month={dashMonth} onMonthChange={setDashMonth} colors={colors} variant="topbar" lang={lang} />
               </div>
             )}
+            <LanguageSwitcher value={lang} onChange={changeLang} isDark={isDark} accent={colors.accent} />
             <button onClick={() => navigateTo("settings")} title="Settings" style={{ width: 36, height: 36, borderRadius: 8, border: `1px solid ${colors.cardBorder}`, background: colors.card, color: page === "settings" ? colors.accent : colors.textSub, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
               <Settings size={16} />
             </button>
