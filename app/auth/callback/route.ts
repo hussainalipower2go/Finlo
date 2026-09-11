@@ -30,15 +30,24 @@ export async function GET(request: Request) {
 
   const redirectTo = next && next.startsWith('/') ? next : '/dashboard'
 
+  let target: string
+  try {
+    const u = new URL(redirectTo, requestUrl.origin)
+    if (u.origin !== requestUrl.origin) target = '/dashboard'
+    else target = u.pathname + u.search + u.hash
+  } catch {
+    target = '/dashboard'
+  }
+
   const meta = data.user.user_metadata as Record<string, unknown> | undefined
   const onboarded = meta?.onboarded === true
   if (!onboarded) {
     const hasData = await hasExistingUserData(supabase)
     if (hasData) {
       supabase.auth.updateUser({ data: { onboarded: true } }).catch(() => {})
-    } else if (redirectTo !== '/onboarding') {
+    } else if (target === '/dashboard' || target === '/') {
       return NextResponse.redirect(new URL('/onboarding', requestUrl.origin))
     }
   }
-  return NextResponse.redirect(new URL(redirectTo, requestUrl.origin))
+  return NextResponse.redirect(new URL(target, requestUrl.origin))
 }

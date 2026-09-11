@@ -90,8 +90,10 @@ export default function UpcomingPage() {
           .select('frequency, next_due_date')
           .eq('id', bill.id)
           .single()
+        const freqDays: Record<string, number> = { daily: 1, weekly: 7, 'bi-weekly': 14, monthly: 30, quarterly: 90, yearly: 365 }
+        const days = freqDays[data?.frequency || 'monthly'] || 30
         const base = data?.next_due_date ? new Date(data.next_due_date) : new Date()
-        const next = new Date(base.getFullYear(), base.getMonth() + 1, base.getDate()).toISOString().slice(0, 10)
+        const next = new Date(base.getTime() + days * 24 * 60 * 60 * 1000).toISOString().slice(0, 10)
         await supabase.from('recurring_expenses').update({ next_due_date: next }).eq('id', bill.id).throwOnError()
       } else {
         await supabase.from('expenses').update({ status: 'completed' }).eq('id', bill.id).throwOnError()

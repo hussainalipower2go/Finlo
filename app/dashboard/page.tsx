@@ -287,7 +287,7 @@ export default function FinloApp() {
       const savedPlan = u.user_metadata?.plan as string | undefined;
       if (savedPlan === "beginner" || savedPlan === "professional") setPlan(savedPlan);
       const onb = u.user_metadata as Record<string, unknown> | undefined;
-      if (onb && onb.onboarded !== true) {
+      if (onb?.onboarded !== true) {
         const hasData = await hasExistingUserData(supabase);
         if (hasData) {
           supabase.auth.updateUser({ data: { onboarded: true } }).catch(() => {});
@@ -1434,9 +1434,11 @@ function UpcomingPage({ colors, transactions, recurring, installments, supabase,
   const markPaidRecurring = async (item: UpcomingItem) => {
     if (!confirm(`Mark "${item.name}" as paid? It moves to the next cycle.`)) return;
     try {
+      const freqDays: Record<string, number> = { daily: 1, weekly: 7, "bi-weekly": 14, monthly: 30, quarterly: 90, yearly: 365 };
+      const days = freqDays[item.frequency || "monthly"] || 30;
       const { data } = await supabase.from("recurring_expenses").select("next_due_date").eq("id", item.id).single();
       const base = data?.next_due_date ? new Date(data.next_due_date) : new Date();
-      const next = new Date(base.getFullYear(), base.getMonth() + 1, base.getDate()).toISOString().slice(0, 10);
+      const next = new Date(base.getTime() + days * 24 * 60 * 60 * 1000).toISOString().slice(0, 10);
       await supabase.from("recurring_expenses").update({ next_due_date: next }).eq("id", item.id).throwOnError();
     } catch (e) {
       alert(e instanceof Error ? e.message : "Could not mark as paid");
@@ -2453,16 +2455,21 @@ function SettingsPage({ colors, displayName, userEmail, onSignOut, currency, onC
       const json = await res.json().catch(() => ({}));
 
       if (!res.ok) {
-        // Fallback: at least clear the user's data using the client session.
-        const tables = ["transactions", "income", "expenses", "recurring_expenses", "budgets"] as const;
+        // Fallback: clear the user's data using the client session.
+        const tables = ["transactions", "income", "expenses", "recurring_expenses", "budgets", "installments", "push_subscriptions", "pending_transactions", "import_history", "sms_import_settings", "user_preferences", "ai_conversations", "ai_messages"] as const;
         for (const table of tables) {
           const { error } = await supabase.from(table).delete().eq("user_id", user.id);
-          if (error) throw new Error(error.message);
+          if (error) console.error(`[delete-account] ${table}:`, error.message);
         }
-        throw new Error(json.error || "Could not delete the account");
+        void json;
       }
 
-      await supabase.auth.signOut();
+      // Session is already gone after a successful deletion, so ignore signOut errors.
+      try { await supabase.auth.signOut(); } catch {}
+      try {
+        localStorage.removeItem("finlo_preferences");
+        localStorage.removeItem("finlo_onboarded");
+      } catch {}
       router.push("/");
       router.refresh();
     } catch (e) {

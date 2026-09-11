@@ -1,6 +1,7 @@
-import { NextResponse } from 'next/server'
+import { NextResponse, type NextRequest } from 'next/server'
 import { isFlagEnabled } from '@/lib/admin/features'
 import { reportError } from '@/lib/admin/helpers'
+import { getAuthUser } from '@/app/api/import/auth'
 
 export const runtime = 'nodejs'
 
@@ -53,8 +54,13 @@ Return ONLY the JSON object, no explanation.`
   }
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
+    const auth = await getAuthUser(request)
+    if (!auth.ok) {
+      return NextResponse.json({ error: auth.error }, { status: auth.status })
+    }
+
     if (!(await isFlagEnabled('receipt_scanning_enabled'))) {
       return NextResponse.json({ error: 'Receipt scanning is temporarily disabled' }, { status: 403 })
     }

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getAuthUser } from '../auth'
+import { getAuthUser, isExternalAuth } from '../auth'
 import { createClient as createServerClient } from '@/lib/supabase-server'
+import { adminDb } from '@/lib/admin/helpers'
 
 export const runtime = 'nodejs'
 export const maxDuration = 30
@@ -40,7 +41,8 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'No actions provided' }, { status: 400 })
   }
 
-  const server = await createServerClient()
+  // External devices (Bearer token) have no browser cookie session for RLS.
+  const server = isExternalAuth(req) ? adminDb() : await createServerClient()
 
   let added = 0
   let ignored = 0

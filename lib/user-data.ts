@@ -1,4 +1,4 @@
-const DATA_TABLES = ["transactions", "income", "expenses", "budgets", "installments", "recurring_expenses"];
+const DATA_TABLES = ["transactions", "income", "expenses", "budgets", "installments", "recurring_expenses", "pending_transactions", "import_history", "sms_import_settings"];
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function hasExistingUserData(db: any): Promise<boolean> {

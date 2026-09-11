@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient as createServerClient } from '@/lib/supabase-server'
 import { adminDb } from '@/lib/admin/helpers'
-import { getAuthUser } from '../auth'
+import { getAuthUser, isExternalAuth } from '../auth'
 import { analyzeSms, findDuplicate } from '@/services/sms-parser/index'
 import { looksFinancial } from '@/services/sms-parser/banks'
 import { isFlagEnabled } from '@/lib/admin/features'
@@ -65,7 +65,9 @@ export async function POST(req: NextRequest) {
   // Only ever process messages that look financial (defense in depth).
   const financial = messages.filter((m) => m.body && looksFinancial(m.body))
 
-  const server = await createServerClient()
+  // External devices (Bearer or import token) have no browser cookie session, so RLS
+// would block them — use the service-role client for those requests.
+  const server = isExternalAuth(req) ? adminDb() : await createServerClient()
 
   // Settings (default to review mode when not configured yet).
   let settings: { import_mode: string; auto_add_confidence: number; excluded_senders: string[]; enabled: boolean } = {

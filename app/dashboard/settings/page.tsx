@@ -315,15 +315,20 @@ export default function SettingsPage() {
       const json = await res.json().catch(() => ({}))
 
       if (!res.ok) {
-        const tables = ['transactions', 'income', 'expenses', 'recurring_expenses', 'budgets'] as const
+        const tables = ['transactions', 'income', 'expenses', 'recurring_expenses', 'budgets', 'installments', 'push_subscriptions', 'pending_transactions', 'import_history', 'sms_import_settings', 'user_preferences', 'ai_conversations', 'ai_messages'] as const
         for (const table of tables) {
           const { error } = await supabase.from(table).delete().eq('user_id', user.id)
-          if (error) throw new Error(error.message)
+          if (error) console.error(`[delete-account] ${table}:`, error.message)
         }
-        throw new Error(json.error || 'Could not delete the account')
+        void json
       }
 
-      await supabase.auth.signOut()
+      // Session is already gone after a successful deletion, so ignore signOut errors.
+      try { await supabase.auth.signOut() } catch {}
+      try {
+        localStorage.removeItem('finlo_preferences')
+        localStorage.removeItem('finlo_onboarded')
+      } catch {}
       router.push('/')
       router.refresh()
     } catch (e) {

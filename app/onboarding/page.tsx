@@ -129,9 +129,6 @@ export default function OnboardingPage() {
         plan,
       };
       try {
-        await supabase.auth.updateUser({
-          data: { full_name: name.trim(), currency, onboarded: true, opening_balance: Number(openingBalance.trim() || 0), plan: plan || "professional" },
-        });
         const { data: existing } = await supabase
           .from("income")
           .select("id")
@@ -148,6 +145,9 @@ export default function OnboardingPage() {
             },
           ]);
         }
+        await supabase.auth.updateUser({
+          data: { full_name: name.trim(), currency, onboarded: true, opening_balance: Number(openingBalance.trim() || 0), plan: plan || "professional" },
+        });
         localStorage.setItem("finlo_preferences", JSON.stringify(preferences));
         localStorage.setItem("finlo_onboarded", "true");
         toast({ type: "success", message: "Welcome to Finlo! Your dashboard is ready." });

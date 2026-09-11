@@ -9,6 +9,12 @@ export type AuthResult =
 
 export const BEARER_PREFIX = 'Bearer '
 
+/** True when the request authenticates via an external device (Bearer token or import token), which means there is no browser cookie session to rely on. */
+export function isExternalAuth(req: NextRequest): boolean {
+  const h = req.headers.get('authorization')
+  return (!!h && h.startsWith(BEARER_PREFIX)) || !!req.headers.get('x-finlo-import-token')
+}
+
 /**
  * Authenticate the requesting user.
  *

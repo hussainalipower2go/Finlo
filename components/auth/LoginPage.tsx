@@ -18,11 +18,15 @@ export function LoginPage() {
   const [oauthLoading, setOauthLoading] = useState<"google" | "apple" | null>(null);
   const [error, setError] = useState(() => {
     if (typeof window === "undefined") return "";
-    const params = new URLSearchParams(window.location.search);
-    const e = params.get("error");
-    if (!e) return "";
-    const reason = params.get("reason");
-    return reason ? decodeURIComponent(reason) : `Sign in failed (${e}).`;
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const e = params.get("error");
+      if (!e) return "";
+      const reason = params.get("reason");
+      return reason ? decodeURIComponent(reason) : `Sign in failed (${e}).`;
+    } catch {
+      return "";
+    }
   });
   const router = useRouter();
   const { toast } = useToast();

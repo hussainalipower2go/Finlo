@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { getAuthUser } from '../auth'
+import { getAuthUser, isExternalAuth } from '../auth'
 import { createClient as createServerClient } from '@/lib/supabase-server'
+import { adminDb } from '@/lib/admin/helpers'
 
 export const runtime = 'nodejs'
 
@@ -14,7 +15,8 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: auth.error }, { status: auth.status })
   }
 
-  const server = await createServerClient()
+  // External devices (Bearer token) have no browser cookie session for RLS.
+  const server = isExternalAuth(req) ? adminDb() : await createServerClient()
 
   const { data, error } = await server
     .from('pending_transactions')

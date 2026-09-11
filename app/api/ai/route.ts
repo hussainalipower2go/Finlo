@@ -1,6 +1,7 @@
-import { NextResponse } from 'next/server'
+import { NextResponse, type NextRequest } from 'next/server'
 import { isFlagEnabled } from '@/lib/admin/features'
 import { reportError } from '@/lib/admin/helpers'
+import { getAuthUser } from '@/app/api/import/auth'
 
 export const runtime = 'nodejs'
 
@@ -41,8 +42,13 @@ async function callGemini(apiKey: string, model: string, prompt: string, timeout
   }
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
+    const auth = await getAuthUser(request)
+    if (!auth.ok) {
+      return NextResponse.json({ error: auth.error }, { status: auth.status })
+    }
+
     if (!(await isFlagEnabled('ai_assistant_enabled'))) {
       return NextResponse.json({ reply: "The AI Assistant is temporarily disabled. Please try again later." }, { status: 200 })
     }
