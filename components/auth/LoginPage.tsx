@@ -10,13 +10,20 @@ import { createClient } from "@/lib/supabase";
 import { t, getStoredLanguage, type LangCode } from "@/lib/i18n";
 
 export function LoginPage() {
-  const [lang, setLang] = useState<LangCode>("en");
+  const [lang] = useState<LangCode>(() => getStoredLanguage());
   const [showPassword, setShowPassword] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [oauthLoading, setOauthLoading] = useState<"google" | "apple" | null>(null);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(() => {
+    if (typeof window === "undefined") return "";
+    const params = new URLSearchParams(window.location.search);
+    const e = params.get("error");
+    if (!e) return "";
+    const reason = params.get("reason");
+    return reason ? decodeURIComponent(reason) : `Sign in failed (${e}).`;
+  });
   const router = useRouter();
   const { toast } = useToast();
 
@@ -33,19 +40,6 @@ export function LoginPage() {
     check();
     return () => { active = false; };
   }, [router]);
-
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const e = params.get("error");
-    if (e) {
-      const reason = params.get("reason");
-      setError(reason ? decodeURIComponent(reason) : `Sign in failed (${e}).`);
-    }
-  }, []);
-
-  useEffect(() => {
-    setLang(getStoredLanguage());
-  }, []);
 
   const p = {
     line: "rgba(10,25,61,0.22)",

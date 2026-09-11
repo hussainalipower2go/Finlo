@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef, useEffect, type ReactNode } from "react";
+import { useState, useRef, useEffect, useMemo, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -184,9 +184,6 @@ export default function FinloApp() {
       window.history.replaceState(null, "", url.pathname + url.search + url.hash);
     }
   }, []);
-  useEffect(() => {
-    setLang(getStoredLanguage());
-  }, []);
 
   useEffect(() => {
     void (async () => {
@@ -216,9 +213,9 @@ export default function FinloApp() {
   const [autoClearMessages, setAutoClearMessages] = useState<{ title: string; body: string }[]>([]);
 
   const router = useRouter();
-  const supabase = createClient();
+  const supabase = useMemo(() => createClient(), []);
   const [dashMonth, setDashMonth] = useState(() => new Date().toISOString().slice(0, 7));
-  const [lang, setLang] = useState<LangCode>("en");
+  const [lang, setLang] = useState<LangCode>(() => getStoredLanguage());
   const [plan, setPlan] = useState<"beginner" | "professional">("professional");
 
   const isDark = theme === "dark";
@@ -301,7 +298,7 @@ export default function FinloApp() {
       }
     };
     checkAuth();
-  }, [supabase.auth, router]);
+  }, [supabase, router]);
 
   useEffect(() => {
     if (!hasAuth) return;
@@ -920,9 +917,15 @@ function DashboardPage({ colors, transactions, recurring, installments, budgets,
   const [monthBudgets, setMonthBudgets] = useState<Budget[] | null>(null);
   const curMonth = new Date().toISOString().slice(0, 7);
 
+  const [prevMonth, setPrevMonth] = useState(month);
+  if (month !== prevMonth) {
+    setPrevMonth(month);
+    setMonthBudgets(null);
+  }
+
   useEffect(() => {
     let active = true;
-    if (month === curMonth) { setMonthBudgets(null); return; }
+    if (month === curMonth) return;
     getBudgetsForMonthClient(month)
       .then((bdgs) => {
         if (!active) return;
@@ -950,7 +953,7 @@ function DashboardPage({ colors, transactions, recurring, installments, budgets,
       })
       .catch(() => {});
     return () => { active = false; };
-  }, [month, transactions]);
+  }, [month, transactions, curMonth]);
 
   const nowMs = new Date().getTime();
   const upcomingRecurring = recurring

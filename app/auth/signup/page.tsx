@@ -10,7 +10,7 @@ import { createClient } from "@/lib/supabase";
 import { t, getStoredLanguage, type LangCode } from "@/lib/i18n";
 
 export default function SignupPage() {
-  const [lang, setLang] = useState<LangCode>("en");
+  const [lang] = useState<LangCode>(() => getStoredLanguage());
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [email, setEmail] = useState("");
@@ -48,10 +48,6 @@ export default function SignupPage() {
     check();
     return () => { active = false; };
   }, [router]);
-
-  useEffect(() => {
-    setLang(getStoredLanguage());
-  }, []);
 
   async function handleSignup() {
     if (loading) return;

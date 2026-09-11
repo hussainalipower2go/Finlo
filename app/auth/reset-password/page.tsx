@@ -6,6 +6,61 @@ import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
 import { LoaderCircle } from 'lucide-react'
 
+const p = {
+  line: 'rgba(10,25,61,0.22)',
+  text: '#0f172a',
+  desc: 'rgba(100,116,139,0.85)',
+  label: 'rgba(51,65,85,0.9)',
+  iconMuted: 'rgba(100,116,139,0.6)',
+  inputBg: 'rgba(255,255,255,0.95)',
+  inputText: 'rgba(15,23,42,0.92)',
+}
+
+function PasswordField({
+  id, label, value, onChange, show, onToggle, onClearError, placeholder,
+}: {
+  id: string
+  label: string
+  value: string
+  onChange: (v: string) => void
+  show: boolean
+  onToggle: () => void
+  onClearError: () => void
+  placeholder: string
+}) {
+  return (
+    <div style={{ marginBottom: '20px' }}>
+      <label htmlFor={id} style={{ display: 'block', fontSize: '13px', fontWeight: 500, color: p.label, marginBottom: '8px' }}>{label}</label>
+      <div style={{ position: 'relative' }}>
+        <span style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: p.iconMuted, pointerEvents: 'none' }}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+        </span>
+        <input
+          id={id}
+          type={show ? 'text' : 'password'}
+          value={value}
+          autoComplete="new-password"
+          onChange={e => { onChange(e.target.value); onClearError() }}
+          placeholder={placeholder}
+          style={{ width: '100%', padding: '14px 48px 14px 44px', background: p.inputBg, border: `1px solid ${p.line}`, borderRadius: '12px', fontSize: '14px', color: p.inputText, outline: 'none', fontFamily: 'inherit', boxSizing: 'border-box' }}
+          onFocus={e => e.target.style.borderColor = 'rgba(10,25,61,0.55)'}
+          onBlur={e => e.target.style.borderColor = p.line}
+        />
+        <button type="button" onClick={onToggle} aria-label="Toggle password"
+          style={{ position: 'absolute', right: '14px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: p.iconMuted, padding: '4px', display: 'flex' }}>
+          {show
+            ? <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            : <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
+          }
+        </button>
+      </div>
+    </div>
+  )
+}
+
 export default function ResetPassword() {
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
@@ -17,16 +72,6 @@ export default function ResetPassword() {
   const [isReady, setIsReady] = useState(false)
   const router = useRouter()
   const supabase = createClient()
-
-  const p = {
-    line: 'rgba(10,25,61,0.22)',
-    text: '#0f172a',
-    desc: 'rgba(100,116,139,0.85)',
-    label: 'rgba(51,65,85,0.9)',
-    iconMuted: 'rgba(100,116,139,0.6)',
-    inputBg: 'rgba(255,255,255,0.95)',
-    inputText: 'rgba(15,23,42,0.92)',
-  }
 
   useEffect(() => {
     const checkSession = async () => {
@@ -75,50 +120,6 @@ export default function ResetPassword() {
     } finally {
       setLoading(false)
     }
-  }
-
-  function PasswordField({
-    id, label, value, onChange, show, onToggle, placeholder,
-  }: {
-    id: string
-    label: string
-    value: string
-    onChange: (v: string) => void
-    show: boolean
-    onToggle: () => void
-    placeholder: string
-  }) {
-    return (
-      <div style={{ marginBottom: '20px' }}>
-        <label htmlFor={id} style={{ display: 'block', fontSize: '13px', fontWeight: 500, color: p.label, marginBottom: '8px' }}>{label}</label>
-        <div style={{ position: 'relative' }}>
-          <span style={{ position: 'absolute', left: '14px', top: '50%', transform: 'translateY(-50%)', color: p.iconMuted, pointerEvents: 'none' }}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-            </svg>
-          </span>
-          <input
-            id={id}
-            type={show ? 'text' : 'password'}
-            value={value}
-            autoComplete="new-password"
-            onChange={e => { onChange(e.target.value); if (error) setError('') }}
-            placeholder={placeholder}
-            style={{ width: '100%', padding: '14px 48px 14px 44px', background: p.inputBg, border: `1px solid ${p.line}`, borderRadius: '12px', fontSize: '14px', color: p.inputText, outline: 'none', fontFamily: 'inherit', boxSizing: 'border-box' }}
-            onFocus={e => e.target.style.borderColor = 'rgba(10,25,61,0.55)'}
-            onBlur={e => e.target.style.borderColor = p.line}
-          />
-          <button type="button" onClick={onToggle} aria-label="Toggle password"
-            style={{ position: 'absolute', right: '14px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: p.iconMuted, padding: '4px', display: 'flex' }}>
-            {show
-              ? <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-              : <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>
-            }
-          </button>
-        </div>
-      </div>
-    )
   }
 
   return (
@@ -197,6 +198,7 @@ export default function ResetPassword() {
                   onChange={setPassword}
                   show={showPassword}
                   onToggle={() => setShowPassword(!showPassword)}
+                  onClearError={() => setError('')}
                   placeholder="Enter new password"
                 />
                 <PasswordField
@@ -206,6 +208,7 @@ export default function ResetPassword() {
                   onChange={setConfirmPassword}
                   show={showConfirm}
                   onToggle={() => setShowConfirm(!showConfirm)}
+                  onClearError={() => setError('')}
                   placeholder="Re-enter new password"
                 />
                 <p style={{ fontSize: '12px', color: p.desc, margin: '-8px 0 20px 0' }}>At least 8 characters</p>
