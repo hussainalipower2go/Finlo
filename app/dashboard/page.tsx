@@ -28,6 +28,7 @@ import {
 } from "recharts";
 import { formatCurrency, currencySymbol } from "@/lib/format";
 import { autoEnablePush, requestPushForDue, getPushStatus, notifPref, setNotifPref, NOTIF_PREF_BILLS, NOTIF_PREF_BUDGET, NOTIF_PREF_INCOME, type PushStatus } from "@/lib/push";
+import { hasExistingUserData } from "@/lib/user-data";
 import { parseBankSms } from "@/lib/sms-parse";
 import { LANGUAGES, t, getStoredLanguage, storeLanguage, type LangCode } from "@/lib/i18n";
 
@@ -290,8 +291,13 @@ export default function FinloApp() {
       if (savedPlan === "beginner" || savedPlan === "professional") setPlan(savedPlan);
       const onb = u.user_metadata as Record<string, unknown> | undefined;
       if (onb && onb.onboarded !== true) {
-        router.replace("/onboarding");
-        return;
+        const hasData = await hasExistingUserData(supabase);
+        if (hasData) {
+          supabase.auth.updateUser({ data: { onboarded: true } }).catch(() => {});
+        } else {
+          router.replace("/onboarding");
+          return;
+        }
       }
     };
     checkAuth();

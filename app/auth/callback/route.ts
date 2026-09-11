@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase-server'
+import { hasExistingUserData } from '@/lib/user-data'
 
 export const dynamic = 'force-dynamic'
 
@@ -31,8 +32,13 @@ export async function GET(request: Request) {
 
   const meta = data.user.user_metadata as Record<string, unknown> | undefined
   const onboarded = meta?.onboarded === true
-  if (!onboarded && redirectTo !== '/onboarding') {
-    return NextResponse.redirect(new URL('/onboarding', requestUrl.origin))
+  if (!onboarded) {
+    const hasData = await hasExistingUserData(supabase)
+    if (hasData) {
+      supabase.auth.updateUser({ data: { onboarded: true } }).catch(() => {})
+    } else if (redirectTo !== '/onboarding') {
+      return NextResponse.redirect(new URL('/onboarding', requestUrl.origin))
+    }
   }
   return NextResponse.redirect(new URL(redirectTo, requestUrl.origin))
 }
