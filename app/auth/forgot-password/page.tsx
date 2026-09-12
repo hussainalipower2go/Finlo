@@ -5,6 +5,7 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { createClient } from '@/lib/supabase'
 import { LoaderCircle } from 'lucide-react'
+import { ParentBrand } from '@/components/parent-brand'
 
 export default function ForgotPassword() {
   const [email, setEmail] = useState('')
@@ -155,6 +156,8 @@ export default function ForgotPassword() {
             <div style={{ textAlign: 'center', fontSize: '14px', color: p.desc }}>
               <Link href="/auth/login" style={{ color: '#0A193D', textDecoration: 'none', fontWeight: 500 }}>Back to login</Link>
             </div>
+
+            <ParentBrand companyName="ELVA" logo="/branding/elva-logo.svg" />
           </>
         )}
       </div>

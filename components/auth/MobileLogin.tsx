@@ -4,6 +4,7 @@ import { BatteryFull, Signal, Wifi } from 'lucide-react'
 import { FinloLogo } from '@/components/auth/FinloLogo'
 import { HeroIllustration } from '@/components/auth/HeroIllustration'
 import { LoginForm } from '@/components/auth/LoginForm'
+import { ParentBrand } from '@/components/parent-brand'
 
 export function MobileLogin() {
   return (
@@ -45,6 +46,8 @@ export function MobileLogin() {
         <div className="pt-[16px]">
           <LoginForm />
         </div>
+
+        <ParentBrand companyName="ELVA" logo="/branding/elva-logo.svg" />
       </section>
     </main>
   )

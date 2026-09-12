@@ -5,6 +5,7 @@ import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase'
 import { LoaderCircle } from 'lucide-react'
+import { ParentBrand } from '@/components/parent-brand'
 
 const p = {
   line: 'rgba(10,25,61,0.22)',
@@ -227,6 +228,8 @@ export default function ResetPassword() {
             )}
           </>
         )}
+
+        <ParentBrand companyName="ELVA" logo="/branding/elva-logo.svg" />
       </div>
     </div>
   )

@@ -9,6 +9,7 @@ import { useToast } from "@/components/providers/ToastProvider";
 import { createClient } from "@/lib/supabase";
 import { t, getStoredLanguage, storeLanguage, type LangCode } from "@/lib/i18n";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { ParentBrand } from "@/components/parent-brand";
 
 export default function SignupPage() {
   const [lang, setLang] = useState<LangCode>(() => getStoredLanguage());
@@ -436,6 +437,8 @@ export default function SignupPage() {
             {t(lang, "login.haveAccount")}{" "}
             <Link href="/login" style={{ color: "#0A193D", textDecoration: "none", fontWeight: 500 }}>{t(lang, "login.signIn")}</Link>
           </div>
+
+          <ParentBrand companyName="ELVA" logo="/branding/elva-logo.svg" />
         </div>
       </div>
 
