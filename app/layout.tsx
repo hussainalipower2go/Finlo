@@ -26,8 +26,12 @@ const manrope = Manrope({
 });
 
 export const metadata: Metadata = {
-  title: "Finlo - Personal Finance Planning",
-  description: "Know how much you can safely spend until your next income arrives",
+  title: {
+    default: "Finlo | Personal Finance & Expense Management",
+    template: "%s | Finlo",
+  },
+  description:
+    "Finlo helps you track expenses, manage income, organize recurring bills, and understand your finances in one simple dashboard. A product by ELVA.",
   manifest: "/manifest.webmanifest",
   icons: {
     icon: "/finlo-app-icon-512.png",
@@ -38,6 +42,7 @@ export const metadata: Metadata = {
     statusBarStyle: "default",
     title: "Finlo",
   },
+  metadataBase: new URL("https://finlo.site"),
 };
 
 export const viewport: Viewport = {

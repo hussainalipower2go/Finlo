@@ -583,6 +583,150 @@ html.dark .admin-bottom-nav .admin-bnav-item.active,
   }
 }
 
+/* ═══════════ Public Landing Page ═══════════ */
+
+/* Landing theme tokens — light (default) */
+:root {
+  --lp-bg: #F4F6FD;
+  --lp-surface: rgba(255,255,255,0.55);
+  --lp-surface-strong: rgba(255,255,255,0.75);
+  --lp-text: #0f172a;
+  --lp-text-soft: #334155;
+  --lp-text-muted: #61708F;
+  --lp-text-faint: #94a3b8;
+  --lp-divider: rgba(10,25,61,0.08);
+  --lp-border: rgba(10,25,61,0.10);
+  --lp-border-soft: rgba(10,25,61,0.06);
+  --lp-glass-bg: rgba(255,255,255,0.42);
+  --lp-glass-bg-strong: rgba(255,255,255,0.62);
+  --lp-glass-border: rgba(255,255,255,0.75);
+  --lp-glass-blur: blur(22px) saturate(180%);
+  --lp-glass-blur-soft: blur(16px) saturate(160%);
+  --lp-glass-inset: inset 0 1px 0 rgba(255,255,255,0.85);
+  --lp-glass-shadow: 0 24px 60px rgba(10,25,61,0.10);
+  --lp-chip-bg: rgba(255,255,255,0.30);
+  --lp-chip-border: rgba(255,255,255,0.75);
+  --lp-shadow-card: 0 1px 2px rgba(10,25,61,0.04), 0 10px 30px rgba(10,25,61,0.08);
+  --lp-shadow-card-hover: 0 2px 4px rgba(10,25,61,0.05), 0 18px 44px rgba(10,25,61,0.10);
+  --lp-nav-bg: rgba(255,255,255,0.55);
+  --lp-nav-bg-scrolled: rgba(255,255,255,0.78);
+  --lp-nav-menu-bg: rgba(255,255,255,0.97);
+  --lp-hover-bg: rgba(10,25,61,0.05);
+}
+
+/* Landing theme tokens — dark */
+html.dark {
+  --lp-bg: #080b1a;
+  --lp-surface: rgba(18,27,53,0.55);
+  --lp-surface-strong: rgba(22,33,64,0.75);
+  --lp-text: #f1f5ff;
+  --lp-text-soft: rgba(226,232,240,0.85);
+  --lp-text-muted: rgba(173,186,222,0.7);
+  --lp-text-faint: rgba(148,163,184,0.5);
+  --lp-divider: rgba(255,255,255,0.10);
+  --lp-border: rgba(255,255,255,0.14);
+  --lp-border-soft: rgba(255,255,255,0.08);
+  --lp-glass-bg: rgba(12,18,36,0.55);
+  --lp-glass-bg-strong: rgba(18,27,53,0.75);
+  --lp-glass-border: rgba(255,255,255,0.12);
+  --lp-glass-blur: blur(22px) saturate(180%);
+  --lp-glass-blur-soft: blur(16px) saturate(160%);
+  --lp-glass-inset: inset 0 1px 0 rgba(255,255,255,0.08);
+  --lp-glass-shadow: 0 24px 60px rgba(0,0,0,0.5);
+  --lp-chip-bg: rgba(255,255,255,0.06);
+  --lp-chip-border: rgba(255,255,255,0.12);
+  --lp-shadow-card: 0 1px 2px rgba(0,0,0,0.3), 0 10px 30px rgba(0,0,0,0.4);
+  --lp-shadow-card-hover: 0 2px 4px rgba(0,0,0,0.4), 0 18px 44px rgba(0,0,0,0.5);
+  --lp-nav-bg: rgba(8,11,26,0.55);
+  --lp-nav-bg-scrolled: rgba(8,11,26,0.78);
+  --lp-nav-menu-bg: rgba(8,11,26,0.97);
+  --lp-hover-bg: rgba(255,255,255,0.08);
+}
+
+.landing-features-grid {
+  grid-template-columns: repeat(1, 1fr);
+}
+.landing-about-points {
+  grid-template-columns: repeat(1, 1fr);
+}
+.landing-steps-row {
+  align-items: stretch;
+}
+.landing-step-arrow {
+  transform: rotate(90deg);
+  justify-content: center;
+}
+.landing-chip {
+  display: none;
+}
+
+.landing-footer-link {
+  transition: color 0.15s ease;
+}
+.landing-footer-link:hover {
+  color: #0A193D;
+}
+
+@media (min-width: 768px) {
+  .landing-features-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .landing-about-points {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .landing-hero-left {
+    grid-column: span 5;
+  }
+  .landing-hero-right {
+    grid-column: span 7;
+  }
+  .landing-features-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .landing-steps-row {
+    flex-direction: row;
+  }
+  .landing-step-arrow {
+    transform: rotate(0);
+  }
+}
+
+@media (min-width: 900px) {
+  .landing-chip {
+    display: flex;
+  }
+}
+
+/* Reveal animation for landing sections (respects reduced motion) */
+@keyframes lp-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .lp-reveal {
+    animation: lp-fade-up 0.7s ease both;
+  }
+  .lp-reveal-1 {
+    animation-delay: 0.05s;
+  }
+  .lp-reveal-2 {
+    animation-delay: 0.12s;
+  }
+  .lp-reveal-3 {
+    animation-delay: 0.2s;
+  }
+}
+
 html.dark .admin-mobile-header,
 .dark .admin-mobile-header {
   background: linear-gradient(135deg, rgba(21, 29, 51, 0.85), rgba(26, 34, 60, 0.68));

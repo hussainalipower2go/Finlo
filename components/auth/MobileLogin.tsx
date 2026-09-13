@@ -47,7 +47,7 @@ export function MobileLogin() {
           <LoginForm />
         </div>
 
-        <ParentBrand companyName="ELVA" logo="/branding/elva-logo.svg" />
+        <ParentBrand companyName="ELVA" logo="/branding/Back ELVA.svg" />
       </section>
     </main>
   )

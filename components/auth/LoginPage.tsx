@@ -396,7 +396,7 @@ export function LoginPage() {
             <Link href="/auth/signup" style={{ color: "#0A193D", textDecoration: "none", fontWeight: 500 }}>{t(lang, "login.signUp")}</Link>
           </div>
 
-          <ParentBrand companyName="ELVA" logo="/branding/elva-logo.svg" />
+          <ParentBrand companyName="ELVA" logo="/branding/Back ELVA.svg" />
         </div>
       </div>
 
