@@ -396,19 +396,19 @@ export default function Hero() {
       />
 
       <div
+        className="landing-hero-grid"
         style={{
           position: "relative",
           maxWidth: 1200,
           margin: "0 auto",
           padding: "0 clamp(20px, 5vw, 40px)",
           display: "grid",
-          gridTemplateColumns: "repeat(12, 1fr)",
           gap: 40,
           alignItems: "center",
         }}
       >
         {/* LEFT — copy (≈45%) */}
-        <div className="landing-hero-left" style={{ gridColumn: "span 12" }}>
+        <div className="landing-hero-left">
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src="/finlo-logo-background.svg"
@@ -515,7 +515,7 @@ export default function Hero() {
         </div>
 
         {/* RIGHT — dashboard preview (≈55%) */}
-        <div className="landing-hero-right" style={{ gridColumn: "span 12", position: "relative", marginTop: 24 }}>
+        <div className="landing-hero-right" style={{ position: "relative", marginTop: 24 }}>
           <DashboardPreview />
 
           {FLOATING.map((f) => {

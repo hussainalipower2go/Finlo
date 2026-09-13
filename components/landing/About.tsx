@@ -21,18 +21,18 @@ export default function About() {
       }}
     >
       <div
+        className="landing-about-grid"
         style={{
           maxWidth: 1200,
           margin: "0 auto",
           padding: "0 clamp(20px, 5vw, 40px)",
           display: "grid",
-          gridTemplateColumns: "repeat(12, 1fr)",
           gap: 40,
           alignItems: "center",
         }}
       >
         {/* Left — about copy */}
-        <div style={{ gridColumn: "span 12" }}>
+        <div className="landing-about-left">
           <SectionKicker>About Finlo</SectionKicker>
           <h2
             style={{
@@ -63,11 +63,11 @@ export default function About() {
           <div
             style={{
               display: "grid",
-              gridTemplateColumns: "repeat(1, 1fr)",
               gap: 12,
               marginTop: 28,
               maxWidth: 560,
             }}
+            className="landing-about-points"
           >
             {POINTS.map((p) => (
               <div key={p} style={{ display: "flex", alignItems: "center", gap: 12 }}>
@@ -95,7 +95,7 @@ export default function About() {
         </div>
 
         {/* Right — ELVA glass card */}
-        <div style={{ gridColumn: "span 12" }}>
+        <div className="landing-about-right">
           <div
             style={{
               position: "relative",

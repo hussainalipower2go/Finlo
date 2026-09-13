@@ -77,7 +77,6 @@ export default function HowItWorks() {
         <div
           style={{
             display: "flex",
-            flexDirection: "column",
             gap: 18,
             marginTop: 48,
           }}

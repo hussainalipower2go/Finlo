@@ -649,8 +649,13 @@ html.dark {
 .landing-about-points {
   grid-template-columns: repeat(1, 1fr);
 }
+.landing-hero-grid,
+.landing-about-grid {
+  grid-template-columns: minmax(0, 1fr);
+}
 .landing-steps-row {
   align-items: stretch;
+  flex-direction: column;
 }
 .landing-step-arrow {
   transform: rotate(90deg);
@@ -658,6 +663,16 @@ html.dark {
 }
 .landing-chip {
   display: none;
+}
+
+.landing-footer-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.landing-footer-brand {
+  grid-column: span 2;
+}
+.landing-footer-col {
+  grid-column: auto;
 }
 
 .landing-footer-link {
@@ -674,14 +689,20 @@ html.dark {
   .landing-about-points {
     grid-template-columns: repeat(2, 1fr);
   }
+  .landing-footer-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .landing-footer-brand {
+    grid-column: span 4;
+  }
 }
 
 @media (min-width: 1024px) {
-  .landing-hero-left {
-    grid-column: span 5;
+  .landing-hero-grid {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
   }
-  .landing-hero-right {
-    grid-column: span 7;
+  .landing-about-grid {
+    grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
   }
   .landing-features-grid {
     grid-template-columns: repeat(3, 1fr);
@@ -697,6 +718,15 @@ html.dark {
 @media (min-width: 900px) {
   .landing-chip {
     display: flex;
+  }
+}
+
+@media (max-width: 560px) {
+  .landing-footer-grid {
+    grid-template-columns: repeat(1, minmax(0, 1fr));
+  }
+  .landing-preview-tab {
+    display: none;
   }
 }
 

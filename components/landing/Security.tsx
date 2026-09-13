@@ -49,7 +49,6 @@ export default function Security() {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(1, 1fr)",
             gap: 16,
             marginTop: 44,
           }}

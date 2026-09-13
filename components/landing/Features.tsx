@@ -87,7 +87,6 @@ export default function Features() {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(1, 1fr)",
             gap: 18,
             marginTop: 48,
           }}

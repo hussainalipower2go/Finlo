@@ -59,16 +59,16 @@ export default function Footer() {
       <div style={{ position: "relative", maxWidth: 1200, margin: "0 auto", padding: "0 clamp(20px, 5vw, 40px)" }}>
         {/* Top */}
         <div
+          className="landing-footer-grid"
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(12, 1fr)",
             gap: 32,
             paddingBottom: 40,
             borderBottom: "1px solid rgba(255,255,255,0.12)",
           }}
         >
           {/* Brand */}
-          <div style={{ gridColumn: "span 12" }}>
+          <div className="landing-footer-brand">
             <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
@@ -105,7 +105,7 @@ export default function Footer() {
 
           {/* Link columns */}
           {COLUMNS.map((col) => (
-            <div key={col.title} style={{ gridColumn: "span 6" }}>
+            <div key={col.title} className="landing-footer-col">
               <div
                 style={{
                   fontSize: 12,

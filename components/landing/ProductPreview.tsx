@@ -166,6 +166,7 @@ export default function ProductPreview() {
               {["Dashboard", "Transactions", "Budgets", "Analytics"].map((tab, i) => (
                 <span
                   key={tab}
+                  className="landing-preview-tab"
                   style={{
                     fontSize: 12,
                     fontWeight: i === 3 ? 700 : 500,
